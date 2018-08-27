@@ -33,6 +33,7 @@ namespace MiniFramework
         GUIContent clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
         GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         GUIContent scrollToBottomLabel = new GUIContent("ScrollToBottom", "Scroll bar always at bottom");
+        public void Init(){ }
         // Use this for initialization
         void Awake()
         {

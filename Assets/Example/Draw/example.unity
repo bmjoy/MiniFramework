@@ -134,15 +134,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 456313788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efe8a3fda6363ce48acdfb0746d38c07, type: 3}
+  m_Script: {fileID: 11500000, guid: ad643d7d234f3c4438d3361681b0a10d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Pattern:
     PatternType: 0
     DrawType: 0
     Color: {r: 0, g: 0, b: 0, a: 1}
-    Angle: 60
-    Radius: 2
+    Angle: 0
+    Radius: 0
     Length: 0
     Width: 0
 --- !u!4 &456313790

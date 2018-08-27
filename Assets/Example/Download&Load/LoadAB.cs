@@ -2,8 +2,7 @@
 using UnityEngine;
 public class LoadAB : MonoBehaviour {
     void Start () {      
-        ResLoader rl = new ResLoader(this, "file:///" + Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui");
-        rl.LoadAssetBundle(LoadCompleted);
+        ResLoader.Instance.LoadAssetBundle(this, "file:///" + Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui", LoadCompleted);
     }
 	void LoadCompleted(AssetBundle ab)
     {

@@ -1,7 +1,7 @@
 ﻿using MiniFramework;
 using System;
 
-public class UIExample : UIPlaneBase
+public class UIExample : UIPanel
 {
     public override void SetCloseAnimation()
     {

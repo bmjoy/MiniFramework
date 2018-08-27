@@ -1,22 +1,13 @@
-﻿using MiniFramework;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 namespace MiniFramework
 {
     public class MiniApplication : MonoBehaviour
     {
-        public string UIPath;
         // Use this for initialization
         void Start()
         {
+            Console.Instance.Init();
             UIManager.Instance.Init();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
     }
 }

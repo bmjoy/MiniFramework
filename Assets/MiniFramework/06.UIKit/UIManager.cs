@@ -10,29 +10,57 @@ namespace MiniFramework
         public Canvas Canvas;
         public Camera UICamera;
         public EventSystem EventSystem;
-        public readonly Dictionary<int, GameObject> UIPanelDict = new Dictionary<int, GameObject>();
+        public readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
         public void Init()
         {
-            GameObject obj = Resources.Load("UI/UI Root") as GameObject;
-            UIRoot = Instantiate(obj, transform);
+            UIRoot = GameObject.Find("UI Root");
+            if (UIRoot != null)
+            {
+                UIRoot.transform.SetParent(transform);
+            }
+            else
+            {
+                UIRoot = Resources.Load("UI/UI Root") as GameObject;
+                UIRoot = Instantiate(UIRoot, transform);
+            }
+            GetCanvas();
+            GetCamera();
+            GetEventSystem();
+            GetUI();
         }
-
-        public void OpenUI(int id)
+        void GetCanvas()
         {
-
+            Canvas = UIRoot.GetComponentInChildren<Canvas>();
         }
+        void GetCamera()
+        {
+            UICamera = UIRoot.GetComponentInChildren<Camera>();
+        }
+
+        void GetEventSystem()
+        {
+            EventSystem = UIRoot.GetComponentInChildren<EventSystem>();
+        }
+
+        void GetUI()
+        {
+            for (int i = 0; i < Canvas.transform.childCount; i++)
+            {
+                UIPanel panel = Canvas.transform.GetChild(i).GetComponent<UIPanel>();
+                if (panel != null)
+                {
+                    UIPanelDict.Add(panel.name, panel);
+                }
+            }
+        }
+
         public void OpenUI(string name)
         {
-
-        }
-
-        public void CloseUI(int id)
-        {
-
+            UIPanelDict[name].Open();
         }
         public void CloseUI(string name)
         {
-
+            UIPanelDict[name].Close();
         }
     }
 }

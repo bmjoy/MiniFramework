@@ -60,6 +60,7 @@ namespace MiniFramework
                 return false;
             }
             obj.IsRecycled = true;
+            obj.OnRecycled();
             mCacheStack.Push(obj);
             return true;
         }

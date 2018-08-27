@@ -4,24 +4,21 @@ using System;
 
 namespace MiniFramework
 {
-    public class ResLoader
+    public class ResLoader:Singleton<ResLoader>
     {
         private string loadPath;
         private MonoBehaviour mono;
         private Action<AssetBundle> callBack;
-
-        public ResLoader(MonoBehaviour self,string path)
+        private ResLoader() { }
+        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> callBack)
         {
-            mono = self;
-            loadPath = path;
+            this.mono = mono;
+            this.loadPath = path;
+            this.callBack = callBack;
+            this.mono.StartCoroutine(loadAssetBundle());
         }
 
-        public void LoadAssetBundle(Action<AssetBundle> callBack)
-        {           
-            mono.StartCoroutine(loadAssetBundle(callBack));
-        }
-
-        IEnumerator loadAssetBundle(Action<AssetBundle> callBack)
+        IEnumerator loadAssetBundle()
         {
             WWW www = new WWW(loadPath);
             yield return www;

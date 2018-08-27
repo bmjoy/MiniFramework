@@ -2,10 +2,8 @@
 using UnityEngine;
 namespace MiniFramework
 {
-    public abstract class UIPlaneBase:MonoBehaviour
+    public abstract class UIPanel:MonoBehaviour
     {
-        public int ID;
-        public string Name;
         public Action OpenAnimation;
         public Action CloseAnimation;
         public virtual void Open() {
