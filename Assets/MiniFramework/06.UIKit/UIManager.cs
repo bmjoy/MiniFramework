@@ -56,11 +56,33 @@ namespace MiniFramework
 
         public void OpenUI(string name)
         {
-            UIPanelDict[name].Open();
+            if (UIPanelDict.ContainsKey(name))
+                UIPanelDict[name].Open();
         }
         public void CloseUI(string name)
         {
-            UIPanelDict[name].Close();
+            if (UIPanelDict.ContainsKey(name))
+                UIPanelDict[name].Close();
+        }
+
+        public void LoadUI(string path)
+        {
+            GameObject ui = Resources.Load(path) as GameObject;
+            if (ui != null)
+            {
+                ui = Instantiate(ui, Canvas.transform);
+                ui.SetActive(false);
+                UIPanel panel = ui.GetComponent<UIPanel>();
+                if (panel != null)
+                {
+                    UIPanelDict.Add(panel.name, panel);
+                }
+            }
+        }
+        public void DestroyUI(string name)
+        {
+            if (UIPanelDict.ContainsKey(name))
+                Destroy(UIPanelDict[name].gameObject);
         }
     }
 }

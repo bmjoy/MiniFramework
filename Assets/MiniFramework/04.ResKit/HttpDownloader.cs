@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using UnityEngine;
 namespace MiniFramework
 {
     public enum DownState
@@ -12,29 +11,41 @@ namespace MiniFramework
         Stop,
         Completed
     }
-    public class HttpDownloader:Singleton<HttpDownloader>
+    public class HttpDownloader : Singleton<HttpDownloader>
     {
-        private Dictionary<int,DownloadTask> tasks = new Dictionary<int, DownloadTask>();
-        public DownState GetStatus(int id)
+        private Dictionary<string, DownloadTask> tasks = new Dictionary<string, DownloadTask>();
+        public DownState GetStatus(string name)
         {
-            return tasks[id].GetStatus();
+            if (tasks.ContainsKey(name))
+                return tasks[name].GetStatus();
+            return DownState.None;
         }
-        public float GetProcess(int id)
+        public float GetProcess(string name)
         {
-            return tasks[id].GetProcess();
+            if (tasks.ContainsKey(name))
+                return tasks[name].GetProcess();
+            return 0;
+        }
+        public void RemoveTask(string name)
+        {
+            if (tasks.ContainsKey(name))
+                tasks.Remove(name);
         }
         private HttpDownloader() { }
-        public void Download(int id,string url, string savePath, Action callBack = null)
-        {       
-            if (!tasks.ContainsKey(id))
+        public string Download(string url, string saveDir, Action callBack = null)
+        {
+            string fileName = url.Substring(url.LastIndexOf('/') + 1);
+            if (!tasks.ContainsKey(fileName))
             {
-                DownloadTask task = new DownloadTask(url, savePath, callBack);
-                tasks.Add(id,task);
+                DownloadTask task = new DownloadTask(fileName, url, saveDir, callBack);
+                tasks.Add(fileName, task);
             }
+            return fileName;
         }
     }
     public class DownloadTask
     {
+        private string fileName;
         private DownState state;
         private string url;//下载地址
         private string tempSavePath;//临时文件保存路径
@@ -46,7 +57,7 @@ namespace MiniFramework
         private FileStream fileStream;
         private HttpWebResponse response;
         private Stream responseStream;
-        private byte[] buffer = new byte[1024];
+        private byte[] buffer = new byte[4096];
         public DownState GetStatus()
         {
             return state;
@@ -55,16 +66,17 @@ namespace MiniFramework
         {
             if (fileLength > 0)
             {
-                return Mathf.Clamp((float)curLength / fileLength, 0, 1);
+                return (float)curLength / fileLength;
             }
             return 0;
         }
-        public  DownloadTask(string url, string savePath, Action callBack = null)
+        public DownloadTask(string name, string url, string dir, Action callBack = null)
         {
+            fileName = name;
             state = DownState.None;
             this.url = url;
-            tempSavePath = savePath + ".temp";
-            this.savePath = savePath;
+            tempSavePath = dir + "/" + fileName + ".temp";
+            savePath = dir + "/" + fileName;
             CallBack = callBack;
             DownTask();
         }
@@ -74,6 +86,10 @@ namespace MiniFramework
             state = DownState.Start;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
             request.Method = "GET";
+
+            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+
             if (File.Exists(tempSavePath))
             {
                 fileStream = File.OpenWrite(tempSavePath);
@@ -95,17 +111,17 @@ namespace MiniFramework
             response = (HttpWebResponse)request.EndGetResponse(result);
             responseStream = response.GetResponseStream();
             fileLength = response.ContentLength + curLength;
-            responseStream.BeginRead(buffer, 0, buffer.Length,new AsyncCallback(ReadCallBack), responseStream);
+            responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallBack), responseStream);
         }
 
         void ReadCallBack(IAsyncResult result)
         {
             responseStream = (Stream)result.AsyncState;
             int read = responseStream.EndRead(result);
-            curLength += read;
-            if (read > 0)
+            if (curLength < fileLength)
             {
-                fileStream.Write(buffer,0,read);
+                fileStream.Write(buffer, 0, read);
+                curLength += read;
                 responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallBack), responseStream);
             }
             else
@@ -123,6 +139,7 @@ namespace MiniFramework
                     CallBack();
                 }
                 state = DownState.Completed;
+                HttpDownloader.Instance.RemoveTask(fileName);
             }
         }
 
