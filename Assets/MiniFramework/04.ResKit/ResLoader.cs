@@ -7,13 +7,35 @@ namespace MiniFramework
     public class ResLoader:Singleton<ResLoader>
     {
         private ResLoader() { }
-
-
-        public void LoadAssetAsync(MonoBehaviour mono, string path, Action<UnityEngine.Object> loadedCallBack)
+        /// <summary>
+        /// 获取所有AssetBundle的Hash128
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public Hash128[] GetAllAssetBundleHash(string path)
         {
-            mono.StartCoroutine(loadAsset(path,loadedCallBack));
+            AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
+            AssetBundleManifest manifest = assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            string[] bundlesName = manifest.GetAllAssetBundles();
+            Hash128[] bundlesHash = new Hash128[bundlesName.Length];
+            for (int i = 0; i < bundlesName.Length; i++)
+            {
+                bundlesHash[i] = manifest.GetAssetBundleHash(bundlesName[i]);
+            }
+            return bundlesHash;
         }
-        IEnumerator loadAsset(string path, Action<UnityEngine.Object> loadedCallBack)
+        /// <summary>
+        /// 从Resources文件异步加载资源
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="mono"></param>
+        /// <param name="path"></param>
+        /// <param name="loadedCallBack"></param>
+        public void LoadAssetAsync<T>(MonoBehaviour mono, string path, Action<T> loadedCallBack) where T :UnityEngine.Object
+        {
+            mono.StartCoroutine(loadAsset<T>(path,loadedCallBack));
+        }
+        IEnumerator loadAsset<T>(string path, Action<T> loadedCallBack) where T : UnityEngine.Object
         {
             var resRequest = Resources.LoadAsync(path);
             yield return resRequest;
@@ -23,8 +45,14 @@ namespace MiniFramework
                 Debug.LogError("Failed to load Asset!");
                 yield break;
             }
-            loadedCallBack(asset);
+            loadedCallBack(asset as T);
         }
+        /// <summary>
+        /// 异步加载AssetBundle
+        /// </summary>
+        /// <param name="mono"></param>
+        /// <param name="path"></param>
+        /// <param name="loadedCallBack"></param>
         public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
         {
             mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));

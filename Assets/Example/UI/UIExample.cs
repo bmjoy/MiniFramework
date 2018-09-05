@@ -5,7 +5,7 @@ public class UIExample : UIPanel
 {
     public override void SetCloseAnimation()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public override void SetOpenAnimation()
