@@ -65,7 +65,7 @@ namespace MiniFramework
                 UIPanelDict[name].Close();
         }
 
-        public void LoadUI(string path)
+        public void LoadUIFromResources(string path)
         {
             GameObject ui = Resources.Load(path) as GameObject;
             if (ui != null)
@@ -79,10 +79,29 @@ namespace MiniFramework
                 }
             }
         }
+        public void LoadUIFromAssetBundle(AssetBundle ab,string name)
+        {
+            GameObject ui = ab.LoadAsset(name) as GameObject;
+            if(ui != null)
+            {
+                ui = Instantiate(ui, Canvas.transform);
+                ui.SetActive(false);
+                UIPanel panel = ui.GetComponent<UIPanel>();
+                if (panel != null)
+                {
+                    UIPanelDict.Add(panel.name, panel);
+                }
+            }
+        }
+
         public void DestroyUI(string name)
         {
             if (UIPanelDict.ContainsKey(name))
+            {
                 Destroy(UIPanelDict[name].gameObject);
+                UIPanelDict.Remove(name);
+            }
+               
         }
     }
 }

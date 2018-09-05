@@ -6,29 +6,41 @@ namespace MiniFramework
 {
     public class ResLoader:Singleton<ResLoader>
     {
-        private string loadPath;
-        private MonoBehaviour mono;
-        private Action<AssetBundle> callBack;
         private ResLoader() { }
-        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> callBack)
-        {
-            this.mono = mono;
-            this.loadPath = path;
-            this.callBack = callBack;
-            this.mono.StartCoroutine(loadAssetBundle());
-        }
 
-        IEnumerator loadAssetBundle()
+
+        public void LoadAssetAsync(MonoBehaviour mono, string path, Action<UnityEngine.Object> loadedCallBack)
         {
-            WWW www = new WWW(loadPath);
-            yield return www;
-            if (www.error != null)
+            mono.StartCoroutine(loadAsset(path,loadedCallBack));
+        }
+        IEnumerator loadAsset(string path, Action<UnityEngine.Object> loadedCallBack)
+        {
+            var resRequest = Resources.LoadAsync(path);
+            yield return resRequest;
+            var asset = resRequest.asset;
+            if (asset == null)
             {
-                Debug.Log(www.error);
+                Debug.LogError("Failed to load Asset!");
                 yield break;
             }
-            callBack(www.assetBundle);
-            www.Dispose();
+            loadedCallBack(asset);
+        }
+        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
+        {
+            mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
+        }
+
+        IEnumerator loadAssetBundle(string loadPath, Action<AssetBundle> loadedCallBack)
+        {
+            var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);
+            yield return bundleLoadRequest;
+            var loadedAssetBundle = bundleLoadRequest.assetBundle;
+            if (loadedAssetBundle == null)
+            {
+                Debug.LogError("Failed to load AssetBundle!");
+                yield break;
+            }
+            loadedCallBack(loadedAssetBundle);
         }
     }
 }

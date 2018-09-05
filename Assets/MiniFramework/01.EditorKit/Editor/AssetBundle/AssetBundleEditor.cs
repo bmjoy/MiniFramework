@@ -19,7 +19,7 @@ namespace MiniFramework
         [MenuItem("MiniFramework/AssetBundle/Build Window")]
         public static void BuildABWindow()
         {        
-            BuildPipeline.BuildAssetBundles(GetTargetPath(BuildTarget.StandaloneWindows), BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
+            BuildPipeline.BuildAssetBundles(GetTargetPath(BuildTarget.StandaloneWindows), BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
         }
         private static string GetTargetPath(BuildTarget platform)
         {
