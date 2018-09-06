@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 namespace MiniFramework
 {
@@ -12,15 +13,16 @@ namespace MiniFramework
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public Hash128[] GetAllAssetBundleHash(string path)
+        public Dictionary<string,Hash128> GetAllAssetBundleHash(string path)
         {
             AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
             AssetBundleManifest manifest = assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             string[] bundlesName = manifest.GetAllAssetBundles();
-            Hash128[] bundlesHash = new Hash128[bundlesName.Length];
+            Dictionary<string, Hash128> bundlesHash = new Dictionary<string, Hash128>();
             for (int i = 0; i < bundlesName.Length; i++)
             {
-                bundlesHash[i] = manifest.GetAssetBundleHash(bundlesName[i]);
+                Hash128 hash = manifest.GetAssetBundleHash(bundlesName[i]);
+                bundlesHash.Add(bundlesName[i],hash);
             }
             return bundlesHash;
         }

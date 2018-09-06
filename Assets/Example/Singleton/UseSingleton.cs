@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UseSingleton : MonoBehaviour
+public class UseSingleton : MonoSingleton<UseSingleton>
 {
 
     // Use this for initialization

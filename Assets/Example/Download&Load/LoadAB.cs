@@ -1,4 +1,5 @@
 ﻿using MiniFramework;
+using System.Collections.Generic;
 using UnityEngine;
 public class LoadAB : MonoBehaviour
 {
@@ -6,12 +7,11 @@ public class LoadAB : MonoBehaviour
     {
         ResLoader.Instance.LoadAssetBundle(this, Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui", LoadCompleted);
 
-        Hash128[] hashes = ResLoader.Instance.GetAllAssetBundleHash(Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/StandaloneWindows");
-        for (int i = 0; i < hashes.Length; i++)
+        Dictionary<string,Hash128> bundlesHash = ResLoader.Instance.GetAllAssetBundleHash(Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/StandaloneWindows");
+        foreach (var item in bundlesHash)
         {
-            Debug.Log(hashes[i]);
+            Debug.Log(item.Key+":"+item.Value);
         }
-
     } 
     void LoadCompleted(AssetBundle ab)
     {
