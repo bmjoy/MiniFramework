@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MiniFramework
 {
-    public enum UIType
+    public enum UIInitType
     {
         //普通
         Normal,

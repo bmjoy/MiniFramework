@@ -2,7 +2,6 @@
 using MiniFramework;
 public class Sender : MonoBehaviour, IMsgSender
 {
-
     // Use this for initialization
     void Start()
     {

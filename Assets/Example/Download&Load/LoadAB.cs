@@ -5,7 +5,7 @@ public class LoadAB : MonoBehaviour
 {
     void Start()
     {
-        ResLoader.Instance.LoadAssetBundle(this, Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui", LoadCompleted);
+        ResLoader.Instance.LoadAssetBundle(this, Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/test", LoadCompleted);
 
         Dictionary<string,Hash128> bundlesHash = ResLoader.Instance.GetAllAssetBundleHash(Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/StandaloneWindows");
         foreach (var item in bundlesHash)
@@ -15,7 +15,7 @@ public class LoadAB : MonoBehaviour
     } 
     void LoadCompleted(AssetBundle ab)
     {
-        GameObject obj = ab.LoadAsset<GameObject>("UI Panel");
+        GameObject obj = ab.LoadAsset<GameObject>("04 (6)");
         Instantiate(obj);
         ab.Unload(false);
     }

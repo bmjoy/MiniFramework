@@ -9,5 +9,13 @@ namespace MiniFramework
             Console.Instance.Init();
             UIManager.Instance.Init();
         }
+        public void SetIsFullScreen(bool isFullScreen)
+        {
+            Screen.fullScreen = isFullScreen;
+        }
+        public void SetResolution(int width,int height)
+        {
+            Screen.SetResolution(width,height,Screen.fullScreen);
+        }
     }
 }

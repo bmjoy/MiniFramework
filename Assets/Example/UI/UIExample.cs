@@ -1,15 +1,18 @@
-﻿using MiniFramework;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using MiniFramework;
 using System;
 
 public class UIExample : UIPanel
 {
-    public override void SetCloseAnimation()
-    {
-        //throw new NotImplementedException();
-    }
-
-    public override void SetOpenAnimation()
-    {
-        throw new NotImplementedException();
-    }
+    // Use this for initialization
+    void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
 }

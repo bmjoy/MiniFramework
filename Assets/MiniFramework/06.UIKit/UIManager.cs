@@ -10,8 +10,9 @@ namespace MiniFramework
         public Canvas Canvas;
         public Camera UICamera;
         public EventSystem EventSystem;
-        public readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
-        public string AssetBundlePath ;
+        private string AssetBundlePath;
+        private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
+        private readonly Stack<UIPanel> UIPanelStack = new Stack<UIPanel>();
         public void Init()
         {
             AssetBundlePath = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui";
@@ -54,6 +55,7 @@ namespace MiniFramework
                 if (panel != null)
                 {
                     UIPanelDict.Add(panel.name, panel);
+                    UIPanelStack.Push(panel);
                 }
             }
         }
@@ -61,12 +63,20 @@ namespace MiniFramework
         public void OpenUI(string name)
         {
             if (UIPanelDict.ContainsKey(name))
-                UIPanelDict[name].Open();
+            {
+                UIPanel panel = UIPanelDict[name];
+                panel.SetLayerToTop();
+                panel.Open();                
+            }             
         }
         public void CloseUI(string name)
         {
             if (UIPanelDict.ContainsKey(name))
-                UIPanelDict[name].Close();
+            {
+                UIPanel panel = UIPanelDict[name];
+                panel.SetLayerToButtom();
+                panel.Close();
+            }
         }
         
         public void DestroyUI(string name)
@@ -75,8 +85,7 @@ namespace MiniFramework
             {
                 Destroy(UIPanelDict[name].gameObject);
                 UIPanelDict.Remove(name);
-            }
-               
+            }          
         }
         void LoadUIFromAssetBundle(AssetBundle ab)
         {
@@ -84,7 +93,6 @@ namespace MiniFramework
             for (int i = 0; i < objects.Length; i++)
             {
                 GameObject ui = Instantiate(objects[i], Canvas.transform);
-                ui.SetActive(false);
                 UIPanel panel = ui.GetComponent<UIPanel>();
                 if (panel != null)
                 {

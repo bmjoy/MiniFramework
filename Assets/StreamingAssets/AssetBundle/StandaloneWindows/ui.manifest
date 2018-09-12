@@ -1,19 +1,15 @@
 ManifestFileVersion: 0
-CRC: 219624523
+CRC: 1088383807
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c087d30382fa477f68a132a4a12cff57
+    Hash: 0ee7c38d0f2129d527448d925e9eed59
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 0e81d3c1bb5084a54b12148ba481128f
+    Hash: 60a201026f0858f06427e6fab8bebee5
 HashAppended: 0
 ClassTypes:
 - Class: 1
-  Script: {instanceID: 0}
-- Class: 4
-  Script: {instanceID: 0}
-- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -21,27 +17,17 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
-- Class: 92
-  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: -619905303, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 1077351063, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  Script: {fileID: 575553740, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 39c1e5d71aa004d4aa8f5373c82261c6, type: 3}
+  Script: {fileID: 11500000, guid: 5ea8cae4a24a8b047b0b790ee35707a8, type: 3}
 - Class: 115
-  Script: {instanceID: 0}
-- Class: 124
   Script: {instanceID: 0}
 - Class: 128
   Script: {instanceID: 0}
@@ -49,11 +35,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 222
   Script: {instanceID: 0}
-- Class: 223
-  Script: {instanceID: 0}
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/MiniFramework/06.UIKit/Resources/UI/UI Root.prefab
-- Assets/MiniFramework/06.UIKit/Resources/UI/UI Panel.prefab
+- Assets/Example/UI/Panel.prefab
 Dependencies: []

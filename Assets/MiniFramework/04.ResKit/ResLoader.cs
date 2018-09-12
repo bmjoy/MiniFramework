@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MiniFramework
 {
@@ -50,14 +51,15 @@ namespace MiniFramework
             loadedCallBack(asset as T);
         }
         /// <summary>
-        /// 异步加载AssetBundle
+        /// 从本地路径异步加载AssetBundle
         /// </summary>
         /// <param name="mono"></param>
         /// <param name="path"></param>
         /// <param name="loadedCallBack"></param>
         public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
         {
-            mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
+            if (File.Exists(path))
+                mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
         }
 
         IEnumerator loadAssetBundle(string loadPath, Action<AssetBundle> loadedCallBack)

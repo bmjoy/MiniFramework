@@ -1,12 +1,15 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 namespace MiniFramework
 {
-    public abstract class UIPanel:MonoBehaviour
+    public abstract class UIPanel : MonoBehaviour,IBeginDragHandler,IDragHandler
     {
         public Action OpenAnimation;
         public Action CloseAnimation;
-        public virtual void Open() {
+        public virtual void Open()
+        {
             if (OpenAnimation != null)
             {
                 OpenAnimation();
@@ -16,7 +19,8 @@ namespace MiniFramework
                 gameObject.SetActive(true);
             }
         }
-        public virtual void Close() {
+        public virtual void Close()
+        {
             if (CloseAnimation != null)
             {
                 CloseAnimation();
@@ -26,7 +30,35 @@ namespace MiniFramework
                 gameObject.SetActive(false);
             }
         }
-        public abstract void SetOpenAnimation();
-        public abstract void SetCloseAnimation();
+        public void SetLayerToTop()
+        {
+            transform.SetAsLastSibling();
+        }
+        public void SetLayerToButtom()
+        {
+            transform.SetAsFirstSibling();
+        }
+
+        Vector3 offset;
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            Vector3 pos;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                transform as RectTransform,
+                eventData.position,
+                eventData.pressEventCamera,
+                out pos);
+            offset = transform.position - pos;
+        }
+        public void OnDrag(PointerEventData eventData)
+        {
+            Vector3 pos;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                transform as RectTransform,
+                eventData.position,
+                eventData.pressEventCamera,
+                out pos);
+            transform.position = pos + offset;
+        }
     }
 }

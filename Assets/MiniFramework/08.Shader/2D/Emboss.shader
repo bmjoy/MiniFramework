@@ -1,5 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
+//¸¡µñÐ§¹û
 Shader "MiniFramework/Emboss"
 {
     Properties

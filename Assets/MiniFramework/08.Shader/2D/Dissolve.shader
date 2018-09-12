@@ -1,4 +1,5 @@
-﻿Shader "MiniFramework/Dissolve"
+﻿//消融效果
+Shader "MiniFramework/Dissolve"
 {
 	Properties
 	{

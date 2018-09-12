@@ -35,6 +35,7 @@ namespace MiniFramework
             if (type.enumValueIndex == (int)PatternType.扇形)
             {
                 SerializedProperty radius = pattern.FindPropertyRelative("Radius");
+
                 SerializedProperty angle = pattern.FindPropertyRelative("Angle");
                 EditorGUILayout.PropertyField(radius);
                 EditorGUILayout.PropertyField(angle);
