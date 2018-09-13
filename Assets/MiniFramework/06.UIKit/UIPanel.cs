@@ -18,6 +18,7 @@ namespace MiniFramework
             {
                 gameObject.SetActive(true);
             }
+            SetLayerToTop();
         }
         public virtual void Close()
         {
@@ -29,6 +30,7 @@ namespace MiniFramework
             {
                 gameObject.SetActive(false);
             }
+            SetLayerToButtom();
         }
         public void SetLayerToTop()
         {

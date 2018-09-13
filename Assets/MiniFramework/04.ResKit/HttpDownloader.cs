@@ -111,10 +111,10 @@ namespace MiniFramework
             response = (HttpWebResponse)request.EndGetResponse(result);
             responseStream = response.GetResponseStream();
             fileLength = response.ContentLength + curLength;
-            responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallBack), responseStream);
+            responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
         }
 
-        void ReadCallBack(IAsyncResult result)
+        void ReadCallback(IAsyncResult result)
         {
             responseStream = (Stream)result.AsyncState;
             int read = responseStream.EndRead(result);
@@ -122,7 +122,7 @@ namespace MiniFramework
             {
                 fileStream.Write(buffer, 0, read);
                 curLength += read;
-                responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallBack), responseStream);
+                responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
             }
             else
             {
