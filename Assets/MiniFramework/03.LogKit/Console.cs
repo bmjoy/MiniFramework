@@ -33,17 +33,17 @@ namespace MiniFramework
         GUIContent clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
         GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         GUIContent scrollToBottomLabel = new GUIContent("ScrollToBottom", "Scroll bar always at bottom");
-        public void Init(){ }
+        public void Init() { }
         // Use this for initialization
         void Awake()
         {
             new FPSCounter(this);
             new MemoryDetector(this);
-            Application.logMessageReceived += HandleLog;
+            Application.logMessageReceivedThreaded += HandleLog;
         }
         void OnDestroy()
         {
-            Application.logMessageReceived -= HandleLog;
+            Application.logMessageReceivedThreaded -= HandleLog;
         }
         // Update is called once per frame
         void Update()
@@ -74,6 +74,7 @@ namespace MiniFramework
         }
         void ConsoleWindow(int windowId)
         {
+
             if (scrollToBottom)
             {
                 GUILayout.BeginScrollView(Vector2.up * entries.Count * 100.0f);
@@ -114,7 +115,6 @@ namespace MiniFramework
             collapse = GUILayout.Toggle(collapse, collapseLabel, GUILayout.ExpandWidth(false));
             scrollToBottom = GUILayout.Toggle(scrollToBottom, scrollToBottomLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
-
             GUI.DragWindow(new Rect(0, 0, windowRect.width, windowRect.height));
         }
         void HandleLog(string message, string stackTrace, LogType type)

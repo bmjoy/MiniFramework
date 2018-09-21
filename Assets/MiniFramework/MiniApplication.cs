@@ -7,7 +7,6 @@ namespace MiniFramework
         void Start()
         {
             Console.Instance.Init();
-            UIManager.Instance.Init();
         }
         public void SetIsFullScreen(bool isFullScreen)
         {

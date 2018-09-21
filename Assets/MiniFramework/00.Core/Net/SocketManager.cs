@@ -1,98 +1,67 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
 namespace MiniFramework
 {
-    public class SocketManager:MonoSingleton<SocketManager>
+    public class SocketManager : MonoSingleton<SocketManager>,IMsgSender
     {
-        public string serverIP;
-        public int serverPort;
-        private Action connectCallback;
-        private Action connectFailedCallback;
-        private Socket socket;
-
-        private bool isStopReceive = false;
-        public void Connect()
+        public string serverIP="127.0.0.1";
+        public int serverPort=8888;
+        public Server Server;
+        public Client Client;
+        private byte[] tempReceiveBuff = new byte[4096];
+        public void LaunchAsServer()
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Debug.Log(socket.ReceiveTimeout + ":" + socket.SendTimeout + "current:" + DateTime.Now); ;
-            IPAddress address = IPAddress.Parse(serverIP);
-            IPEndPoint endPoint = new IPEndPoint(address, serverPort);
-            IAsyncResult result = socket.BeginConnect(endPoint, ConnectCallback, socket);
-            //bool success = result.AsyncWaitHandle.WaitOne(5000, true);
-            //if (!success)
-            //{
-            //    //超时
-            //    Debug.Log("Connect OutTime!");
-            //    Closed();
-            //}
-            //else
-            //{
-            //    isStopReceive = false;
-            //    Thread thread = new Thread(new ThreadStart(Receive));
-            //    thread.IsBackground = true;
-            //    thread.Start();
-            //}
+            Server = new Server(serverIP, serverPort);
         }
-        public void Closed()
+        public void LaunchAsClient()
         {
-            isStopReceive = true;
-            if (socket != null && socket.Connected)
-            {
-                socket.Close();
-            }
-            socket = null;
+            Client = new Client(serverIP, serverPort);
         }
-        void ConnectCallback(IAsyncResult ar)
+        
+        public void Receive(object o)
         {
-            Debug.Log("current:" + DateTime.Now);
-            if (socket.Connected)
-            {
-                Debug.Log("连接成功");
-                isStopReceive = false;
-                Thread thread = new Thread(new ThreadStart(Receive));
-                thread.IsBackground = true;
-                thread.Start();
-            }
-            else
-            {
-                Debug.Log("连接失败");
-            }
-        }
-
-        private void Send()
-        {
-
-        }
-        private void Receive()
-        {
-            while (!isStopReceive)
+            Socket socket = (Socket)o;
+            while (true)
             {
                 if (!socket.Connected)
                 {
+                    Debug.LogError("Socket连接中断！");
                     socket.Close();
                     break;
                 }
                 try
                 {
-                    byte[] bytes = new byte[4096];
-                    int i = socket.Receive(bytes);
-                    if (i <= 0)
+                    int receiveLength = socket.Receive(tempReceiveBuff);
+                    if (receiveLength > 0)
                     {
-                        socket.Close();
-                        break;
+                        ByteBuffer buff = new ByteBuffer(tempReceiveBuff);
+                        string data = buff.ReadString();
+                        Debug.Log(data);
+                        this.SendMsg("1", data);
                     }
                 }
                 catch (Exception e)
                 {
                     socket.Close();
+                    Debug.Log(e);
                     break;
                 }
-
             }
         }
+        private void OnDestroy()
+        {
+            if (Server != null)
+            {
+                Server.Close();
+            }
+            if (Client != null)
+            {
+                Client.Close();
+            }           
+        }
     }
-
 }
