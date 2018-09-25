@@ -14,9 +14,9 @@ namespace MiniFramework
         public Server(int port)
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, SocketManager.Instance.ServerPort);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, SocketManager.Instance.HostPort);
             Socket.Bind(endPoint);
-            Socket.Listen(12);
+            Socket.Listen(SocketManager.Instance.MaxListens);
             Debug.Log("服务器启动成功!");
             Thread thread = new Thread(ListenCallback);
             thread.IsBackground = true;
@@ -60,20 +60,20 @@ namespace MiniFramework
                     buffer.WriteString(data);
                     byte[] package = buffer.BuildDataPackage();
                     item.Value.Send(package);
+                    Debug.Log("发送数据大小：" + package.Length);
                 }
             }
 
         }
         public void Close()
         {
-            if (Socket != null)
+            if (Socket!=null)
             {
                 foreach (var item in ClientSocketDict)
                 {
-                    item.Value.Shutdown(SocketShutdown.Both);
                     item.Value.Close();
                 }
-                Debug.Log("已断开所有客户端连接");
+                Debug.Log("已断开所有客户端连接!");
                 ClientSocketDict.Clear();
                 Socket.Close();
                 Debug.Log("已关闭服务器！");

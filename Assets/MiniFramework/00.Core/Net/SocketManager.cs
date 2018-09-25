@@ -9,17 +9,18 @@ namespace MiniFramework
 {
     public class SocketManager : MonoSingleton<SocketManager>,IMsgSender
     {
-        public string ServerIP="127.0.0.1";
-        public int ServerPort=8888;
+        public string HostIP="127.0.0.1";
+        public int HostPort=8888;
+        public int MaxListens=12;
         public Server Server;
         public Client Client;
         public void LaunchAsServer()
         {
-            Server = new Server(ServerPort);
+            Server = new Server(HostPort);
         }
         public void LaunchAsClient()
         {
-            Client = new Client(ServerIP, ServerPort);
+            Client = new Client(HostIP, HostPort);
         }
         
         public void Receive(object o)

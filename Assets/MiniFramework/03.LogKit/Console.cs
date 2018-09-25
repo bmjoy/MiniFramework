@@ -77,7 +77,7 @@ namespace MiniFramework
 
             if (scrollToBottom)
             {
-                GUILayout.BeginScrollView(Vector2.up * entries.Count * 100.0f);
+                scrollPos = GUILayout.BeginScrollView(Vector2.up * entries.Count * 100.0f);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace MiniFramework
                         GUI.contentColor = Color.white;
                         break;
                 }
-                GUILayout.Label(entry.message + "\n" + entry.stackTrace);
+                GUILayout.Label(entry.message + entry.stackTrace);
             }
             GUILayout.EndScrollView();
             GUI.contentColor = Color.white;

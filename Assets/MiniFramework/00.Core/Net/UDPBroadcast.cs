@@ -15,8 +15,7 @@ namespace MiniFramework
         {        
             udpSend = new UdpClient(new IPEndPoint(IPAddress.Any, 0));
             IPEndPoint targetPoint = new IPEndPoint(IPAddress.Broadcast, ServerPort);
-            ByteBuffer data = new ByteBuffer();
-           
+            ByteBuffer data = new ByteBuffer();       
             data.WriteString(SocketManager.Instance.GetIPv4());
             byte[] bytes = data.ToBytes();
             udpSend.Send(bytes, bytes.Length, targetPoint);
@@ -44,6 +43,7 @@ namespace MiniFramework
                     ByteBuffer buffer = new ByteBuffer(receiveBytes);
                     string msg = buffer.ReadString();
                     Debug.Log("Udp广播信息：" + msg + "\nIP端口：" + recePoint);
+                    SocketManager.Instance.HostIP = msg;
                     this.SendMsg("2", msg);
                 }
                 catch (Exception e)

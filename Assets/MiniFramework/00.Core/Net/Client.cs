@@ -12,8 +12,8 @@ namespace MiniFramework
         public Client(string serverIP, int port)
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPAddress address = IPAddress.Parse(SocketManager.Instance.ServerIP);
-            IPEndPoint endPoint = new IPEndPoint(address, SocketManager.Instance.ServerPort);
+            IPAddress address = IPAddress.Parse(SocketManager.Instance.HostIP);
+            IPEndPoint endPoint = new IPEndPoint(address, SocketManager.Instance.HostPort);
             Socket.BeginConnect(endPoint, ConnectCallback, Socket);
         }
 
@@ -45,11 +45,10 @@ namespace MiniFramework
         }
         public void Close()
         {
-            if (Socket != null)
+            if (Socket!=null)
             {
-                Socket.Shutdown(SocketShutdown.Both);
                 Socket.Close();
-                Debug.Log("已断开连接");
+                Debug.Log("已断开连接!");
             }
         }
     }
