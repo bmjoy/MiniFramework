@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Text;
+using UnityEngine;
 
 namespace MiniFramework
 {
@@ -130,6 +132,19 @@ namespace MiniFramework
             writer.Flush();
             return stream.ToArray();
         }
+
+        public byte[] BuildDataPackage()
+        {
+            int headLength = 4;
+            int bodyLength = (int)stream.Length;
+            byte[] totalBytes = new byte[headLength + bodyLength];
+            byte[] headBytes = BitConverter.GetBytes(bodyLength);
+            headBytes.CopyTo(totalBytes, 0);
+            ToBytes().CopyTo(totalBytes, headLength);
+            return totalBytes;
+        }
+
+        
 
         public void Flush()
         {

@@ -14,6 +14,7 @@ public class Send : MonoBehaviour
             if (SocketManager.Instance.Server != null)
             {
                 SocketManager.Instance.Server.Send(Text.text);
+                SocketManager.Instance.Server.Send("1");
             }
             if (SocketManager.Instance.Client != null)
             {

@@ -12,8 +12,8 @@ namespace MiniFramework
         public Client(string serverIP, int port)
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPAddress address = IPAddress.Parse(SocketManager.Instance.serverIP);
-            IPEndPoint endPoint = new IPEndPoint(address, SocketManager.Instance.serverPort);
+            IPAddress address = IPAddress.Parse(SocketManager.Instance.ServerIP);
+            IPEndPoint endPoint = new IPEndPoint(address, SocketManager.Instance.ServerPort);
             Socket.BeginConnect(endPoint, ConnectCallback, Socket);
         }
 
@@ -38,7 +38,9 @@ namespace MiniFramework
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteString(data);
-                Socket.Send(buffer.ToBytes());
+                byte[] package = buffer.BuildDataPackage();
+                Socket.Send(package);
+                Debug.Log("发送数据大小："+package.Length);
             }
         }
         public void Close()

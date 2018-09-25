@@ -11,11 +11,10 @@ namespace MiniFramework
     {
         public Socket Socket;
         public Dictionary<string, Socket> ClientSocketDict = new Dictionary<string, Socket>();
-        public Server(string serverIP, int port)
+        public Server(int port)
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPAddress address = IPAddress.Parse(serverIP);
-            IPEndPoint endPoint = new IPEndPoint(address, SocketManager.Instance.serverPort);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, SocketManager.Instance.ServerPort);
             Socket.Bind(endPoint);
             Socket.Listen(12);
             Debug.Log("服务器启动成功!");
@@ -59,7 +58,8 @@ namespace MiniFramework
                 {
                     ByteBuffer buffer = new ByteBuffer();
                     buffer.WriteString(data);
-                    item.Value.Send(buffer.ToBytes());
+                    byte[] package = buffer.BuildDataPackage();
+                    item.Value.Send(package);
                 }
             }
 

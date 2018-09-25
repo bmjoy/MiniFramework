@@ -14,6 +14,7 @@ public class Host : MonoBehaviour {
             if (s)
             {
                 SocketManager.Instance.LaunchAsServer();
+                UdpBroadcast.Instance.Broadcast();
             }
             else
             {

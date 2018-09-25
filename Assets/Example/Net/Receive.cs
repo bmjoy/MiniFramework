@@ -7,15 +7,25 @@ using UnityEngine.UI;
 
 public class Receive : MonoBehaviour ,IMsgReceiver{
     public Text Text;
+    bool getMsg;
+    object msg;
 	// Use this for initialization
 	void Start () {
         this.RegisterMsg("1",ReceiveMsg);
 	}
-
+    private void Update()
+    {
+        if (getMsg)
+        {
+            Text.text = msg.ToString();
+            GameObject text = Instantiate(Text.gameObject, Text.transform.parent);
+            text.SetActive(true);
+            getMsg = false;
+        }
+    }
     void ReceiveMsg(object[] data)
     {
-        Text.text = data[0].ToString();
-        GameObject text = Instantiate(Text.gameObject, Text.transform);
-        text.SetActive(true);
+        getMsg = true;
+        msg = data[0];
     }
 }
