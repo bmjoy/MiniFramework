@@ -66,8 +66,7 @@ namespace MiniFramework
             }
             if (!msgHandlerDict.ContainsKey(msgName))
             {
-                //Debug.Log("该消息名没有被注册");
-                return;
+                throw new Exception("该消息名没有被注册");
             }
             var handlers = msgHandlerDict[msgName];
             //从后向前遍历，删除item后前面item的索引不会变化

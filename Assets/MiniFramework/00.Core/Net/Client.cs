@@ -32,15 +32,17 @@ namespace MiniFramework
             }
         }
 
-        public void Send(string data)
+        public void Send(int command,byte[] data)
         {
             if (Socket.Connected)
             {
-                ByteBuffer buffer = new ByteBuffer();
-                buffer.WriteString(data);
-                byte[] package = buffer.BuildDataPackage();
+                byte[] package = ByteBuffer.BuildDataPackage(command, data);
                 Socket.Send(package);
                 Debug.Log("发送数据大小："+package.Length);
+            }
+            else
+            {
+                Debug.Log("Socket未连接!");
             }
         }
         public void Close()

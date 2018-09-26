@@ -24,15 +24,18 @@ namespace MiniFramework
         const int margin = 20;
         Rect windowRect = new Rect(margin + Screen.width * 0.5f, margin, Screen.width * 0.5f - (2 * margin), Screen.height - (2 * margin));
         Vector2 scrollPos;
+
         List<ConsoleMessage> entries = new List<ConsoleMessage>();
 
         bool scrollToBottom = true;
         bool collapse = false;
         bool showGUI = false;
+        bool showKPP = true;
 
         GUIContent clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
         GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         GUIContent scrollToBottomLabel = new GUIContent("ScrollToBottom", "Scroll bar always at bottom");
+        GUIContent showKPPLabel = new GUIContent("ShowKPP", "Show the left param");
         public void Init() { }
         // Use this for initialization
         void Awake()
@@ -59,6 +62,7 @@ namespace MiniFramework
             {
                 OnUpdateCallback();
             }
+            
         }
         private void OnGUI()
         {
@@ -66,23 +70,21 @@ namespace MiniFramework
             {
                 return;
             }
-            if (OnGUICallback != null)
+            if (OnGUICallback != null && showKPP)
             {
                 OnGUICallback();
             }
+            
             windowRect = GUILayout.Window(123, windowRect, ConsoleWindow, "Console");
         }
         void ConsoleWindow(int windowId)
         {
-
             if (scrollToBottom)
             {
-                scrollPos = GUILayout.BeginScrollView(Vector2.up * entries.Count * 100.0f);
+                scrollPos = Vector2.up * entries.Count * 100f;
             }
-            else
-            {
-                scrollPos = GUILayout.BeginScrollView(scrollPos);
-            }
+
+            scrollPos = GUILayout.BeginScrollView(scrollPos);
             for (int i = 0; i < entries.Count; i++)
             {
                 ConsoleMessage entry = entries[i];
@@ -105,6 +107,7 @@ namespace MiniFramework
                 }
                 GUILayout.Label(entry.message + entry.stackTrace);
             }
+
             GUILayout.EndScrollView();
             GUI.contentColor = Color.white;
             GUILayout.BeginHorizontal();
@@ -114,6 +117,7 @@ namespace MiniFramework
             }
             collapse = GUILayout.Toggle(collapse, collapseLabel, GUILayout.ExpandWidth(false));
             scrollToBottom = GUILayout.Toggle(scrollToBottom, scrollToBottomLabel, GUILayout.ExpandWidth(false));
+            showKPP = GUILayout.Toggle(showKPP, showKPPLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
             GUI.DragWindow(new Rect(0, 0, windowRect.width, windowRect.height));
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using UnityEngine;
 namespace MiniFramework
@@ -15,10 +16,9 @@ namespace MiniFramework
         {        
             udpSend = new UdpClient(new IPEndPoint(IPAddress.Any, 0));
             IPEndPoint targetPoint = new IPEndPoint(IPAddress.Broadcast, ServerPort);
-            ByteBuffer data = new ByteBuffer();       
-            data.WriteString(SocketManager.Instance.GetIPv4());
-            byte[] bytes = data.ToBytes();
-            udpSend.Send(bytes, bytes.Length, targetPoint);
+            string ip = SocketManager.Instance.GetIPv4();
+            byte[] data = Encoding.UTF8.GetBytes(ip);
+            udpSend.Send(data, data.Length, targetPoint);
         }
 
         public void Receive()
@@ -39,12 +39,11 @@ namespace MiniFramework
             {
                 try
                 {
-                    Byte[] receiveBytes = udpRece.Receive(ref recePoint);
-                    ByteBuffer buffer = new ByteBuffer(receiveBytes);
-                    string msg = buffer.ReadString();
+                    Byte[] receiveBytes = udpRece.Receive(ref recePoint);                 
+                    string msg = Encoding.UTF8.GetString(receiveBytes);
                     Debug.Log("Udp广播信息：" + msg + "\nIP端口：" + recePoint);
                     SocketManager.Instance.HostIP = msg;
-                    this.SendMsg("2", msg);
+                    this.SendMsg("ip", msg);
                 }
                 catch (Exception e)
                 {

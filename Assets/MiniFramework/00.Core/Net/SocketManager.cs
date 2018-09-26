@@ -1,17 +1,14 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
 using UnityEngine;
 namespace MiniFramework
 {
-    public class SocketManager : MonoSingleton<SocketManager>,IMsgSender
+    public class SocketManager : MonoSingleton<SocketManager>, IMsgSender
     {
-        public string HostIP="127.0.0.1";
-        public int HostPort=8888;
-        public int MaxListens=12;
+        public string HostIP = "127.0.0.1";
+        public int HostPort = 8888;
+        public int MaxListens = 12;
         public Server Server;
         public Client Client;
         public void LaunchAsServer()
@@ -22,7 +19,7 @@ namespace MiniFramework
         {
             Client = new Client(HostIP, HostPort);
         }
-        
+
         public void Receive(object o)
         {
             Socket socket = (Socket)o;
@@ -35,12 +32,8 @@ namespace MiniFramework
                     break;
                 }
                 try
-                {                  
-                    byte[] receBytes = ReadDataPackage(socket);
-                    ByteBuffer buffer = new ByteBuffer(receBytes);
-                    string data = buffer.ReadString();
-                    Debug.Log(data);
-                    this.SendMsg("1", data);
+                {
+                    ReadDataPackage(socket);
                 }
                 catch (Exception e)
                 {
@@ -50,38 +43,39 @@ namespace MiniFramework
                 }
             }
         }
-        private byte[] ReadDataPackage(Socket socket)
-        {
-            int headLength = 4;
-            byte[] receHead = new byte[headLength];
-            int recedHeadLength = socket.Receive(receHead, headLength, 0);
-            Debug.Log("接收数据头大小：" + recedHeadLength);
-            if (recedHeadLength <= 0)
-            {
-                Debug.Log("数据包头小于等于0！");
-                return null;
-            }
-            int BodyLength = BitConverter.ToInt32(receHead, 0);
 
-            while (BodyLength > 0)
-            {
-                byte[] receBody = new byte[BodyLength];
-                int recedBodyLength = socket.Receive(receBody, receBody.Length, 0);
-                Debug.Log("接收数据主体大小：" + recedBodyLength);
-                if (recedBodyLength > 0)
-                {
-                    return receBody;
-                }
-                break;
+        /// <summary>
+        /// 分包
+        /// </summary>
+        /// <param name="receLength"></param>
+        /// <param name="data"></param>
+        private void ReadDataPackage(Socket socket)
+        {
+            byte[] head = new byte[4];
+            int receLength = socket.Receive(head, head.Length, 0);
+            if (receLength < 0)
+            {               
+                return;
             }
-            return null;
+            int bodyLength = BitConverter.ToInt32(head, 0);
+            byte[] body = new byte[bodyLength];
+            receLength = socket.Receive(body, body.Length, 0);
+            if (receLength <0)
+            {
+                return;
+            }
+            int command = BitConverter.ToInt32(body, 0);
+            this.SendMsg(command.ToString(), body);
+            Debug.Log("接收数据 消息头：" + head.Length + "消息主体：" + body.Length);
         }
+
+
         public string GetIPv4()
         {
             IPAddress[] ips = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
             for (int i = 0; i < ips.Length; i++)
             {
-                if(ips[i].AddressFamily == AddressFamily.InterNetwork)
+                if (ips[i].AddressFamily == AddressFamily.InterNetwork)
                 {
                     return ips[i].ToString();
                 }
@@ -97,7 +91,7 @@ namespace MiniFramework
             if (Client != null)
             {
                 Client.Close();
-            }           
+            }
         }
     }
 }

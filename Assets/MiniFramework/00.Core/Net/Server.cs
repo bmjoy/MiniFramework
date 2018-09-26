@@ -50,15 +50,13 @@ namespace MiniFramework
             }
         }
 
-        public void Send(string data)
+        public void Send(int command, byte[] data)
         {
             foreach (var item in ClientSocketDict)
             {
                 if (item.Value.Connected)
                 {
-                    ByteBuffer buffer = new ByteBuffer();
-                    buffer.WriteString(data);
-                    byte[] package = buffer.BuildDataPackage();
+                    byte[] package = ByteBuffer.BuildDataPackage(command, data);
                     item.Value.Send(package);
                     Debug.Log("发送数据大小：" + package.Length);
                 }
