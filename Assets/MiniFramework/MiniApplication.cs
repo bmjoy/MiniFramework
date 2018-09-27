@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 namespace MiniFramework
 {
-    public class MiniApplication : MonoBehaviour
+    public class MiniApplication : MonoSingleton<MiniApplication>
     {
         // Use this for initialization
         void Start()

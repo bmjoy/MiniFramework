@@ -7,6 +7,8 @@ using System;
 using System.Text;
 
 public class Net : MonoBehaviour,IMsgReceiver{
+    public UdpBroadcast Broadcast;
+
     public Text IPText;
     private List<string> msgs = new List<string>();
     public Text ReceText;
@@ -14,6 +16,10 @@ public class Net : MonoBehaviour,IMsgReceiver{
     public Toggle Server;
     public InputField SendText;
     public Button Send;
+    public Button Refresh;
+    public Action<string> MsgCallback;
+    bool tag = false;
+    string msg = "";
 	// Use this for initialization
 	void Start () {
         //this.RegisterMsg("ip", Callback);
@@ -34,6 +40,7 @@ public class Net : MonoBehaviour,IMsgReceiver{
             if (s)
             {
                 SocketManager.Instance.LaunchAsServer();
+                Broadcast.Broadcast();
             }
             else
             {
@@ -53,6 +60,14 @@ public class Net : MonoBehaviour,IMsgReceiver{
                 SocketManager.Instance.Server.Send(1, data);
             }
         });
+        Refresh.onClick.AddListener(() => {
+            Broadcast.ReceiveOnce();
+        });
+
+        Broadcast = new UdpBroadcast();
+        //Broadcast.Receive();
+        MsgCallback += IPListCallback;
+        Broadcast.Net = this;
     }
 
     private void Update()
@@ -67,6 +82,12 @@ public class Net : MonoBehaviour,IMsgReceiver{
             }
             
         }
+        if (tag)
+        {
+            IPText.text = msg;
+            Instantiate(IPText.gameObject, IPText.transform.parent).SetActive(true);
+            tag = false;
+        }
     }
 
     void Callback(object[] o)
@@ -76,5 +97,16 @@ public class Net : MonoBehaviour,IMsgReceiver{
         Array.Copy(data, 4, needData, 0, needData.Length);
         string msg = Encoding.UTF8.GetString(needData);
         msgs.Add(msg);
+    }
+
+    void IPListCallback(string s)
+    {
+        msg = s;
+        tag = true;
+        IPText.text = msg;
+    }
+    private void OnDestroy()
+    {
+        Broadcast.CloseReceive();
     }
 }

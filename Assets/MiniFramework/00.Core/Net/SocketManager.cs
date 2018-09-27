@@ -87,10 +87,12 @@ namespace MiniFramework
             if (Server != null)
             {
                 Server.Close();
+                Server = null;
             }
             if (Client != null)
             {
                 Client.Close();
+                Client = null;
             }
         }
     }

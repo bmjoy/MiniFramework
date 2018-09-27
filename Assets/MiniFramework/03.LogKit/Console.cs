@@ -62,7 +62,7 @@ namespace MiniFramework
             {
                 OnUpdateCallback();
             }
-            
+
         }
         private void OnGUI()
         {
@@ -74,7 +74,7 @@ namespace MiniFramework
             {
                 OnGUICallback();
             }
-            
+
             windowRect = GUILayout.Window(123, windowRect, ConsoleWindow, "Console");
         }
         void ConsoleWindow(int windowId)
@@ -105,7 +105,7 @@ namespace MiniFramework
                         GUI.contentColor = Color.white;
                         break;
                 }
-                GUILayout.Label(entry.message + entry.stackTrace);
+                GUILayout.Label(entry.message + "\n" + entry.stackTrace);
             }
 
             GUILayout.EndScrollView();
