@@ -18,7 +18,7 @@ public class Net : MonoBehaviour,IMsgReceiver{
     public Button Send;
     public Button Refresh;
     public Action<string> MsgCallback;
-    bool tag = false;
+    bool Tag = false;
     string msg = "";
 	// Use this for initialization
 	void Start () {
@@ -61,11 +61,11 @@ public class Net : MonoBehaviour,IMsgReceiver{
             }
         });
         Refresh.onClick.AddListener(() => {
-            Broadcast.ReceiveOnce();
+            //Broadcast.ReceiveOnce();
         });
 
         Broadcast = new UdpBroadcast();
-        //Broadcast.Receive();
+        Broadcast.Receive();
         MsgCallback += IPListCallback;
         Broadcast.Net = this;
     }
@@ -82,11 +82,11 @@ public class Net : MonoBehaviour,IMsgReceiver{
             }
             
         }
-        if (tag)
+        if (Tag)
         {
             IPText.text = msg;
             Instantiate(IPText.gameObject, IPText.transform.parent).SetActive(true);
-            tag = false;
+            Tag = false;
         }
     }
 
@@ -102,8 +102,7 @@ public class Net : MonoBehaviour,IMsgReceiver{
     void IPListCallback(string s)
     {
         msg = s;
-        tag = true;
-        IPText.text = msg;
+        Tag = true;
     }
     private void OnDestroy()
     {

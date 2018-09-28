@@ -12,21 +12,18 @@ namespace MiniFramework
         ~UdpBroadcast(){
             CloseReceive();
         }
-        
-        
         private int ServerPort = 4444;
         private UdpClient udpRece;
         private UdpClient udpSend;
         private Thread receThread;
         private IPEndPoint targetPoint;
         public UdpBroadcast()
-        {
-            udpSend = new UdpClient(new IPEndPoint(IPAddress.Any, 0));
-            udpRece = new UdpClient(new IPEndPoint(IPAddress.Any, ServerPort));
+        {                  
             targetPoint = new IPEndPoint(IPAddress.Broadcast, ServerPort);
         }
         public void Broadcast()
-        {                    
+        {
+            udpSend = new UdpClient(new IPEndPoint(IPAddress.Any, 0));
             string ip = SocketManager.Instance.GetIPv4();
             byte[] data = Encoding.UTF8.GetBytes(ip);
             udpSend.Send(data, data.Length, targetPoint);
@@ -35,45 +32,15 @@ namespace MiniFramework
         public void Receive()
         {
             if (receThread == null)
-            {
+            {                
                 receThread = new Thread(rece);
                 receThread.IsBackground = true;
                 receThread.Start();
             }
-        }
-        public void ReceiveOnce()
-        {
-            
-            IPEndPoint recePoint = new IPEndPoint(IPAddress.Any, 0);
-            try
-            {
-                udpRece.BeginReceive(ReceiveCallback, udpRece);             
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                return;
-            }
-        }
-        void ReceiveCallback(IAsyncResult ar)
-        {
-            IPEndPoint recePoint = new IPEndPoint(IPAddress.Any, 0);
-            Byte[] receiveBytes = udpRece.EndReceive(ar, ref recePoint);
-            if (receiveBytes.Length <= 0)
-            {
-                return;
-            }
-            string msg = Encoding.UTF8.GetString(receiveBytes);
-            if (Net.MsgCallback != null)
-            {
-                Net.MsgCallback.Invoke(msg);
-            }
-            Debug.Log("Udp广播信息：" + msg);
-            udpRece.BeginReceive(ReceiveCallback, udpRece);
-        } 
-
+        }   
         void rece()
         {
+            udpRece = new UdpClient(new IPEndPoint(IPAddress.Any, ServerPort));
             IPEndPoint recePoint = new IPEndPoint(IPAddress.Any,0);
             while (true)
             {
@@ -104,6 +71,7 @@ namespace MiniFramework
             {
                 receThread.Interrupt();
                 receThread.Abort();
+                receThread = null;
             }           
         }
     }
