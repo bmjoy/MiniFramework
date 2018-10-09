@@ -60,8 +60,7 @@ namespace MiniFramework
         {
             if(!mStateDict.ContainsKey(stateName))
             {
-                mStateDict[stateName] = new FSMState(stateName);
-                
+                mStateDict[stateName] = new FSMState(stateName);               
             }
             mCurState = stateName;
         }

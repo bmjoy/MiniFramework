@@ -36,10 +36,10 @@ namespace MiniFramework
         GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         GUIContent scrollToBottomLabel = new GUIContent("ScrollToBottom", "Scroll bar always at bottom");
         GUIContent showKPPLabel = new GUIContent("ShowKPP", "Show the left param");
-        public void Init() { }
         // Use this for initialization
-        void Awake()
+        public override void Awake()
         {
+            base.Awake();
             new FPSCounter(this);
             new MemoryDetector(this);
             Application.logMessageReceivedThreaded += HandleLog;
