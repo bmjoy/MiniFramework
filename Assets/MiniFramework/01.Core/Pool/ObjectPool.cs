@@ -6,8 +6,15 @@ namespace MiniFramework
 {
     public class ObjectPool : MonoSingleton<ObjectPool>
     {
-
-        public List<int> CacheObjects = new List<int>();
+        [Serializable]
+        public struct Prefab
+        {
+            public GameObject Obj;
+            public uint Max;
+            public uint Min;
+            public bool DestroyOnLoad;
+        }
+        public List<Prefab> NeedCachePrefabs = new List<Prefab>();
         private Dictionary<string, Stack<GameObject>> mCacheDict = new Dictionary<string, Stack<GameObject>>();
         private uint mMaxCount = 10;//缓存池最大个数
         /// <summary>
@@ -25,14 +32,17 @@ namespace MiniFramework
         }
         private void Start()
         {
-            
+            for (int i = 0; i < NeedCachePrefabs.Count; i++)
+            {
+                Init(NeedCachePrefabs[i].Obj, NeedCachePrefabs[i].Max, NeedCachePrefabs[i].Min, NeedCachePrefabs[i].DestroyOnLoad);
+            }
         }
         /// <summary>
         /// 初始化对象池
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="count"></param>
-        public void Init(GameObject obj, uint maxCount, uint minCount, bool dontDestroyOnLoad = false)
+        public void Init(GameObject obj, uint maxCount, uint minCount, bool DestroyOnLoad = false)
         {
             mMaxCount = maxCount;
             uint initCount = Math.Min(maxCount, minCount);
@@ -41,7 +51,7 @@ namespace MiniFramework
                 for (int i = CurCount(obj.name); i < initCount; i++)
                 {
                     GameObject temp = Instantiate(obj);
-                    if (dontDestroyOnLoad)
+                    if (!DestroyOnLoad)
                     {
                         DontDestroyOnLoad(temp);
                     }

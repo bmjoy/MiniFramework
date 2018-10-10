@@ -10,22 +10,28 @@ namespace MiniFramework
 
         void OnEnable()
         {
-            SerializedProperty prop = serializedObject.FindProperty("CacheObjects");
+            SerializedProperty prop = serializedObject.FindProperty("NeedCachePrefabs");
 
             reorderableList = new ReorderableList(serializedObject, prop, true, true, true, true);
 
             reorderableList.drawElementCallback = (rect, index, isActive, isFocused) => {
-                var element = prop.GetArrayElementAtIndex(index);
-                rect.height -= 4;
                 rect.y += 2;
-                EditorGUI.PropertyField(rect, element);
-            };
-            //背景色
-            reorderableList.drawElementBackgroundCallback = (rect, index, isActive, isFocused) => {
-                GUI.backgroundColor = Color.yellow;
-            };
+                SerializedProperty element = prop.GetArrayElementAtIndex(index);               
+                SerializedProperty obj = element.FindPropertyRelative("Obj");
+                SerializedProperty max = element.FindPropertyRelative("Max");
+                SerializedProperty min = element.FindPropertyRelative("Min");
+                SerializedProperty destroyOnLoad = element.FindPropertyRelative("DestroyOnLoad");
+                EditorGUI.PropertyField(new Rect(rect.x,rect.y, 100, EditorGUIUtility.singleLineHeight), obj,GUIContent.none);
 
-            //头部
+                EditorGUI.LabelField(new Rect(rect.x + 110, rect.y, EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight), "Max");
+                EditorGUI.PropertyField(new Rect(rect.x+140, rect.y, 30, EditorGUIUtility.singleLineHeight), max,GUIContent.none);
+
+                EditorGUI.LabelField(new Rect(rect.x + 180, rect.y, EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight), "Min");
+                EditorGUI.PropertyField(new Rect(rect.x + 210, rect.y, 30, EditorGUIUtility.singleLineHeight), min, GUIContent.none);
+
+                EditorGUI.LabelField(new Rect(rect.x + 250, rect.y, EditorGUIUtility.labelWidth,EditorGUIUtility.singleLineHeight),"DestoryOnLoad");
+                EditorGUI.PropertyField(new Rect(rect.x + 350, rect.y, 20, EditorGUIUtility.singleLineHeight), destroyOnLoad,GUIContent.none);
+            };
             reorderableList.drawHeaderCallback = (rect) =>
                 EditorGUI.LabelField(rect, prop.displayName);
 

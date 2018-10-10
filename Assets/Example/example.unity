@@ -113,7 +113,8 @@ NavMeshSettings:
 --- !u!1 &366384100
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 1758226679821442, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
@@ -122,7 +123,6 @@ GameObject:
   - component: {fileID: 366384103}
   - component: {fileID: 366384102}
   - component: {fileID: 366384101}
-  - component: {fileID: 366384106}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -133,28 +133,32 @@ GameObject:
 --- !u!81 &366384101
 AudioListener:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 81462615427748618, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366384100}
   m_Enabled: 1
 --- !u!124 &366384102
 Behaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 124079583204890336, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366384100}
   m_Enabled: 1
 --- !u!92 &366384103
 Behaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 92595230502243798, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366384100}
   m_Enabled: 1
 --- !u!20 &366384104
 Camera:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 20090628469985248, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366384100}
   m_Enabled: 1
@@ -190,7 +194,8 @@ Camera:
 --- !u!4 &366384105
 Transform:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 4141122488942718, guid: 730c8147d60a94a408b5d8d48c1c6671,
+    type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 366384100}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -200,25 +205,85 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &366384106
+--- !u!1 &1984257342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1984257343}
+  - component: {fileID: 1984257344}
+  m_Layer: 0
+  m_Name: Encrypt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1984257343
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1984257342}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1984257344
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 366384100}
+  m_GameObject: {fileID: 1984257342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e84f3926cb47d444a4db9d6c9576123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: "asd1231\u89E3\u5BC6"
+--- !u!1 &2091953068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 2091953069}
+  - component: {fileID: 2091953070}
+  m_Layer: 0
+  m_Name: Object Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2091953069
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2091953068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2091953070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2091953068}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f91c6adb88ac144e83c0545f77c0602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CacheObjects:
-  - icon: {fileID: 0}
-    name: 
-    hp: 0
-    power: 0
-    weapon: {fileID: 0}
-  - icon: {fileID: 0}
-    name: 
-    hp: 0
-    power: 0
-    weapon: {fileID: 0}
+  NeedCachePrefabs: []
