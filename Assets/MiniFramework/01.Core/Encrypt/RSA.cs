@@ -8,9 +8,8 @@ namespace MiniFramework
     {
         public static string Encrypt(string normalText,string xmlPublicKey)
         {
-            byte[] bytes = Encoding.Default.GetBytes(normalText);
+            byte[] bytes = Encoding.UTF8.GetBytes(normalText);
             CspParameters cp = new CspParameters();
-            //cp.KeyContainerName = "mini";
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
             rsa.FromXmlString(xmlPublicKey);
             byte[] encryptBytes = rsa.Encrypt(bytes, false);
@@ -22,11 +21,10 @@ namespace MiniFramework
             {
                 var bytes = Convert.FromBase64String(encryptText);
                 CspParameters cp = new CspParameters();
-                //cp.KeyContainerName = "mini";
                 RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
                 rsa.FromXmlString(xmlPrivateKey);
                 var decryptBytes = rsa.Decrypt(bytes, false);
-                return Encoding.Default.GetString(decryptBytes);
+                return Encoding.UTF8.GetString(decryptBytes);
             }
             catch (Exception e)
             {

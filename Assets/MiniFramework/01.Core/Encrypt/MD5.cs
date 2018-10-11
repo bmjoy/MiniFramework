@@ -7,7 +7,7 @@ namespace MiniFramework
     {
         public static string Encrypt(string normalTxt)
         {
-            byte[] bytes = Encoding.Default.GetBytes(normalTxt);
+            byte[] bytes = Encoding.UTF8.GetBytes(normalTxt);
             byte[] md5 = new MD5CryptoServiceProvider().ComputeHash(bytes);
             return Convert.ToBase64String(md5);
         }

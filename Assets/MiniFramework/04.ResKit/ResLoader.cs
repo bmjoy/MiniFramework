@@ -37,6 +37,17 @@ namespace MiniFramework
         public void LoadAssetAsync<T>(MonoBehaviour mono, string path, Action<T> loadedCallBack) where T :UnityEngine.Object
         {
             mono.StartCoroutine(loadAsset<T>(path,loadedCallBack));
+        }      
+        /// <summary>
+        /// 从本地路径异步加载AssetBundle
+        /// </summary>
+        /// <param name="mono"></param>
+        /// <param name="path"></param>
+        /// <param name="loadedCallBack"></param>
+        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
+        {
+            if (File.Exists(path))
+                mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
         }
         IEnumerator loadAsset<T>(string path, Action<T> loadedCallBack) where T : UnityEngine.Object
         {
@@ -50,18 +61,6 @@ namespace MiniFramework
             }
             loadedCallBack(asset as T);
         }
-        /// <summary>
-        /// 从本地路径异步加载AssetBundle
-        /// </summary>
-        /// <param name="mono"></param>
-        /// <param name="path"></param>
-        /// <param name="loadedCallBack"></param>
-        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
-        {
-            if (File.Exists(path))
-                mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
-        }
-
         IEnumerator loadAssetBundle(string loadPath, Action<AssetBundle> loadedCallBack)
         {
             var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);

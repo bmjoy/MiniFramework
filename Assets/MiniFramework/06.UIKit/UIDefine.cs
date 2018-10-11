@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MiniFramework
+﻿namespace MiniFramework
 {
     public enum UIInitType
     {

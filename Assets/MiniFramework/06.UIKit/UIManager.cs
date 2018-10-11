@@ -7,25 +7,16 @@ namespace MiniFramework
 {
     public class UIManager : MonoSingleton<UIManager>
     {
-        public GameObject UIRoot;
         public Canvas Canvas;
         public Camera UICamera;
         public EventSystem EventSystem;
         private string AssetBundlePath;
         private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
-        public void Init()
+        private Queue<UIPanel> ReadyShowPanels = new Queue<UIPanel>();
+        private Queue<UIPanel> ReadyClosePanels = new Queue<UIPanel>();
+        public void Start()
         {
             AssetBundlePath = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui";
-            UIRoot = GameObject.Find("UI Root");
-            if (UIRoot != null)
-            {
-                UIRoot.transform.SetParent(transform);
-            }
-            else
-            {
-                UIRoot = Resources.Load("UI/UI Root") as GameObject;
-                UIRoot = Instantiate(UIRoot, transform);
-            }
             GetCanvas();
             GetCamera();
             GetEventSystem();
@@ -33,32 +24,10 @@ namespace MiniFramework
 
             ResLoader.Instance.LoadAssetBundle(this, AssetBundlePath, LoadUIFromAssetBundle);
         }
-        void GetCanvas()
-        {
-            Canvas = UIRoot.GetComponentInChildren<Canvas>();
-        }
-        void GetCamera()
-        {
-            UICamera = UIRoot.GetComponentInChildren<Camera>();
-        }
 
-        void GetEventSystem()
+        private void Update()
         {
-            EventSystem = UIRoot.GetComponentInChildren<EventSystem>();
-        }
-        /// <summary>
-        /// 获取根路径UI
-        /// </summary>
-        void GetUI()
-        {
-            for (int i = 0; i < Canvas.transform.childCount; i++)
-            {
-                UIPanel panel = Canvas.transform.GetChild(i).GetComponent<UIPanel>();
-                if (panel!=null&&!UIPanelDict.ContainsKey(panel.name))
-                {
-                    UIPanelDict.Add(panel.name, panel);
-                }
-            }
+            CheckReadyPanels();
         }
         /// <summary>
         /// 打开UI
@@ -68,8 +37,33 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanelDict[panelName].Open();
-            }           
+                UIPanel uP = UIPanelDict[panelName];
+                ReadyShowPanels.Enqueue(UIPanelDict[panelName]);
+            }
+        }
+        public void OpenTheTop()
+        {
+            foreach (var item in UIPanelDict)
+            {
+                if (!item.Value.gameObject.activeInHierarchy&&!ReadyShowPanels.Contains(item.Value))
+                {
+                    OpenUI(item.Key);
+                    return;
+                }
+            }
+        }
+        public void CloseTheTop()
+        {
+            string[] uiNames = new string[UIPanelDict.Count];
+            UIPanelDict.Keys.CopyTo(uiNames, 0);
+            for (int i = uiNames.Length-1; i >=0; i--)
+            {
+                if (UIPanelDict[uiNames[i]].gameObject.activeInHierarchy&&!ReadyClosePanels.Contains(UIPanelDict[uiNames[i]]))
+                {
+                    CloseUI(uiNames[i]);
+                    return;
+                }
+            }          
         }
         /// <summary>
         /// 关闭UI
@@ -79,7 +73,8 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanelDict[panelName].Close();
+                UIPanel uP = UIPanelDict[panelName];
+                ReadyClosePanels.Enqueue(UIPanelDict[panelName]);
             }
         }
         /// <summary>
@@ -92,7 +87,7 @@ namespace MiniFramework
             {
                 Destroy(UIPanelDict[panelName].gameObject);
                 UIPanelDict.Remove(panelName);
-            }          
+            }
         }
         /// <summary>
         /// 禁用面板交互
@@ -136,6 +131,42 @@ namespace MiniFramework
                 }
             }
         }
+
+        void CheckReadyPanels()
+        {
+            if (ReadyShowPanels.Count > 0)
+            {
+                UIPanel uP = ReadyShowPanels.Peek();
+                if (uP.State == UIPanelState.Open)
+                {
+                    ReadyShowPanels.Dequeue();
+                }
+            }
+            if (ReadyClosePanels.Count > 0)
+            {
+                UIPanel uP = ReadyClosePanels.Peek();
+                if (uP.State == UIPanelState.Close)
+                {
+                    ReadyClosePanels.Dequeue();
+                }
+            }
+            if (ReadyShowPanels.Count > 0)
+            {
+                UIPanel uP = ReadyShowPanels.Peek();
+                if (uP.State == UIPanelState.Close)
+                {
+                    uP.Open();
+                }
+            }         
+            if (ReadyClosePanels.Count > 0)
+            {
+                UIPanel uP = ReadyClosePanels.Peek();
+                if (uP.State == UIPanelState.Open)
+                {
+                    uP.Close();
+                }
+            }
+        }
         /// <summary>
         /// 从AssetBundle中加载UI
         /// </summary>
@@ -148,7 +179,34 @@ namespace MiniFramework
                 GameObject ui = Instantiate(objects[i], Canvas.transform);
                 ui.name = objects[i].name;
                 UIPanel panel = ui.GetComponent<UIPanel>();
-                if (panel != null&&!UIPanelDict.ContainsKey(panel.name))
+                if (panel != null && !UIPanelDict.ContainsKey(panel.name))
+                {
+                    UIPanelDict.Add(panel.name, panel);
+                }
+            }
+        }
+        void GetCanvas()
+        {
+            Canvas = transform.GetComponentInChildren<Canvas>();
+        }
+        void GetCamera()
+        {
+            UICamera = transform.GetComponentInChildren<Camera>();
+        }
+
+        void GetEventSystem()
+        {
+            EventSystem = transform.GetComponentInChildren<EventSystem>();
+        }
+        /// <summary>
+        /// 获取根路径UI
+        /// </summary>
+        void GetUI()
+        {
+            for (int i = 0; i < Canvas.transform.childCount; i++)
+            {
+                UIPanel panel = Canvas.transform.GetChild(i).GetComponent<UIPanel>();
+                if (panel != null && !UIPanelDict.ContainsKey(panel.name))
                 {
                     UIPanelDict.Add(panel.name, panel);
                 }

@@ -4,34 +4,18 @@ using UnityEngine.EventSystems;
 
 namespace MiniFramework
 {
+    public enum UIPanelState
+    {
+        Close,
+        Open,
+        Playing,
+    }
     public abstract class UIPanel : MonoBehaviour,IBeginDragHandler,IDragHandler
     {
-        public Action OpenAnimation;
-        public Action CloseAnimation;
-        public virtual void Open()
-        {
-            if (OpenAnimation != null)
-            {
-                OpenAnimation();
-            }
-            else
-            {
-                gameObject.SetActive(true);
-            }
-            SetLayerToTop();
-        }
-        public virtual void Close()
-        {
-            if (CloseAnimation != null)
-            {
-                CloseAnimation();
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-            SetLayerToButtom();
-        }
+        public UIPanelState State;
+        public bool IsCanDrag;
+        public abstract void Open();
+        public abstract void Close();
         public void SetLayerToTop()
         {
             transform.SetAsLastSibling();
@@ -44,6 +28,10 @@ namespace MiniFramework
         Vector3 offset;
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (!IsCanDrag)
+            {
+                return;
+            }
             Vector3 pos;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(
                 transform as RectTransform,
@@ -54,6 +42,10 @@ namespace MiniFramework
         }
         public void OnDrag(PointerEventData eventData)
         {
+            if (!IsCanDrag)
+            {
+                return;
+            }
             Vector3 pos;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(
                 transform as RectTransform,
