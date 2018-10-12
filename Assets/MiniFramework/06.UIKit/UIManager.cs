@@ -12,7 +12,7 @@ namespace MiniFramework
         public EventSystem EventSystem;
         private string AssetBundlePath;
         private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
-        private Queue<UIPanel> ReadyShowPanels = new Queue<UIPanel>();
+        private Queue<UIPanel> ReadyOpenPanels = new Queue<UIPanel>();
         private Queue<UIPanel> ReadyClosePanels = new Queue<UIPanel>();
         public void Start()
         {
@@ -37,33 +37,9 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel uP = UIPanelDict[panelName];
-                ReadyShowPanels.Enqueue(UIPanelDict[panelName]);
+                UIPanel up = UIPanelDict[panelName];
+                ReadyOpenPanels.Enqueue(up);
             }
-        }
-        public void OpenTheTop()
-        {
-            foreach (var item in UIPanelDict)
-            {
-                if (!item.Value.gameObject.activeInHierarchy&&!ReadyShowPanels.Contains(item.Value))
-                {
-                    OpenUI(item.Key);
-                    return;
-                }
-            }
-        }
-        public void CloseTheTop()
-        {
-            string[] uiNames = new string[UIPanelDict.Count];
-            UIPanelDict.Keys.CopyTo(uiNames, 0);
-            for (int i = uiNames.Length-1; i >=0; i--)
-            {
-                if (UIPanelDict[uiNames[i]].gameObject.activeInHierarchy&&!ReadyClosePanels.Contains(UIPanelDict[uiNames[i]]))
-                {
-                    CloseUI(uiNames[i]);
-                    return;
-                }
-            }          
         }
         /// <summary>
         /// 关闭UI
@@ -73,10 +49,60 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel uP = UIPanelDict[panelName];
-                ReadyClosePanels.Enqueue(UIPanelDict[panelName]);
+                UIPanel up = UIPanelDict[panelName];
+                ReadyClosePanels.Enqueue(up);
             }
         }
+        void CheckReadyPanels()
+        {
+            if (ReadyClosePanels.Count > 0)
+            {
+                UIPanel up = ReadyClosePanels.Peek();
+                if (up.State == UIPanelState.Close)
+                {
+                    ReadyClosePanels.Dequeue();
+                }
+            }
+            if (ReadyOpenPanels.Count > 0)
+            {
+                UIPanel up = ReadyOpenPanels.Peek();
+                if (up.State == UIPanelState.Open)
+                {
+                    ReadyOpenPanels.Dequeue();
+                }
+            }
+            if (ReadyClosePanels.Count > 0)
+            {
+                UIPanel up = ReadyClosePanels.Peek();
+                if (up.State == UIPanelState.Open)
+                {
+                    up.Close();
+                }
+            }
+            if (ReadyOpenPanels.Count > 0)
+            {
+                UIPanel up = ReadyOpenPanels.Peek();
+                if (up.State == UIPanelState.Close)
+                {
+                    up.Open();
+                }
+            }
+        }
+        public void OpenAll()
+        {
+            foreach (var item in UIPanelDict)
+            {
+                OpenUI(item.Key);
+            }
+        }
+        public void CloseAll()
+        {
+            foreach (var item in UIPanelDict)
+            {
+                CloseUI(item.Key);
+            }
+        }
+
         /// <summary>
         /// 销毁UI
         /// </summary>
@@ -132,41 +158,7 @@ namespace MiniFramework
             }
         }
 
-        void CheckReadyPanels()
-        {
-            if (ReadyShowPanels.Count > 0)
-            {
-                UIPanel uP = ReadyShowPanels.Peek();
-                if (uP.State == UIPanelState.Open)
-                {
-                    ReadyShowPanels.Dequeue();
-                }
-            }
-            if (ReadyClosePanels.Count > 0)
-            {
-                UIPanel uP = ReadyClosePanels.Peek();
-                if (uP.State == UIPanelState.Close)
-                {
-                    ReadyClosePanels.Dequeue();
-                }
-            }
-            if (ReadyShowPanels.Count > 0)
-            {
-                UIPanel uP = ReadyShowPanels.Peek();
-                if (uP.State == UIPanelState.Close)
-                {
-                    uP.Open();
-                }
-            }         
-            if (ReadyClosePanels.Count > 0)
-            {
-                UIPanel uP = ReadyClosePanels.Peek();
-                if (uP.State == UIPanelState.Open)
-                {
-                    uP.Close();
-                }
-            }
-        }
+        
         /// <summary>
         /// 从AssetBundle中加载UI
         /// </summary>

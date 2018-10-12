@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using MiniFramework;
 using DG.Tweening;
+using System;
+
 public class PanelExample : UIPanel {
 
 	// Use this for initialization
 	public void Start () {
-       
+        //UIManager.Instance.CloseUI(name).OpenUI(name);
 	}
     public override void Open()
     {
@@ -15,7 +17,7 @@ public class PanelExample : UIPanel {
         gameObject.SetActive(true);
         transform.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-1000, 00, 0);
         transform.GetComponent<RectTransform>().DOAnchorPosX(0, 1f).OnComplete(() => {
-            State = UIPanelState.Open;           
+            Close();
         } );
         SetLayerToTop();
     }
@@ -26,8 +28,8 @@ public class PanelExample : UIPanel {
         transform.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(000, 00, 0);
         transform.GetComponent<RectTransform>().DOAnchorPosX(-1000f, 1f).OnComplete(() => 
         {
-            State = UIPanelState.Close;
             gameObject.SetActive(false);
+            State = UIPanelState.Close;
         });
         SetLayerToButtom();
     }
