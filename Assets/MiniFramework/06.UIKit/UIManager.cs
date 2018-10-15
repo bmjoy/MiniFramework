@@ -12,7 +12,7 @@ namespace MiniFramework
         public EventSystem EventSystem;
         private string AssetBundlePath;
         private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
-        private Queue<PanelQueue> PanelQueues = new Queue<PanelQueue>();
+        private readonly Queue<QueueObject> PanelQueue = new Queue<QueueObject>();
         public bool IdleQueue;
 
         enum OperationType
@@ -20,7 +20,7 @@ namespace MiniFramework
             Close,
             Open,
         }
-        class PanelQueue
+        class QueueObject
         {
             public UIPanel UPanel;
             public OperationType Type;
@@ -52,11 +52,11 @@ namespace MiniFramework
             if (UIPanelDict.ContainsKey(panelName))
             {
                 UIPanel up = UIPanelDict[panelName];
-                PanelQueue pq = new PanelQueue();
-                pq.UPanel = up;
-                pq.Type = OperationType.Open;
-                pq.paramList = paramList;
-                PanelQueues.Enqueue(pq);
+                QueueObject qo = new QueueObject();
+                qo.UPanel = up;
+                qo.Type = OperationType.Open;
+                qo.paramList = paramList;
+                PanelQueue.Enqueue(qo);
             }
         }
         /// <summary>
@@ -70,11 +70,11 @@ namespace MiniFramework
                 UIPanel up = UIPanelDict[panelName];
                 if(up.State == UIPanelState.Open)
                 {
-                    PanelQueue pq = new PanelQueue();
-                    pq.UPanel = up;
-                    pq.Type = OperationType.Close;
-                    pq.paramList = paramList;
-                    PanelQueues.Enqueue(pq);
+                    QueueObject qo = new QueueObject();
+                    qo.UPanel = up;
+                    qo.Type = OperationType.Close;
+                    qo.paramList = paramList;
+                    PanelQueue.Enqueue(qo);
                 }             
             }
         }
@@ -213,16 +213,16 @@ namespace MiniFramework
         /// </summary>
         void CheckReadyPanels()
         {
-            if (PanelQueues.Count > 0 && IdleQueue)
+            if (PanelQueue.Count > 0 && IdleQueue)
             {
-                PanelQueue pq = PanelQueues.Dequeue();
-                switch (pq.Type)
+                QueueObject qo = PanelQueue.Dequeue();
+                switch (qo.Type)
                 {
                     case OperationType.Close:
-                        pq.UPanel.Close(pq.paramList);
+                        qo.UPanel.Close(qo.paramList);
                         break;
                     case OperationType.Open:
-                        pq.UPanel.Open(pq.paramList);
+                        qo.UPanel.Open(qo.paramList);
                         break;
                 }
             }

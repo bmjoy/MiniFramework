@@ -1,7 +1,7 @@
 ﻿using System.IO;
 namespace MiniFramework
 {
-    public static class FileUtil
+    public class FileUtil
     {
         public static void CreateDirectoryIfNoExist(string dir)
         {

@@ -28,7 +28,7 @@ namespace MiniFramework
             return bundlesHash;
         }
         /// <summary>
-        /// 从Resources文件异步加载资源
+        /// 异步加载Resources资源
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="mono"></param>
@@ -39,7 +39,7 @@ namespace MiniFramework
             mono.StartCoroutine(loadAsset<T>(path,loadedCallBack));
         }      
         /// <summary>
-        /// 从本地路径异步加载AssetBundle
+        /// 异步加载AssetBundle包
         /// </summary>
         /// <param name="mono"></param>
         /// <param name="path"></param>
