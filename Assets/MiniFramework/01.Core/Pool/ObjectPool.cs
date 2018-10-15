@@ -44,6 +44,10 @@ namespace MiniFramework
         /// <param name="count"></param>
         public void Init(GameObject obj, uint maxCount, uint minCount, bool DestroyOnLoad = false)
         {
+            if (obj == null)
+            {
+                return;
+            }
             mMaxCount = maxCount;
             uint initCount = Math.Min(maxCount, minCount);
             if (CurCount(obj.name) < initCount)

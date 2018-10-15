@@ -12,10 +12,24 @@ namespace MiniFramework
         public EventSystem EventSystem;
         private string AssetBundlePath;
         private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
-        private Queue<UIPanel> ReadyOpenPanels = new Queue<UIPanel>();
-        private Queue<UIPanel> ReadyClosePanels = new Queue<UIPanel>();
+        private Queue<PanelQueue> PanelQueues = new Queue<PanelQueue>();
+        public bool IdleQueue;
+
+        enum OperationType
+        {
+            Close,
+            Open,
+        }
+        class PanelQueue
+        {
+            public UIPanel UPanel;
+            public OperationType Type;
+            public object[] paramList;
+        }
         public void Start()
         {
+            IdleQueue = true;
+
             AssetBundlePath = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui";
             GetCanvas();
             GetCamera();
@@ -33,73 +47,55 @@ namespace MiniFramework
         /// 打开UI
         /// </summary>
         /// <param name="panelName"></param>
-        public void OpenUI(string panelName)
+        public void OpenUIByQueue(string panelName, params object[] paramList)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
                 UIPanel up = UIPanelDict[panelName];
-                ReadyOpenPanels.Enqueue(up);
+                PanelQueue pq = new PanelQueue();
+                pq.UPanel = up;
+                pq.Type = OperationType.Open;
+                pq.paramList = paramList;
+                PanelQueues.Enqueue(pq);
             }
         }
         /// <summary>
         /// 关闭UI
         /// </summary>
         /// <param name="panelName"></param>
-        public void CloseUI(string panelName)
+        public void CloseUIByQueue(string panelName, params object[] paramList)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
                 UIPanel up = UIPanelDict[panelName];
-                ReadyClosePanels.Enqueue(up);
+                if(up.State == UIPanelState.Open)
+                {
+                    PanelQueue pq = new PanelQueue();
+                    pq.UPanel = up;
+                    pq.Type = OperationType.Close;
+                    pq.paramList = paramList;
+                    PanelQueues.Enqueue(pq);
+                }             
             }
         }
-        void CheckReadyPanels()
-        {
-            if (ReadyClosePanels.Count > 0)
-            {
-                UIPanel up = ReadyClosePanels.Peek();
-                if (up.State == UIPanelState.Close)
-                {
-                    ReadyClosePanels.Dequeue();
-                }
-            }
-            if (ReadyOpenPanels.Count > 0)
-            {
-                UIPanel up = ReadyOpenPanels.Peek();
-                if (up.State == UIPanelState.Open)
-                {
-                    ReadyOpenPanels.Dequeue();
-                }
-            }
-            if (ReadyClosePanels.Count > 0)
-            {
-                UIPanel up = ReadyClosePanels.Peek();
-                if (up.State == UIPanelState.Open)
-                {
-                    up.Close();
-                }
-            }
-            if (ReadyOpenPanels.Count > 0)
-            {
-                UIPanel up = ReadyOpenPanels.Peek();
-                if (up.State == UIPanelState.Close)
-                {
-                    up.Open();
-                }
-            }
-        }
+        /// <summary>
+        /// 打开所有UI
+        /// </summary>
         public void OpenAll()
         {
             foreach (var item in UIPanelDict)
             {
-                OpenUI(item.Key);
+                OpenUIByQueue(item.Key);
             }
         }
+        /// <summary>
+        /// 关闭所有UI
+        /// </summary>
         public void CloseAll()
         {
             foreach (var item in UIPanelDict)
             {
-                CloseUI(item.Key);
+                CloseUIByQueue(item.Key);
             }
         }
 
@@ -158,7 +154,7 @@ namespace MiniFramework
             }
         }
 
-        
+
         /// <summary>
         /// 从AssetBundle中加载UI
         /// </summary>
@@ -177,15 +173,23 @@ namespace MiniFramework
                 }
             }
         }
+        /// <summary>
+        /// 获取Canvas
+        /// </summary>
         void GetCanvas()
         {
             Canvas = transform.GetComponentInChildren<Canvas>();
         }
+        /// <summary>
+        /// 获取UI摄像机
+        /// </summary>
         void GetCamera()
         {
             UICamera = transform.GetComponentInChildren<Camera>();
         }
-
+        /// <summary>
+        /// 获取EventSystem
+        /// </summary>
         void GetEventSystem()
         {
             EventSystem = transform.GetComponentInChildren<EventSystem>();
@@ -204,6 +208,24 @@ namespace MiniFramework
                 }
             }
         }
-
+        /// <summary>
+        /// 检查队列
+        /// </summary>
+        void CheckReadyPanels()
+        {
+            if (PanelQueues.Count > 0 && IdleQueue)
+            {
+                PanelQueue pq = PanelQueues.Dequeue();
+                switch (pq.Type)
+                {
+                    case OperationType.Close:
+                        pq.UPanel.Close(pq.paramList);
+                        break;
+                    case OperationType.Open:
+                        pq.UPanel.Open(pq.paramList);
+                        break;
+                }
+            }
+        }
     }
 }

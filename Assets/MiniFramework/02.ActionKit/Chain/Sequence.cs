@@ -11,7 +11,7 @@ namespace MiniFramework
     {
         public MonoBehaviour Executer { get; set; }
         public bool IsRecycled { get; set; }
-        private List<IEnumerator> nodes= new List<IEnumerator>();
+        private List<IEnumerator> nodes = new List<IEnumerator>();
         public Sequence() { }
         public void Append(float seconds)
         {

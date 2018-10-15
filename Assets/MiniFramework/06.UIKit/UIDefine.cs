@@ -1,5 +1,10 @@
 ﻿namespace MiniFramework
 {
+    public enum UIPanelState
+    {
+        Close,
+        Open,
+    }
     public enum UIInitType
     {
         //普通
