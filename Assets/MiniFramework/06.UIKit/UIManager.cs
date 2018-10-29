@@ -44,7 +44,7 @@ namespace MiniFramework
             CheckReadyPanels();
         }
         /// <summary>
-        /// 打开UI
+        /// 打开UI(队列)
         /// </summary>
         /// <param name="panelName"></param>
         public void OpenUIByQueue(string panelName, params object[] paramList)
@@ -60,7 +60,7 @@ namespace MiniFramework
             }
         }
         /// <summary>
-        /// 关闭UI
+        /// 关闭UI(队列)
         /// </summary>
         /// <param name="panelName"></param>
         public void CloseUIByQueue(string panelName, params object[] paramList)

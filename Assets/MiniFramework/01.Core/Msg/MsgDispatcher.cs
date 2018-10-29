@@ -19,19 +19,15 @@ namespace MiniFramework
         /// <summary>
         /// 保存同类消息组
         /// </summary>
-        static readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();
+        static readonly Dictionary<MsgDefine, List<MsgHandler>> msgHandlerDict = new Dictionary<MsgDefine, List<MsgHandler>>();
         /// <summary>
         /// 注册消息
         /// </summary>
         /// <param name="receiverSelf">接收方</param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public static void RegisterMsg(this IMsgReceiver receiverSelf, string msgName, Action<object[]> callback)
+        public static void RegisterMsg(this IMsgReceiver receiverSelf, MsgDefine msgName, Action<object[]> callback)
         {
-            if (string.IsNullOrEmpty(msgName))
-            {
-                throw new Exception("消息名不能为null!");
-            }
             if (callback == null)
             {
                 throw new Exception("callback不能为null!");
@@ -58,12 +54,8 @@ namespace MiniFramework
         /// <param name="sender"></param>
         /// <param name="msgName"></param>
         /// <param name="paramList"></param>
-        public static void SendMsg(this IMsgSender sender, string msgName, params object[] paramList)
+        public static void SendMsg(this IMsgSender sender, MsgDefine msgName, params object[] paramList)
         {
-            if (string.IsNullOrEmpty(msgName))
-            {
-                throw new Exception("消息名不能为null!");
-            }
             if (!msgHandlerDict.ContainsKey(msgName))
             {
                 throw new Exception("该消息名没有被注册");
@@ -89,9 +81,9 @@ namespace MiniFramework
         /// <param name="receiverSelf"></param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public static void UnRegisterMsg(this IMsgReceiver receiverSelf, string msgName, Action<object[]> callback)
+        public static void UnRegisterMsg(this IMsgReceiver receiverSelf, MsgDefine msgName, Action<object[]> callback)
         {
-            if (msgName == null || callback == null)
+            if (callback == null)
             {
                 return;
             }

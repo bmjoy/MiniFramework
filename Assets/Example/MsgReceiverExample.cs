@@ -4,6 +4,6 @@ public class MsgReceiverExample : MonoBehaviour,IMsgReceiver {
 
 	// Use this for initialization
 	void Start () {
-        this.RegisterMsg("xx", (param) => Debug.Log("我接收到了:"+param[0]));
+        this.RegisterMsg(MsgDefine.Default, (param) => Debug.Log("我接收到了:"+param[0]));
 	}
 }
