@@ -12,14 +12,6 @@ namespace MiniFramework
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            //if (GUILayout.Button("Add"))
-            //{
-            //    patterns.arraySize++;
-            //}
-            //if (GUILayout.Button("Delete"))
-            //{
-            //    patterns.arraySize--; 
-            //}
             SerializedProperty type = pattern.FindPropertyRelative("PatternType");
             EditorGUILayout.PropertyField(type);
             SerializedProperty drawType = pattern.FindPropertyRelative("DrawType");

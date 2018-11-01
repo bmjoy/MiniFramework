@@ -17,13 +17,15 @@ namespace MiniFramework
                 this.type = type;
             }
         }
-
         public Action OnUpdateCallback;
         public Action OnGUICallback;
 
         const int margin = 20;
         Rect windowRect = new Rect(margin + Screen.width * 0.5f, margin, Screen.width * 0.5f - (2 * margin), Screen.height - (2 * margin));
         Vector2 scrollPos;
+        string content = "";
+        float contentWidth = Screen.width * 0.5f - (2 * margin) - 35;
+        float contentHeight;
 
         List<ConsoleMessage> entries = new List<ConsoleMessage>();
 
@@ -36,6 +38,7 @@ namespace MiniFramework
         GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         GUIContent scrollToBottomLabel = new GUIContent("ScrollToBottom", "Scroll bar always at bottom");
         GUIContent showKPPLabel = new GUIContent("ShowKPP", "Show the left param");
+
         // Use this for initialization
         public override void Awake()
         {
@@ -62,7 +65,6 @@ namespace MiniFramework
             {
                 OnUpdateCallback();
             }
-
         }
         private void OnGUI()
         {
@@ -75,19 +77,21 @@ namespace MiniFramework
                 OnGUICallback();
             }
 
-            windowRect = GUILayout.Window(123, windowRect, ConsoleWindow, "Console");
-        }
+            windowRect = GUI.Window(123, windowRect, ConsoleWindow, "Console");
+        }      
         void ConsoleWindow(int windowId)
         {
             if (scrollToBottom)
             {
-                scrollPos = Vector2.up * entries.Count * 100f;
-            }
-
-            scrollPos = GUILayout.BeginScrollView(scrollPos);
+                scrollPos = Vector2.up * contentHeight;
+            }             
+            scrollPos = GUI.BeginScrollView(new Rect(10, 20, windowRect.width - 15, windowRect.height - 50), scrollPos, new Rect(0, 0, contentWidth, contentHeight));
+            contentHeight = 0;
+            GUIStyle style = new GUIStyle();
             for (int i = 0; i < entries.Count; i++)
             {
                 ConsoleMessage entry = entries[i];
+
                 if (collapse && i > 0 && entry.message == entries[i - 1].message)
                 {
                     continue;
@@ -96,20 +100,23 @@ namespace MiniFramework
                 {
                     case LogType.Error:
                     case LogType.Exception:
-                        GUI.contentColor = Color.red;
+                        style.normal.textColor = Color.red;
                         break;
                     case LogType.Warning:
-                        GUI.contentColor = Color.yellow;
+                        style.normal.textColor = Color.yellow;
                         break;
                     default:
-                        GUI.contentColor = Color.white;
+                        style.normal.textColor = Color.white;
                         break;
                 }
-                GUILayout.Label(entry.message + "\n" + entry.stackTrace);
+                content = entry.message + "\n" + entry.stackTrace;
+                style.wordWrap = true;
+                GUI.Label(new Rect(0, contentHeight, contentWidth, style.CalcHeight(new GUIContent(content), contentWidth)), content, style);
+                contentHeight += style.CalcHeight(new GUIContent(content), contentWidth);
             }
-
-            GUILayout.EndScrollView();
+            GUI.EndScrollView();
             GUI.contentColor = Color.white;
+            GUILayout.BeginArea(new Rect(5, windowRect.height - 25, windowRect.width - 10, 25));
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(clearLabel))
             {
@@ -119,11 +126,12 @@ namespace MiniFramework
             scrollToBottom = GUILayout.Toggle(scrollToBottom, scrollToBottomLabel, GUILayout.ExpandWidth(false));
             showKPP = GUILayout.Toggle(showKPP, showKPPLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
+            GUILayout.EndArea();
             GUI.DragWindow(new Rect(0, 0, windowRect.width, windowRect.height));
         }
         void HandleLog(string message, string stackTrace, LogType type)
         {
-            entries.Add(new ConsoleMessage(message, stackTrace, type));
+            entries.Add(new ConsoleMessage(message, stackTrace, type));           
         }
     }
 }

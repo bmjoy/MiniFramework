@@ -3,5 +3,6 @@
     public enum MsgDefine
     {
         Default, 
+        Net,
     }
 }
