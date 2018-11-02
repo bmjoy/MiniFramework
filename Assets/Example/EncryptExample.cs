@@ -14,8 +14,8 @@ public class EncryptExample : MonoBehaviour
 
         string privateKey = "";
         string publicKey = "";
-        RSA.RSAKey(out privateKey, out publicKey);//生成公钥和私钥
 
+        RSA.RSAKey(out privateKey, out publicKey);//生成公钥和私钥
         string rsa = RSA.Encrypt(Text, publicKey);//rsa使用公钥加密
 
         Debug.Log("md5:" + md5);

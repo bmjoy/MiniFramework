@@ -15,7 +15,7 @@ namespace MiniFramework
         {
             var bytes = Encoding.UTF8.GetBytes(normalTxt);
             SymmetricAlgorithm aes = Rijndael.Create();
-            aes.Key = Encoding.UTF8.GetBytes(Key.PadLeft(32, '0').Substring(0, 32));
+            aes.Key = Encoding.UTF8.GetBytes(Key.PadRight(32, '0').Substring(0, 32));
             aes.IV = KeyIV;
             using (MemoryStream ms = new MemoryStream())
             {
@@ -31,7 +31,7 @@ namespace MiniFramework
             {
                 var bytes = Convert.FromBase64String(encryptTxt);
                 SymmetricAlgorithm aes = Rijndael.Create();
-                aes.Key = Encoding.UTF8.GetBytes(Key.PadLeft(32, '0').Substring(0, 32));
+                aes.Key = Encoding.UTF8.GetBytes(Key.PadRight(32, '0').Substring(0, 32));
                 aes.IV = KeyIV;
                 using (MemoryStream ms = new MemoryStream())
                 {
