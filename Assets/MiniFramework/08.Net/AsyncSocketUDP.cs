@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using UnityEngine;
 namespace MiniFramework
 {
-    public class AsyncSocketUDP : IMsgSender
+    public class AsyncSocketUDP
     {
         private UdpClient client;
         private byte[] recvBuffer;
@@ -26,7 +26,7 @@ namespace MiniFramework
         {
             IPEndPoint remote = null;
             recvBuffer = client.EndReceive(ar, ref remote);
-            this.SendMsg(MsgDefine.Net, recvBuffer, remote);
+            this.SendMsg("SocketManager", recvBuffer, remote);
             if (client != null)
             {
                 client.BeginReceive(ReceiveDataAsync, null);
@@ -55,7 +55,6 @@ namespace MiniFramework
 
         private void SplitPack(byte[] data, IPEndPoint ep)
         {
-
             if (data.Length > maxBufferSize)
             {
                 int count = data.Length / maxBufferSize;
@@ -68,7 +67,6 @@ namespace MiniFramework
                         Array.Copy(data, i * maxBufferSize, buffer, 0, maxBufferSize);
                     client.BeginSend(buffer, buffer.Length, ep, new AsyncCallback(SendCallback), null);
                 }
-
             }
         }
     }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using UnityEngine;
 namespace MiniFramework
 {
-    public class SocketManager : MonoSingleton<SocketManager>, IMsgReceiver,IMsgSender
+    public class SocketManager : MonoSingleton<SocketManager>
     {
         private AsyncSocketUDP aSocketUDP;
         private Queue<byte[]> MsgQueue;
@@ -14,7 +13,7 @@ namespace MiniFramework
         {
             aSocketUDP = new AsyncSocketUDP();
             MsgQueue = new Queue<byte[]>();
-            this.RegisterMsg(MsgDefine.Net, Receiver);
+            this.RegisterMsg("SocketManager", Receiver);
         }
         public void Send(byte[] data, string ip, int port)
         {
@@ -32,7 +31,7 @@ namespace MiniFramework
         {
             if (MsgQueue.Count > 0)
             {
-                this.SendMsg(MsgDefine.Default,MsgQueue.Dequeue());
+                //this.SendMsg(MsgDefine.Default,MsgQueue.Dequeue()); 
             }
         }
     }

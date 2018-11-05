@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 namespace MiniFramework
 {
-    public interface IMsgReceiver { }
-    public interface IMsgSender { }
+    //public interface IMsgReceiver { }
+    //public interface IMsgSender { }
     public static class MsgDispatcher
     {
         private class MsgHandler
         {
-            public readonly IMsgReceiver Receiver;
+            public readonly object Receiver;
             public readonly Action<object[]> Callback;
-            public MsgHandler(IMsgReceiver receiver, Action<object[]> callback)
+            public MsgHandler(object receiver, Action<object[]> callback)
             {
                 Receiver = receiver;
                 Callback = callback;
@@ -19,14 +19,14 @@ namespace MiniFramework
         /// <summary>
         /// 保存同类消息组
         /// </summary>
-        static readonly Dictionary<MsgDefine, List<MsgHandler>> msgHandlerDict = new Dictionary<MsgDefine, List<MsgHandler>>();
+        static readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();
         /// <summary>
         /// 注册消息
         /// </summary>
         /// <param name="receiverSelf">接收方</param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public static void RegisterMsg(this IMsgReceiver receiverSelf, MsgDefine msgName, Action<object[]> callback)
+        public static void RegisterMsg(this object receiverSelf, string msgName, Action<object[]> callback)
         {
             if (callback == null)
             {
@@ -54,7 +54,7 @@ namespace MiniFramework
         /// <param name="sender"></param>
         /// <param name="msgName"></param>
         /// <param name="paramList"></param>
-        public static void SendMsg(this IMsgSender sender, MsgDefine msgName, params object[] paramList)
+        public static void SendMsg(this object sender, string msgName, params object[] paramList)
         {
             if (!msgHandlerDict.ContainsKey(msgName))
             {
@@ -81,7 +81,7 @@ namespace MiniFramework
         /// <param name="receiverSelf"></param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public static void UnRegisterMsg(this IMsgReceiver receiverSelf, MsgDefine msgName, Action<object[]> callback)
+        public static void UnRegisterMsg(this object receiverSelf, string msgName, Action<object[]> callback)
         {
             if (callback == null)
             {

@@ -14,7 +14,6 @@ namespace MiniFramework
         private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
         private readonly Queue<QueueObject> PanelQueue = new Queue<QueueObject>();
         public bool IdleQueue;
-
         enum OperationType
         {
             Close,
@@ -34,7 +33,7 @@ namespace MiniFramework
             GetCanvas();
             GetCamera();
             GetEventSystem();
-            GetUI();
+            GetDefaultUI();
 
             ResLoader.Instance.LoadAssetBundle(this, AssetBundlePath, LoadUIFromAssetBundle);
         }
@@ -75,7 +74,7 @@ namespace MiniFramework
                     qo.Type = OperationType.Close;
                     qo.paramList = paramList;
                     PanelQueue.Enqueue(qo);
-                }             
+                }
             }
         }
         /// <summary>
@@ -153,8 +152,6 @@ namespace MiniFramework
                 }
             }
         }
-
-
         /// <summary>
         /// 从AssetBundle中加载UI
         /// </summary>
@@ -197,7 +194,7 @@ namespace MiniFramework
         /// <summary>
         /// 获取根路径UI
         /// </summary>
-        void GetUI()
+        void GetDefaultUI()
         {
             for (int i = 0; i < Canvas.transform.childCount; i++)
             {

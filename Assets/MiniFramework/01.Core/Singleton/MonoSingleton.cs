@@ -20,7 +20,7 @@
                     }
                 }
                 return mInstance;
-            }        
+            }
         }
         public virtual void Awake()
         {

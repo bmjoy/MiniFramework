@@ -3,7 +3,7 @@ using MiniFramework;
 using System.Text;
 using UnityEngine.UI;
 using System;
-public class NetExample : MonoBehaviour,IMsgReceiver {
+public class NetExample : MonoBehaviour {
 
     public Text Text;
     public InputField InputText;
@@ -19,7 +19,7 @@ public class NetExample : MonoBehaviour,IMsgReceiver {
             SocketManager.Instance.Send(data, remoIP.text, int.Parse(remoPort.text));
         });
 
-        this.RegisterMsg(MsgDefine.Default, Rece);
+        //this.RegisterMsg(Rece);
 	}
     void Rece(object[] o) {
         Text.text = Encoding.UTF8.GetString((byte[])o[0]);

@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using MiniFramework;
-public class MsgSenderExample : MonoBehaviour,IMsgSender {
-
-	// Use this for initialization
-	void Start () {
-        this.SendMsg(MsgDefine.Default, "hello world");
-	}
+public class MsgSenderExample : MonoBehaviour
+{ 
+    // Use this for initialization
+    void OnEnable()
+    {
+        this.SendMsg("MsgReceiver1", "hello world");
+        this.SendMsg("MsgReceiver2", "hello world2");
+    }
 }
