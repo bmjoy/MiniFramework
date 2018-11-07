@@ -18,10 +18,6 @@ namespace MiniFramework
             client.BeginReceive(ReceiveDataAsync, null);
             Debug.Log("本机：" + client.Client.LocalEndPoint);
         }
-        /// <summary>
-        /// 接收数据
-        /// </summary>
-        /// <param name="ar"></param>
         private void ReceiveDataAsync(IAsyncResult ar)
         {
             IPEndPoint remote = null;
@@ -52,22 +48,9 @@ namespace MiniFramework
                 }
             }
         }
-
-        private void SplitPack(byte[] data, IPEndPoint ep)
+        public void Stop()
         {
-            if (data.Length > maxBufferSize)
-            {
-                int count = data.Length / maxBufferSize;
-                for (int i = 0; i <= count; i++)
-                {
-                    byte[] buffer = new byte[maxBufferSize];
-                    if (i == count)
-                        Array.Copy(data, i * maxBufferSize, buffer, 0, data.Length - i * maxBufferSize);
-                    else
-                        Array.Copy(data, i * maxBufferSize, buffer, 0, maxBufferSize);
-                    client.BeginSend(buffer, buffer.Length, ep, new AsyncCallback(SendCallback), null);
-                }
-            }
+            client.Close();
         }
     }
 }

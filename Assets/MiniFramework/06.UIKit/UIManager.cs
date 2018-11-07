@@ -59,6 +59,18 @@ namespace MiniFramework
             }
         }
         /// <summary>
+        /// 打开UI
+        /// </summary>
+        /// <param name="panelName"></param>
+        public void OpenUI(string panelName, params object[] paramList)
+        {
+            if (UIPanelDict.ContainsKey(panelName))
+            {
+                UIPanel up = UIPanelDict[panelName];
+                up.Open(paramList);
+            }
+        }
+        /// <summary>
         /// 关闭UI(队列)
         /// </summary>
         /// <param name="panelName"></param>
@@ -74,6 +86,21 @@ namespace MiniFramework
                     qo.Type = OperationType.Close;
                     qo.paramList = paramList;
                     PanelQueue.Enqueue(qo);
+                }
+            }
+        }
+        /// <summary>
+        /// 关闭UI
+        /// </summary>
+        /// <param name="panelName"></param>
+        public void CloseUI(string panelName, params object[] paramList)
+        {
+            if (UIPanelDict.ContainsKey(panelName))
+            {
+                UIPanel up = UIPanelDict[panelName];
+                if (up.State == UIPanelState.Open)
+                {
+                    up.Close(paramList);
                 }
             }
         }
