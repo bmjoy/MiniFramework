@@ -31,10 +31,16 @@ namespace MiniFramework
             if (tasks.ContainsKey(name))
                 tasks.Remove(name);
         }
-        private HttpDownloader() { }
-        public string Download(string url, string saveDir, Action callBack = null)
+        public void CloseTask(string name)
         {
-            string fileName = url.Substring(url.LastIndexOf('/') + 1);
+            if (tasks.ContainsKey(name))
+                tasks[name].Close();
+        }
+        private HttpDownloader() { }
+        public string Download(string url, string saveDir, string fileName = null, Action callBack = null)
+        {
+            if (fileName == null)
+                fileName = url.Substring(url.LastIndexOf('/') + 1);
             if (!tasks.ContainsKey(fileName))
             {
                 DownloadTask task = new DownloadTask(fileName, url, saveDir, callBack);
@@ -57,7 +63,7 @@ namespace MiniFramework
         private FileStream fileStream;
         private HttpWebResponse response;
         private Stream responseStream;
-        private byte[] buffer = new byte[4096];
+        private byte[] buffer = new byte[1024];
         public DownState GetStatus()
         {
             return state;
@@ -80,7 +86,15 @@ namespace MiniFramework
             CallBack = callBack;
             DownTask();
         }
-
+        public void Close()
+        {
+            if (fileStream != null)
+                fileStream.Close();
+            if (responseStream != null)
+                responseStream.Close();
+            if (response != null)
+                response.Close();
+        }
         void DownTask()
         {
             state = DownState.Start;
@@ -88,7 +102,7 @@ namespace MiniFramework
             request.Method = "GET";
 
             ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
             if (File.Exists(tempSavePath))
             {
