@@ -31,7 +31,7 @@ namespace MiniFramework
 
         bool scrollToBottom = true;
         bool collapse = false;
-        bool showGUI = true;
+        bool showGUI = false;
         bool showKPP = true;
 
         GUIContent clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
