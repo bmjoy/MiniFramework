@@ -31,16 +31,24 @@ namespace MiniFramework
             if (tasks.ContainsKey(name))
                 tasks.Remove(name);
         }
-        public void CloseTask(string name)
+        public void Dispose(string name)
         {
             if (tasks.ContainsKey(name))
-                tasks[name].Close();
+                tasks[name].Dispose();
         }
         private HttpDownloader() { }
         public string Download(string url, string saveDir, string fileName = null, Action callBack = null)
         {
-            if (fileName == null)
+            if (fileName == null || fileName == "")
                 fileName = url.Substring(url.LastIndexOf('/') + 1);
+            else if (!fileName.Contains("."))
+            {
+                int index = url.LastIndexOf('.');
+                if (index != -1)
+                {
+                    fileName += url.Substring(url.LastIndexOf('.'));
+                }
+            }
             if (!tasks.ContainsKey(fileName))
             {
                 DownloadTask task = new DownloadTask(fileName, url, saveDir, callBack);
@@ -86,12 +94,12 @@ namespace MiniFramework
             CallBack = callBack;
             DownTask();
         }
-        public void Close()
+        public void Dispose()
         {
             if (fileStream != null)
-                fileStream.Close();
+                fileStream.Dispose();
             if (responseStream != null)
-                responseStream.Close();
+                responseStream.Dispose();
             if (response != null)
                 response.Close();
         }
@@ -140,20 +148,17 @@ namespace MiniFramework
             }
             else
             {
-                fileStream.Close();
-                responseStream.Close();
-                response.Close();
+                Dispose();
                 if (File.Exists(savePath))
                 {
                     File.Delete(savePath);
                 }
                 File.Move(tempSavePath, savePath);
+                state = DownState.Completed;
                 if (CallBack != null)
                 {
                     CallBack();
                 }
-                state = DownState.Completed;
-                HttpDownloader.Instance.RemoveTask(fileName);
             }
         }
 

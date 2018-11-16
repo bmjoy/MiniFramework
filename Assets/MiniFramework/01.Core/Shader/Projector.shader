@@ -1,8 +1,8 @@
 ﻿// Upgrade NOTE: replaced '_Projector' with 'unity_Projector'
 // Upgrade NOTE: replaced '_ProjectorClip' with 'unity_ProjectorClip'
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Projector/Custom" {
+//投影仪使用shader
+Shader "MiniFramework/Projector" {
 	Properties{
 		_ShadowTex("Cookie", 2D) = "gray" {}
 	_FalloffTex("FallOff", 2D) = "white" {}
