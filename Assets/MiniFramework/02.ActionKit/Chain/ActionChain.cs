@@ -21,22 +21,22 @@ namespace MiniFramework
             sequence.Executer = selfBehaviour;
             return sequence;
         }
-        public static ISequence Delay(this ISequence sequence, float seconds)
+        internal static ISequence Delay(this ISequence sequence, float seconds)
         {
             sequence.Append(seconds);
             return sequence;
         }
-        public static ISequence Event(this ISequence sequence, Action action)
+        internal static ISequence Event(this ISequence sequence, Action action)
         {
             sequence.Append(action);
             return sequence;
         }
-        public static ISequence Until(this ISequence sequence, Func<bool> condition)
+        internal static ISequence Until(this ISequence sequence, Func<bool> condition)
         {
             sequence.Append(condition);
             return sequence;
         }
-        public static ISequence Start(this ISequence sequence)
+        internal static ISequence Start(this ISequence sequence)
         {
             sequence.Execute();
             return sequence;

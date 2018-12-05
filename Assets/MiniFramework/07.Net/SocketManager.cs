@@ -24,7 +24,7 @@ namespace MiniFramework
             IPEndPoint remote = (IPEndPoint)o[1];
             Debug.Log(Encoding.UTF8.GetString(data) + "\n来自：" + remote.ToString());
         }
-        public void Stop()
+        private void OnDestroy()
         {
             aSocketUDP.Stop();
         }

@@ -22,6 +22,6 @@ namespace MiniFramework
         public void SetLayerToButtom()
         {
             transform.SetAsFirstSibling();
-        }        
+        }
     }
 }

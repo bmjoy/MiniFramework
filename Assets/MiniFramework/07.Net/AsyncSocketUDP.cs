@@ -11,12 +11,20 @@ namespace MiniFramework
         private int maxBufferSize = 1024;
         public AsyncSocketUDP()
         {
-            IPEndPoint ep = new IPEndPoint(IPAddress.Any, 0);
-            client = new UdpClient(ep);
-            recvBuffer = new byte[maxBufferSize];
-            client.EnableBroadcast = true;
-            client.BeginReceive(ReceiveDataAsync, null);
-            Debug.Log("本机：" + client.Client.LocalEndPoint);
+            try
+            {
+                IPEndPoint ep = new IPEndPoint(IPAddress.Any, 7777);
+                client = new UdpClient(ep);
+                recvBuffer = new byte[maxBufferSize];
+                client.EnableBroadcast = true;
+                client.BeginReceive(ReceiveDataAsync, null);
+                Debug.Log("本机：" + client.Client.LocalEndPoint);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                return;
+            }
         }
         private void ReceiveDataAsync(IAsyncResult ar)
         {
@@ -50,7 +58,8 @@ namespace MiniFramework
         }
         public void Stop()
         {
-            client.Close();
+            if (client != null)
+                client.Close();
         }
     }
 }
