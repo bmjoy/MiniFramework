@@ -4,25 +4,28 @@ using System.Text;
 using UnityEngine;
 namespace MiniFramework
 {
-    public static class RSA
+    public class RSA : IEncrypt, IDecrypt
     {
-        public static string Encrypt(string normalText,string xmlPublicKey)
+        public string XmlPublicKey { get; set; }
+        public string XmlPrivateKey { get; set; }
+        public RSA() { }
+        public string Encrypt(string normalText)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(normalText);
             CspParameters cp = new CspParameters();
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
-            rsa.FromXmlString(xmlPublicKey);
+            rsa.FromXmlString(XmlPublicKey);
             byte[] encryptBytes = rsa.Encrypt(bytes, false);
             return Convert.ToBase64String(encryptBytes);
         }
-        public static string Decrypt(string encryptText,string xmlPrivateKey)
+        public string Decrypt(string encryptText)
         {
             try
             {
                 var bytes = Convert.FromBase64String(encryptText);
                 CspParameters cp = new CspParameters();
                 RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
-                rsa.FromXmlString(xmlPrivateKey);
+                rsa.FromXmlString(XmlPrivateKey);
                 var decryptBytes = rsa.Decrypt(bytes, false);
                 return Encoding.UTF8.GetString(decryptBytes);
             }
@@ -39,7 +42,7 @@ namespace MiniFramework
         /// <param name="xmlPrivateKey">私钥</param>
         /// <param name="xmlPublicKey">公钥</param>
 
-        public static void RSAKey(out string xmlPrivateKey, out string xmlPublicKey)
+        public void GenerateKey(out string xmlPrivateKey, out string xmlPublicKey)
         {
             try
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 namespace MiniFramework
@@ -27,13 +28,13 @@ namespace MiniFramework
             }
         }
 
-        public static void HttpPost(this MonoBehaviour mono, string url, WWWForm form, Action<string> callback)
+        public static void HttpPost(this MonoBehaviour mono, string url,WWWForm form, Action<string> callback)
         {
-            mono.StartCoroutine(GetEnumerator(url, callback));
+            mono.StartCoroutine(PostEnumerator(url,form, callback));
         }
         static IEnumerator PostEnumerator(string url, WWWForm form, Action<string> callback)
         {
-            using (UnityWebRequest www = UnityWebRequest.Post(url,form))
+            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
             {
                 yield return www.Send();
 

@@ -3,9 +3,10 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public static class MD5
+    public class MD5 : IEncrypt
     {
-        public static string Encrypt(string normalTxt)
+        public MD5() { }
+        public string Encrypt(string normalTxt)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(normalTxt);
             byte[] md5 = new MD5CryptoServiceProvider().ComputeHash(bytes);

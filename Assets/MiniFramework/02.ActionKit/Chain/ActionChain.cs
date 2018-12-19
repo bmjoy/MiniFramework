@@ -11,35 +11,34 @@ namespace MiniFramework
         {
             Sequence sequence = Pool<Sequence>.Instance.Allocate();
             sequence.Executer = selfBehaviour;
-            sequence.Append(seconds);
-            sequence.Append(action);
+            sequence.Delay(seconds);
+            sequence.Event(action);
             sequence.Execute();
         }
-        public static ISequence Sequence<T>(this T selfBehaviour) where T : MonoBehaviour
+        public static Sequence Sequence<T>(this T selfBehaviour) where T : MonoBehaviour
         {
             Sequence sequence = Pool<Sequence>.Instance.Allocate();
             sequence.Executer = selfBehaviour;
             return sequence;
         }
-        internal static ISequence Delay(this ISequence sequence, float seconds)
-        {
-            sequence.Append(seconds);
-            return sequence;
-        }
-        internal static ISequence Event(this ISequence sequence, Action action)
-        {
-            sequence.Append(action);
-            return sequence;
-        }
-        internal static ISequence Until(this ISequence sequence, Func<bool> condition)
-        {
-            sequence.Append(condition);
-            return sequence;
-        }
-        internal static ISequence Start(this ISequence sequence)
-        {
-            sequence.Execute();
-            return sequence;
-        }
+        //internal static Sequence Delay<T>(this T sequence, float seconds) where T:IDelay
+        //{
+        //    sequence.Delay(seconds);
+        //    return sequence;
+        //}
+        //internal static Sequence Event(this Sequence sequence, Action action)
+        //{
+        //    sequence.Event(action);
+        //    return sequence;
+        //}
+        //internal static Sequence Until(this Sequence sequence, Func<bool> condition)
+        //{
+        //    sequence.Until(condition);
+        //    return sequence;
+        //}
+        //internal static void Start(this Sequence sequence)
+        //{
+        //    sequence.Execute();
+        //}
     }
 }

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 namespace MiniFramework
 {
-    //public interface IMsgReceiver { }
-    //public interface IMsgSender { }
-    public static class MsgDispatcher
+    public class MsgDispatcher
     {
-        private class MsgHandler
+        protected class MsgHandler
         {
             public readonly object Receiver;
             public readonly Action<object[]> Callback;
@@ -19,69 +17,14 @@ namespace MiniFramework
         /// <summary>
         /// 保存同类消息组
         /// </summary>
-        static readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();
-        /// <summary>
-        /// 注册消息
-        /// </summary>
-        /// <param name="receiverSelf">接收方</param>
-        /// <param name="msgName"></param>
-        /// <param name="callback"></param>
-        public static void RegisterMsg(this object receiverSelf, string msgName, Action<object[]> callback)
-        {
-            if (callback == null)
-            {
-                throw new Exception("callback不能为null!");
-            }
-            //确保一个消息名只有一组消息列表
-            if (!msgHandlerDict.ContainsKey(msgName))
-            {
-                msgHandlerDict[msgName] = new List<MsgHandler>();
-            }
-            var handlers = msgHandlerDict[msgName];
-            foreach (var item in handlers)
-            {
-                //防止重复注册
-                if (receiverSelf == item.Receiver && callback == item.Callback)
-                {
-                    return;
-                }
-            }
-            handlers.Add(new MsgHandler(receiverSelf, callback));
-        }
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="msgName"></param>
-        /// <param name="paramList"></param>
-        public static void SendMsg(this object sender, string msgName, params object[] paramList)
-        {
-            if (!msgHandlerDict.ContainsKey(msgName))
-            {
-                throw new Exception("该消息名没有被注册");
-            }
-            var handlers = msgHandlerDict[msgName];
-            //从后向前遍历，删除item后前面item的索引不会变化
-            for (int i = handlers.Count - 1; i >= 0; i--)
-            {
-                var handler = handlers[i];
-                if (handler.Receiver != null)
-                {
-                    handler.Callback(paramList);
-                }
-                else
-                {
-                    handlers.Remove(handler);
-                }
-            }
-        }
+        protected static readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();          
         /// <summary>
         /// 撤销注册消息
         /// </summary>
         /// <param name="receiverSelf"></param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public static void UnRegisterMsg(this object receiverSelf, string msgName, Action<object[]> callback)
+        public static void UnRegisterMsg(object receiver, string msgName, Action<object[]> callback)
         {
             if (callback == null)
             {
@@ -91,7 +34,7 @@ namespace MiniFramework
             for (int i = handlers.Count - 1; i >= 0; i--)
             {
                 var handler = handlers[i];
-                if (handler.Receiver == receiverSelf && handler.Callback == callback)
+                if (handler.Receiver == receiver && handler.Callback == callback)
                 {
                     handlers.Remove(handler);
                     break;

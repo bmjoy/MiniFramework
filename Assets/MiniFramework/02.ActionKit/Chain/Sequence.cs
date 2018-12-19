@@ -7,23 +7,26 @@ namespace MiniFramework
     /// <summary>
     /// 队列：控制所有节点的执行
     /// </summary>
-    public class Sequence : IPoolable, ISequence
+    public class Sequence : IPoolable,IDelay,IUntil,IEvent
     {
         public MonoBehaviour Executer { get; set; }
         public bool IsRecycled { get; set; }
         private List<IEnumerator> nodes = new List<IEnumerator>();
         public Sequence() { }
-        public void Append(float seconds)
+        public Sequence Delay(float seconds)
         {
             nodes.Add(delayCoroutine(seconds));
+            return this;
         }
-        public void Append(Action action)
+        public Sequence Event(Action handler)
         {
-            nodes.Add(actionCoroutine(action));
+            nodes.Add(actionCoroutine(handler));
+            return this;
         }
-        public void Append(Func<bool> condition)
+        public Sequence Until(Func<bool> condition)
         {
             nodes.Add(conditionCoroutine(condition));
+            return this;
         }
 
         public void Execute()
@@ -46,9 +49,9 @@ namespace MiniFramework
                 yield return null;
             }
         }
-        private IEnumerator actionCoroutine(Action action)
+        private IEnumerator actionCoroutine(Action handler)
         {
-            action();
+            handler();
             yield return null;
         }
         private IEnumerator conditionCoroutine(Func<bool> condition)
@@ -61,6 +64,7 @@ namespace MiniFramework
         public void OnRecycled()
         {
             nodes.Clear();
+            Executer = null;
         }
     }
 }
