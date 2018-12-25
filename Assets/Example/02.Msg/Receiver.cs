@@ -4,7 +4,7 @@ public class Receiver : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        MsgReceiver.RegisterMsg(this, "Test", Receive);
+        MsgManager.Instance.RegisterMsg(this, "Test", Receive);
     }
 
     void Receive(object[] msg)

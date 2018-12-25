@@ -8,6 +8,7 @@ namespace MiniFramework
     {
         private string url;
         private string saveDir;
+        private string tempSavePath;
         public string FileName;
         private Stream responseStream;
         private FileStream fileStream;
@@ -24,6 +25,7 @@ namespace MiniFramework
         {
             this.url = url;
             this.saveDir = saveDir;
+            this.tempSavePath = saveDir + "/" + FileName + ".temp";
             FileName = fileName;
         }
         private string GetFileNameFromUrl(string url)
@@ -45,7 +47,6 @@ namespace MiniFramework
             request.Method = "GET";
             ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-            string tempSavePath = saveDir + "/" + FileName + ".temp";
             if (File.Exists(tempSavePath))
             {
                 fileStream = File.OpenWrite(tempSavePath);
@@ -82,7 +83,7 @@ namespace MiniFramework
             else
             {
                 Close();
-                string tempSavePath = saveDir + "/" + FileName + ".temp";
+
                 string savePath = saveDir + "/" + FileName;
                 if (File.Exists(savePath))
                 {

@@ -30,7 +30,7 @@ namespace MiniFramework
         {
             IPEndPoint remote = null;
             recvBuffer = client.EndReceive(ar, ref remote);
-            MsgSender.SendMsg("SocketManager", recvBuffer, remote);
+            MsgManager.Instance.SendMsg("SocketManager", recvBuffer, remote);
             if (client != null)
             {
                 client.BeginReceive(ReceiveDataAsync, null);

@@ -11,7 +11,7 @@ namespace MiniFramework
         void Start()
         {
             aSocketUDP = new UDPAsync();
-            MsgReceiver.RegisterMsg(this,"SocketManager", Receiver);
+            MsgManager.Instance.RegisterMsg(this,"SocketManager", Receiver);
         }
         public void Send(byte[] data, string ip, int port)
         {
