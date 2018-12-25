@@ -20,13 +20,14 @@ namespace MiniFramework
             this.url = url;
             this.saveDir = saveDir;
             FileName = GetFileNameFromUrl(url);
+            this.tempSavePath = saveDir + "/" + FileName + ".temp";
         }
         public FileDownloader(string url, string saveDir, string fileName)
         {
             this.url = url;
             this.saveDir = saveDir;
-            this.tempSavePath = saveDir + "/" + FileName + ".temp";
             FileName = fileName;
+            this.tempSavePath = saveDir + "/" + FileName + ".temp";
         }
         private string GetFileNameFromUrl(string url)
         {

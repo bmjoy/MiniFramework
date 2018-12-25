@@ -17,7 +17,7 @@ namespace MiniFramework
             {
                 yield return www.Send();
 
-                if (www.isError)
+                if (www.isNetworkError)
                 {
                     Debug.Log(www.error);
                 }
@@ -38,7 +38,7 @@ namespace MiniFramework
             {
                 yield return www.Send();
 
-                if (www.isError)
+                if (www.isNetworkError)
                 {
                     Debug.Log(www.error);
                 }
