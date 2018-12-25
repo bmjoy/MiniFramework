@@ -13,7 +13,7 @@ namespace MiniFramework
             SerializedProperty prop = serializedObject.FindProperty("NeedCachePrefabs");
 
             reorderableList = new ReorderableList(serializedObject, prop, true, true, true, true);
-            
+
             reorderableList.drawElementCallback = (rect, index, isActive, isFocused) =>
             {
                 rect.y += 2;
@@ -35,7 +35,7 @@ namespace MiniFramework
 
             };
             reorderableList.drawHeaderCallback = (rect) =>
-                EditorGUI.LabelField(rect, prop.displayName);      
+                EditorGUI.LabelField(rect, prop.displayName);
         }
 
         public override void OnInspectorGUI()
