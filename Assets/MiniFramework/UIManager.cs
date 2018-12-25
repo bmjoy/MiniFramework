@@ -35,7 +35,7 @@ namespace MiniFramework
             GetEventSystem();
             GetDefaultUI();
 
-            ResLoader.Instance.LoadAssetBundle(this, AssetBundlePath, LoadUIFromAssetBundle);
+           // ResLoader.Instance.LoadAssetBundle(AssetBundlePath, LoadUIFromAssetBundle);
         }
 
         private void Update()

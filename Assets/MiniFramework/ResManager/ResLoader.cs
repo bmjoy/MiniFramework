@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace MiniFramework
 {
-    public class ResLoader:Singleton<ResLoader>
+    public class ResLoader : MonoSingleton<ResLoader>
     {
         private ResLoader() { }
         /// <summary>
@@ -14,7 +14,7 @@ namespace MiniFramework
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public Dictionary<string,Hash128> GetAllAssetBundleHash(string path)
+        public Dictionary<string, Hash128> GetAllAssetBundleHash(string path)
         {
             AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
             AssetBundleManifest manifest = assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -23,20 +23,9 @@ namespace MiniFramework
             for (int i = 0; i < bundlesName.Length; i++)
             {
                 Hash128 hash = manifest.GetAssetBundleHash(bundlesName[i]);
-                bundlesHash.Add(bundlesName[i],hash);
+                bundlesHash.Add(bundlesName[i], hash);
             }
             return bundlesHash;
-        }
-        /// <summary>
-        /// 异步加载Resources资源
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="mono"></param>
-        /// <param name="path"></param>
-        /// <param name="loadedCallBack"></param>
-        public void LoadAssetAsync<T>(MonoBehaviour mono, string path, Action<T> loadedCallBack) where T :UnityEngine.Object
-        {
-            mono.StartCoroutine(loadAsset<T>(path,loadedCallBack));
         }
         /// <summary>
         /// 异步加载AssetBundle包
@@ -44,27 +33,12 @@ namespace MiniFramework
         /// <param name="mono"></param>
         /// <param name="path"></param>
         /// <param name="loadedCallBack"></param>
-        public void LoadAssetBundle(MonoBehaviour mono, string path,Action<AssetBundle> loadedCallBack)
+        public void LoadAssetBundle<T>(string path, string assetName,Action<T> callback) where T :UnityEngine.Object
         {
             if (File.Exists(path))
-                mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
+                StartCoroutine(loadAssetBundle<T>(path, assetName, callback));
         }
-        public void UnLoadAssetBundle(AssetBundle ab){
-            ab.Unload(false);
-        }
-        IEnumerator loadAsset<T>(string path, Action<T> loadedCallBack) where T : UnityEngine.Object
-        {
-            var resRequest = Resources.LoadAsync(path);
-            yield return resRequest;
-            var asset = resRequest.asset;
-            if (asset == null)
-            {
-                Debug.LogError("Failed to load Asset!");
-                yield break;
-            }
-            loadedCallBack(asset as T);
-        }
-        IEnumerator loadAssetBundle(string loadPath, Action<AssetBundle> loadedCallBack)
+        IEnumerator loadAssetBundle<T>(string loadPath, string assetName,Action<T> callback) where T : UnityEngine.Object
         {
             var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);
             yield return bundleLoadRequest;
@@ -74,7 +48,11 @@ namespace MiniFramework
                 Debug.LogError("Failed to load AssetBundle!");
                 yield break;
             }
-            loadedCallBack(loadedAssetBundle);
+            AssetBundleRequest requset = loadedAssetBundle.LoadAssetAsync<T>(assetName);
+            yield return requset;
+            T obj = requset.asset as T;
+            callback(obj);
+            loadedAssetBundle.Unload(false);
         }
     }
 }
