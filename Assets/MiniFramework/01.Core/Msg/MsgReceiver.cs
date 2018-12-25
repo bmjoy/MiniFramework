@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace MiniFramework {
-    public class MsgReceiver : MsgDispatcher{
+    public sealed class MsgReceiver : MsgDispatcher{
         /// <summary>
         /// 注册消息
         /// </summary>

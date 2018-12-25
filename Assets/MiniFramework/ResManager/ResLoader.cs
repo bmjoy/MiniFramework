@@ -37,7 +37,7 @@ namespace MiniFramework
         public void LoadAssetAsync<T>(MonoBehaviour mono, string path, Action<T> loadedCallBack) where T :UnityEngine.Object
         {
             mono.StartCoroutine(loadAsset<T>(path,loadedCallBack));
-        }      
+        }
         /// <summary>
         /// 异步加载AssetBundle包
         /// </summary>
@@ -48,6 +48,9 @@ namespace MiniFramework
         {
             if (File.Exists(path))
                 mono.StartCoroutine(loadAssetBundle(path, loadedCallBack));
+        }
+        public void UnLoadAssetBundle(AssetBundle ab){
+            ab.Unload(false);
         }
         IEnumerator loadAsset<T>(string path, Action<T> loadedCallBack) where T : UnityEngine.Object
         {

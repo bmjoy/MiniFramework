@@ -69,7 +69,7 @@ namespace MiniFramework
         private Action CallBack;
 
         private FileStream fileStream;
-        private HttpWebResponse response;
+      //  private HttpWebResponse response;
         private Stream responseStream;
         private byte[] buffer = new byte[1024];
         public DownState GetStatus()
@@ -100,8 +100,8 @@ namespace MiniFramework
                 fileStream.Dispose();
             if (responseStream != null)
                 responseStream.Dispose();
-            if (response != null)
-                response.Close();
+            //if (response != null)
+            //    response.Close();
         }
         void DownTask()
         {
@@ -130,7 +130,7 @@ namespace MiniFramework
         void RespCallBack(IAsyncResult result)
         {
             HttpWebRequest request = (HttpWebRequest)result.AsyncState;
-            response = (HttpWebResponse)request.EndGetResponse(result);
+            HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);
             responseStream = response.GetResponseStream();
             fileLength = response.ContentLength + curLength;
             responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
