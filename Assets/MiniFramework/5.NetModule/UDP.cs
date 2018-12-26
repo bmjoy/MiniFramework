@@ -15,13 +15,8 @@ public class UDP
         udp = new UdpClient(ep);
         recvBuffer = new byte[MaxBufferSize];
         udp.EnableBroadcast = true;
-    }
-
-    private void BeginReceive()
-    {
         udp.BeginReceive(ReceiveResult, null);
     }
-
     private void ReceiveResult(IAsyncResult ar)
     {
         IPEndPoint remote = null;
@@ -38,5 +33,11 @@ public class UDP
     private void SendResult(IAsyncResult ar)
     {
         udp.EndSend(ar);
+    }
+
+    public void Close()
+    {
+        if (udp != null)
+            udp.Close();
     }
 }
