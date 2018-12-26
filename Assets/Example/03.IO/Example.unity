@@ -141,6 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6812d1be59de27d4dbec6bcf69da5c6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Obj:
+    id: 0
+    name: 
+    Age: []
+  serializeContent: 
 --- !u!4 &65642928
 Transform:
   m_ObjectHideFlags: 0

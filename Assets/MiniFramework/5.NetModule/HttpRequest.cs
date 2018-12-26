@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 namespace MiniFramework
@@ -15,36 +14,60 @@ namespace MiniFramework
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
-                yield return www.Send();
+                yield return www.SendWebRequest();
 
-                if (www.isNetworkError)
+                if (www.isNetworkError || www.isHttpError)
                 {
                     Debug.Log(www.error);
                 }
                 else
                 {
+                    Debug.Log("Get complete!");
                     callback(www.downloadHandler.text);
                 }
             }
         }
-
-        public static void HttpPost(this MonoBehaviour mono, string url,WWWForm form, Action<string> callback)
+        public static void HttpPut(this MonoBehaviour mono,string url, byte[] data,Action<bool> callback)
         {
-            mono.StartCoroutine(PostEnumerator(url,form, callback));
+            mono.StartCoroutine(PutEnumerator(url,data,callback));
         }
-        static IEnumerator PostEnumerator(string url, WWWForm form, Action<string> callback)
+        static IEnumerator PutEnumerator(string url,byte[] data,Action<bool> callback)
         {
-            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+            using (UnityWebRequest www = UnityWebRequest.Put(url, data))
             {
-                yield return www.Send();
+                yield return www.SendWebRequest();
 
-                if (www.isNetworkError)
+                if (www.isNetworkError || www.isHttpError)
                 {
                     Debug.Log(www.error);
+                    callback(false);
                 }
                 else
                 {
-                    callback(www.downloadHandler.text);
+                    Debug.Log("Upload complete!");
+                    callback(true);
+                }
+            }
+        }
+        public static void HttpPost(this MonoBehaviour mono, string url,WWWForm form, Action<bool> callback)
+        {
+            mono.StartCoroutine(PostEnumerator(url,form, callback));
+        }
+        static IEnumerator PostEnumerator(string url, WWWForm form, Action<bool> callback)
+        {
+            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+            {
+                yield return www.SendWebRequest();
+
+                if (www.isNetworkError || www.isHttpError)
+                {
+                    Debug.Log(www.error);
+                    callback(false);
+                }
+                else
+                {
+                    Debug.Log("Form upload complete!");
+                    callback(true);
                 }
             }
         }

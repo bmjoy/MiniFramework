@@ -9,5 +9,4 @@
         public abstract byte[] Serialize(object obj);
         public abstract T Deserialize<T>(byte[] data);
     }
-
 }

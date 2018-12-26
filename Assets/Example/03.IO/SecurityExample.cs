@@ -11,8 +11,6 @@ public class SecurityExample : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // EncryptText = SecurityFactory.MD5.Encrypt(NormalText);
-
         string publickey;
         string privatekey;
         SecurityFactory.RSA.GenerateKey(out privatekey, out publickey);
