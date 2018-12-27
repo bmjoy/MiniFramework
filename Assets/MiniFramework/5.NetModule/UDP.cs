@@ -1,43 +1,66 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using UnityEngine;
 
-public class UDP
+namespace MiniFramework
 {
-    private UdpClient udp;
-    private byte[] recvBuffer;
-    public int MaxBufferSize { get; set; }
-    public string RemoteIP { get; set; }
-    public int Port { get; set; }
-    public void Init()
+    public class UDP : SocketBase
     {
-        IPEndPoint ep = new IPEndPoint(IPAddress.Any, Port);
-        udp = new UdpClient(ep);
-        recvBuffer = new byte[MaxBufferSize];
-        udp.EnableBroadcast = true;
-        udp.BeginReceive(ReceiveResult, null);
-    }
-    private void ReceiveResult(IAsyncResult ar)
-    {
-        IPEndPoint remote = null;
-        recvBuffer = udp.EndReceive(ar, ref remote);
-        udp.BeginReceive(ReceiveResult, null);
-    }
+        private string ip;
+        private int port;
+        private byte[] recvBuffer;
+        private UdpClient udpClient;
+        public UDP(string ip, int port, int bufferSize)
+        {
+            try
+            {
+                this.ip = ip;
+                this.port = port;
+                recvBuffer = new byte[bufferSize];
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
+                udpClient = new UdpClient(endPoint);
+                udpClient.EnableBroadcast = true;
+            }
+            catch (Exception e)
+            {
 
-    public void BeginSend(byte[] data)
-    {
-        IPEndPoint ep = new IPEndPoint(IPAddress.Parse(RemoteIP), Port);
-        udp.BeginSend(data, data.Length, ep, SendResult, null);
-    }
+                Debug.Log(e);
+            }
+        }
+        public override void Launch()
+        {
+            if (udpClient != null)
+            {
+                udpClient.BeginReceive(ReceiveResult, udpClient);
+            }
+        }
+        private void ReceiveResult(IAsyncResult ar)
+        {
+            udpClient = (UdpClient)ar.AsyncState;
+            IPEndPoint remote = null;
+            recvBuffer = udpClient.EndReceive(ar, ref remote);
+            MsgManager.Instance.SendMsg("SocketManager", recvBuffer);
+            udpClient.BeginReceive(ReceiveResult, udpClient);
+        }
 
-    private void SendResult(IAsyncResult ar)
-    {
-        udp.EndSend(ar);
-    }
+        public override void Send(byte[] data)
+        {
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            udpClient.BeginSend(data, data.Length, endPoint, SendResult, udpClient);
+        }
 
-    public void Close()
-    {
-        if (udp != null)
-            udp.Close();
+        private void SendResult(IAsyncResult ar)
+        {
+            udpClient = (UdpClient)ar.AsyncState;
+            udpClient.EndSend(ar);
+        }
+
+        public override void Close()
+        {
+            if (udpClient != null)
+                udpClient.Close();
+            Debug.Log("连接已断开");
+        }
     }
 }

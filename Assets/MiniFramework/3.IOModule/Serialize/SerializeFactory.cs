@@ -2,10 +2,10 @@
 {
     public abstract class SerializeFactory
     {
-        public static Binary Binary { get => new Binary(); }
-        public static Xml Xml { get => new Xml(); }
-        public static Json Json { get => new Json(); }
-        public static ProtoBuff ProtoBuff { get => new ProtoBuff(); }
+        public static Binary Binary { get { return new Binary(); } }
+        public static Xml Xml { get { return new Xml(); } }
+        public static Json Json { get { return new Json(); } }
+        public static ProtoBuff ProtoBuff { get { return new ProtoBuff(); } }
         public abstract byte[] Serialize(object obj);
         public abstract T Deserialize<T>(byte[] data);
     }

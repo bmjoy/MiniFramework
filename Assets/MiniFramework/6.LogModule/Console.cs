@@ -68,6 +68,7 @@ namespace MiniFramework
         }
         private void OnGUI()
         {
+            GUI.color = Color.red;
             if (!showGUI)
             {
                 return;
