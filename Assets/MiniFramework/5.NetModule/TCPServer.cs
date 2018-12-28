@@ -6,33 +6,25 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPServer : SocketBase
+    public class TCPServer:Net
     {
-        private int maxConnections;
-        private byte[] recvBuffer;
-        private TcpListener tcpListener;
+        private byte[] recvBuffer;        
         private List<TcpClient> remoteClients;
-        public TCPServer(int port, int bufferSize, int maxConnections)
+        private TcpListener tcpListener;
+        protected void Init()
         {
+            recvBuffer = new byte[MaxBufferSize];
+            remoteClients = new List<TcpClient>();
             try
             {
-                this.maxConnections = maxConnections;
-                recvBuffer = new byte[bufferSize];
-                remoteClients = new List<TcpClient>();
-                tcpListener = new TcpListener(IPAddress.Any, port);
+                tcpListener = new TcpListener(IPAddress.Any, Port);
+                tcpListener.Start(MaxConnections);
+                tcpListener.BeginAcceptTcpClient(AcceptResult, tcpListener);
+                Debug.Log("服务端启动成功:" + tcpListener.LocalEndpoint);
             }
             catch (Exception e)
             {
                 Debug.Log(e);
-            }
-        }
-        public override void Launch()
-        {
-            if (tcpListener != null)
-            {
-                tcpListener.Start(maxConnections);
-                tcpListener.BeginAcceptTcpClient(AcceptResult, tcpListener);
-                Debug.Log("服务端启动成功:" + tcpListener.LocalEndpoint);
             }
         }
         private void AcceptResult(IAsyncResult ar)
@@ -68,7 +60,7 @@ namespace MiniFramework
             }
         }
 
-        public override void Send(byte[] data)
+        public void Send(byte[] data)
         {
             for (int i = 0; i < remoteClients.Count; i++)
             {
@@ -82,12 +74,14 @@ namespace MiniFramework
             TcpClient tcpClient = (TcpClient)ar.AsyncState;
             NetworkStream stream = tcpClient.GetStream();
             stream.EndWrite(ar);
-            Debug.Log("发送成功");
         }
         public override void Close()
         {
             if (tcpListener != null)
+            {
                 tcpListener.Stop();
+                tcpListener = null;
+            }
             foreach (var item in remoteClients)
             {
                 if (item.Connected)
@@ -100,4 +94,3 @@ namespace MiniFramework
         }
     }
 }
-

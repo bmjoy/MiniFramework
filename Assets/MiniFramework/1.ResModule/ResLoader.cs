@@ -54,5 +54,34 @@ namespace MiniFramework
             callback(obj);
             loadedAssetBundle.Unload(false);
         }
+
+        /// <summary>
+        /// 异步加载AssetBundle包
+        /// 所有资源
+        /// </summary>
+        /// <param name="mono"></param>
+        /// <param name="path"></param>
+        /// <param name="loadedCallBack"></param>
+        public void LoadAllAssetBundle<T>(string path, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            if (File.Exists(path))
+                StartCoroutine(loadAllAssetBundle(path, callback));
+        }
+        IEnumerator loadAllAssetBundle<T>(string loadPath, Action<T[]> callback) where T : UnityEngine.Object
+        {
+            var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);
+            yield return bundleLoadRequest;
+            var loadedAssetBundle = bundleLoadRequest.assetBundle;
+            if (loadedAssetBundle == null)
+            {
+                Debug.LogError("Failed to load AssetBundle!");
+                yield break;
+            }
+            AssetBundleRequest requset = loadedAssetBundle.LoadAllAssetsAsync();
+            yield return requset;
+            T[] obj = requset.allAssets as T[];
+            callback(obj);
+            loadedAssetBundle.Unload(false);
+        }
     }
 }

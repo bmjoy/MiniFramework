@@ -5,31 +5,24 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPClient : SocketBase
+    public class TCPClient:Net
     {
-        private string ip;
-        private int port;
         private byte[] recvBuffer;
         private TcpClient tcpClient;
-        public TCPClient(string ip, int port, int bufferSize)
+
+        public Action ConnectFailed;
+        public Action ConnectSuccess;
+        public void Init()
         {
+            recvBuffer = new byte[MaxBufferSize];
             try
             {
-                this.ip = ip;
-                this.port = port;
-                recvBuffer = new byte[bufferSize];
                 tcpClient = new TcpClient();
+                tcpClient.BeginConnect(IPAddress.Parse(IP), Port, ConnectResult, tcpClient);
             }
             catch (Exception e)
             {
                 Debug.Log(e);
-            }
-        }
-        public override void Launch()
-        {
-            if (tcpClient != null && !tcpClient.Connected)
-            {
-                tcpClient.BeginConnect(IPAddress.Parse(ip), port, ConnectResult, tcpClient);
             }
         }
         private void ConnectResult(IAsyncResult ar)
@@ -71,7 +64,7 @@ namespace MiniFramework
             }
         }
 
-        public override void Send(byte[] data)
+        public void Send(byte[] data)
         {
             if (tcpClient.Connected)
             {
@@ -83,12 +76,14 @@ namespace MiniFramework
             tcpClient = (TcpClient)ar.AsyncState;
             NetworkStream stream = tcpClient.GetStream();
             stream.EndWrite(ar);
-            Debug.Log("发送成功");
         }
         public override void Close()
         {
             if (tcpClient != null)
+            {
                 tcpClient.Close();
+                tcpClient = null;
+            }
             Debug.Log("连接已断开");
         }
     }

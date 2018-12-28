@@ -15,12 +15,12 @@ public class SerializeExample : MonoBehaviour
         SerializeObj obj = new SerializeObj();
         obj.id = 1;
         obj.name = "haha";
-        obj.Age.Add(1.1415926f);
-        byte[] data = SerializeFactory.ProtoBuff.Serialize(obj);
-        FileUtil.SaveBinaryToLocal(data,Application.streamingAssetsPath+"/protobuff");
-        serializeContent = BitConverter.ToString(data);
-
-        Obj = SerializeFactory.ProtoBuff.Deserialize<SerializeObj>(data);
+        obj.Age.Add(1.1415926d);
+        byte[] data = SerializeFactory.Json.Serialize(obj);
+        FileUtil.SaveBinaryToLocal(data, Application.streamingAssetsPath + "/json");
+        byte[] data2 = FileUtil.ReadBinaryFromLocal(Application.streamingAssetsPath + "/json");
+       // serializeContent = BitConverter.ToString(data);
+        Obj = SerializeFactory.Json.Deserialize<SerializeObj>(data2);
     }
 }
 [Serializable]
@@ -32,5 +32,5 @@ public class SerializeObj
     [ProtoMember(2)]
     public string name;
     [ProtoMember(3)]
-    public List<float> Age = new List<float>();
+    public List<double> Age = new List<double>();
 }
