@@ -5,19 +5,24 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class UDP
+    public class UDP:Net
     {
-        protected int Port;
         private byte[] recvBuffer;
         private UdpClient udpClient;
-        public void Init()
+        public override void Launch()
         {
+            if (IsConnect)
+            {
+                Debug.Log("UDP已启动!");
+                return;
+            }
             try
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
                 udpClient = new UdpClient(endPoint);
                 udpClient.EnableBroadcast = true;
                 udpClient.BeginReceive(ReceiveResult, udpClient);
+                IsConnect = true;
                 Debug.Log("UDP初始化成功");
             }
             catch (Exception e)
@@ -30,13 +35,19 @@ namespace MiniFramework
             udpClient = (UdpClient)ar.AsyncState;
             IPEndPoint remote = new IPEndPoint(IPAddress.Any, Port);
             recvBuffer = udpClient.EndReceive(ar, ref remote);
-            MsgManager.Instance.SendMsg("SocketManager", recvBuffer);
+            if (ReceiveMsgHandler != null)
+            {
+                ReceiveMsgHandler(recvBuffer);
+            }
             udpClient.BeginReceive(ReceiveResult, udpClient);
         }
-        public void Send(byte[] data,string ip)
+        public override void Send(byte[] data,string ip)
         {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
-            udpClient.BeginSend(data, data.Length, endPoint, SendResult, udpClient);
+            if (IsConnect)
+            {
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
+                udpClient.BeginSend(data, data.Length, endPoint, SendResult, udpClient);
+            }
         }
         private void SendResult(IAsyncResult ar)
         {
@@ -44,12 +55,12 @@ namespace MiniFramework
             udpClient.EndSend(ar);
         }
 
-        public void Close()
+        public override void Close()
         {
             if (udpClient != null)
             {
                 udpClient.Close();
-                udpClient = null;
+                IsConnect = false;
             }
             Debug.Log("连接已断开");
         }

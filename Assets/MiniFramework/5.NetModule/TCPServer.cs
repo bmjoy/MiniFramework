@@ -6,13 +6,18 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPServer:Net
+    public class TCPServer : Net
     {
-        private byte[] recvBuffer;        
+        private byte[] recvBuffer;
         private List<TcpClient> remoteClients;
         private TcpListener tcpListener;
-        protected void Init()
+        public override void Launch()
         {
+            if (IsConnect)
+            {
+                Debug.Log("服务器已启动");
+                return;
+            }
             recvBuffer = new byte[MaxBufferSize];
             remoteClients = new List<TcpClient>();
             try
@@ -20,6 +25,7 @@ namespace MiniFramework
                 tcpListener = new TcpListener(IPAddress.Any, Port);
                 tcpListener.Start(MaxConnections);
                 tcpListener.BeginAcceptTcpClient(AcceptResult, tcpListener);
+                IsConnect = true;
                 Debug.Log("服务端启动成功:" + tcpListener.LocalEndpoint);
             }
             catch (Exception e)
@@ -50,18 +56,24 @@ namespace MiniFramework
                     Debug.Log("远程客户端：" + tcpClient.Client.RemoteEndPoint + "已经断开");
                     remoteClients.Remove(tcpClient);
                     tcpClient.Close();
-
                     return;
                 }
                 byte[] realBytes = new byte[recvBytes];
                 Array.Copy(recvBuffer, 0, realBytes, 0, recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
-                MsgManager.Instance.SendMsg("SocketManager", realBytes);
+                if (ReceiveMsgHandler != null)
+                {
+                    ReceiveMsgHandler(realBytes);
+                }
             }
         }
 
-        public void Send(byte[] data)
+        public override void Send(byte[] data, string ip = null)
         {
+            if (!IsConnect)
+            {
+                return;
+            }
             for (int i = 0; i < remoteClients.Count; i++)
             {
                 TcpClient client = remoteClients[i];
@@ -77,19 +89,22 @@ namespace MiniFramework
         }
         public override void Close()
         {
+            if (remoteClients != null)
+            {
+                foreach (var item in remoteClients)
+                {
+                    if (item.Connected)
+                    {
+                        item.Close();
+                    }
+                }
+                remoteClients.Clear();
+            }
             if (tcpListener != null)
             {
                 tcpListener.Stop();
-                tcpListener = null;
+                IsConnect = false;
             }
-            foreach (var item in remoteClients)
-            {
-                if (item.Connected)
-                {
-                    item.Close();
-                }
-            }
-            remoteClients.Clear();
             Debug.Log("服务器已关闭");
         }
     }

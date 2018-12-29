@@ -5,25 +5,20 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPClient:Net
+    public class TCPClient : Net
     {
         private byte[] recvBuffer;
         private TcpClient tcpClient;
-
-        public Action ConnectFailed;
-        public Action ConnectSuccess;
-        public void Init()
+        public override void Launch()
         {
+            if (IsConnect)
+            {
+                Debug.Log("客户端已连接");
+                return;
+            }
             recvBuffer = new byte[MaxBufferSize];
-            try
-            {
-                tcpClient = new TcpClient();
-                tcpClient.BeginConnect(IPAddress.Parse(IP), Port, ConnectResult, tcpClient);
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-            }
+            tcpClient = new TcpClient();
+            tcpClient.BeginConnect(IPAddress.Parse(IP), Port, ConnectResult, tcpClient);
         }
         private void ConnectResult(IAsyncResult ar)
         {
@@ -39,9 +34,11 @@ namespace MiniFramework
                 tcpClient.EndConnect(ar);
                 NetworkStream stream = tcpClient.GetStream();
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
+                IsConnect = true;
                 if (ConnectSuccess != null)
-                    ConnectSuccess();
+                    ConnectSuccess();   
                 Debug.Log("客户端连接成功");
+
             }
         }
         private void ReadResult(IAsyncResult ar)
@@ -53,20 +50,23 @@ namespace MiniFramework
                 int recvLength = stream.EndRead(ar);
                 if (recvLength <= 0)
                 {
-                    tcpClient.Close();
                     Debug.Log("服务器已经关闭");
+                    Close();
                     return;
                 }
                 byte[] realBytes = new byte[recvLength];
                 Array.Copy(recvBuffer, 0, realBytes, 0, recvLength);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
-                MsgManager.Instance.SendMsg("SocketManager", realBytes);
+                if (ReceiveMsgHandler != null)
+                {
+                    ReceiveMsgHandler(realBytes);
+                }
             }
         }
 
-        public void Send(byte[] data)
+        public override void Send(byte[] data, string ip = null)
         {
-            if (tcpClient.Connected)
+            if (IsConnect)
             {
                 tcpClient.GetStream().BeginWrite(data, 0, data.Length, SendResult, tcpClient);
             }
@@ -82,7 +82,7 @@ namespace MiniFramework
             if (tcpClient != null)
             {
                 tcpClient.Close();
-                tcpClient = null;
+                IsConnect = false;
             }
             Debug.Log("连接已断开");
         }
