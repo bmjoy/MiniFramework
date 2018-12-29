@@ -1,7 +1,6 @@
 ## ResManager资源管理模块
 * 资源下载  
-	`资源下载支持断点续传`
-	```
+	```支持断点续传
 	string url ="www.test.com/test.bin";
 	string path = Application.streamingAssetsPath;
 	var load = new FileDownloader(url,path);
