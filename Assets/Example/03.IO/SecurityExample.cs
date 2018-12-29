@@ -16,5 +16,8 @@ public class SecurityExample : MonoBehaviour
         SecurityFactory.RSA.GenerateKey(out privatekey, out publickey);
         EncryptText = SecurityFactory.RSA.Encrypt(NormalText, publickey);
         DecryptText = SecurityFactory.RSA.Decrypt(EncryptText, privatekey);
+
+        EncryptText = SecurityFactory.DES.Encrypt(NormalText, key);
+        DecryptText = SecurityFactory.DES.Decrypt(EncryptText, key);
     }
 }
