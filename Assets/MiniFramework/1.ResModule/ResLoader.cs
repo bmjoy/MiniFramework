@@ -33,12 +33,12 @@ namespace MiniFramework
         /// <param name="mono"></param>
         /// <param name="path"></param>
         /// <param name="loadedCallBack"></param>
-        public void LoadAssetBundle<T>(string path, string assetName,Action<T> callback) where T :UnityEngine.Object
+        public void LoadAssetBundle(string path, string assetName,Action<UnityEngine.Object> callback)
         {
             if (File.Exists(path))
-                StartCoroutine(loadAssetBundle<T>(path, assetName, callback));
+                StartCoroutine(loadAssetBundle(path, assetName, callback));
         }
-        IEnumerator loadAssetBundle<T>(string loadPath, string assetName,Action<T> callback) where T : UnityEngine.Object
+        IEnumerator loadAssetBundle(string loadPath, string assetName,Action<UnityEngine.Object> callback)
         {
             var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);
             yield return bundleLoadRequest;
@@ -48,26 +48,28 @@ namespace MiniFramework
                 Debug.LogError("Failed to load AssetBundle!");
                 yield break;
             }
-            AssetBundleRequest requset = loadedAssetBundle.LoadAssetAsync<T>(assetName);
+            AssetBundleRequest requset = loadedAssetBundle.LoadAssetAsync(assetName);
             yield return requset;
-            T obj = requset.asset as T;
+            var obj = requset.asset;
             callback(obj);
             loadedAssetBundle.Unload(false);
         }
 
         /// <summary>
         /// 异步加载AssetBundle包
+        /// 
+        /// 
         /// 所有资源
         /// </summary>
         /// <param name="mono"></param>
         /// <param name="path"></param>
         /// <param name="loadedCallBack"></param>
-        public void LoadAllAssetBundle<T>(string path, Action<T[]> callback) where T : UnityEngine.Object
+        public void LoadAllAssetBundle(string path, Action<UnityEngine.Object[]> callback) 
         {
             if (File.Exists(path))
                 StartCoroutine(loadAllAssetBundle(path, callback));
         }
-        IEnumerator loadAllAssetBundle<T>(string loadPath, Action<T[]> callback) where T : UnityEngine.Object
+        IEnumerator loadAllAssetBundle(string loadPath, Action<UnityEngine.Object[]> callback)
         {
             var bundleLoadRequest = AssetBundle.LoadFromFileAsync(loadPath);
             yield return bundleLoadRequest;
@@ -79,9 +81,10 @@ namespace MiniFramework
             }
             AssetBundleRequest requset = loadedAssetBundle.LoadAllAssetsAsync();
             yield return requset;
-            T[] obj = requset.allAssets as T[];
+            var obj = requset.allAssets;
             callback(obj);
             loadedAssetBundle.Unload(false);
+            
         }
     }
 }

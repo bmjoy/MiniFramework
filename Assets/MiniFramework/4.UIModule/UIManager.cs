@@ -35,7 +35,7 @@ namespace MiniFramework
             GetEventSystem();
             GetDefaultUI();
 
-            ResLoader.Instance.LoadAllAssetBundle<GameObject>(AssetBundlePath, LoadUIFromAssetBundle);
+            ResLoader.Instance.LoadAllAssetBundle(AssetBundlePath, LoadUIFromAssetBundle);
         }
 
         private void Update()
@@ -183,17 +183,17 @@ namespace MiniFramework
         /// 从AssetBundle中加载UI
         /// </summary>
         /// <param name="ab"></param>
-        void LoadUIFromAssetBundle(GameObject[] objs)
+        void LoadUIFromAssetBundle(Object[] objs)
         {
             for (int i = 0; i < objs.Length; i++)
             {
-                GameObject ui = Instantiate(objs[i], Canvas.transform);
+                Object ui = Instantiate(objs[i], Canvas.transform);
                 ui.name = objs[i].name;
-                UIPanel panel = ui.GetComponent<UIPanel>();
-                if (panel != null && !UIPanelDict.ContainsKey(panel.name))
-                {
-                    UIPanelDict.Add(panel.name, panel);
-                }
+                //UIPanel panel = ui.GetComponent<UIPanel>();
+                //if (panel != null && !UIPanelDict.ContainsKey(panel.name))
+                //{
+                //    UIPanelDict.Add(panel.name, panel);
+                //}
             }
         }
         /// <summary>
