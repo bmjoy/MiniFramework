@@ -50,21 +50,18 @@ namespace MiniFramework
             if (tcpClient.Connected)
             {
                 NetworkStream stream = tcpClient.GetStream();
-                int recvBytes = stream.EndRead(ar);
-                if (recvBytes <= 0)
+                int recvLength = stream.EndRead(ar);
+                if (recvLength <= 0)
                 {
                     Debug.Log("远程客户端：" + tcpClient.Client.RemoteEndPoint + "已经断开");
                     remoteClients.Remove(tcpClient);
                     tcpClient.Close();
                     return;
                 }
-                byte[] realBytes = new byte[recvBytes];
-                Array.Copy(recvBuffer, 0, realBytes, 0, recvBytes);
+                byte[] recvBytes = new byte[recvLength];
+                Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
+                UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
-                if (ReceiveMsgHandler != null)
-                {
-                    ReceiveMsgHandler(realBytes);
-                }
             }
         }
 
@@ -79,6 +76,20 @@ namespace MiniFramework
                 TcpClient client = remoteClients[i];
                 if (client.Connected)
                     client.GetStream().BeginWrite(data, 0, data.Length, SendResult, client);
+            }
+        }
+        public override void Send(PackHead head, byte[] data, string ip = null)
+        {
+            if (!IsConnect)
+            {
+                return;
+            }
+            byte[] sendData = Packer(head, data);
+            for (int i = 0; i < remoteClients.Count; i++)
+            {
+                TcpClient client = remoteClients[i];
+                if (client.Connected)
+                    client.GetStream().BeginWrite(sendData, 0, sendData.Length, SendResult, client);
             }
         }
         private void SendResult(IAsyncResult ar)

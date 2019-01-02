@@ -1,6 +1,4 @@
-﻿using System.Text;
-using UnityEngine;
-namespace MiniFramework
+﻿namespace MiniFramework
 {
     public class SocketManager : MonoSingleton<SocketManager>
     {
@@ -16,12 +14,8 @@ namespace MiniFramework
         public int MaxBufferSize;
         public int MaxConnections;
 
-        public Net Net;
-        public override void OnSingletonInit()
-        {
-            MsgManager.Instance.RegisterMsg(this, "SocketManager", MsgCallback);
-        }
-        private void Start()
+        private Net Net;
+        protected override void OnSingletonInit()
         {
             Init();
         }
@@ -39,13 +33,24 @@ namespace MiniFramework
                     Net = new TCPClient();
                     break;
             }
-            Net.Init(IP,Port,MaxBufferSize,MaxConnections);
-            Net.ReceiveMsgHandler += (data) => MsgManager.Instance.SendMsg("SocketManager", data);
+            Net.Init(IP, Port, MaxBufferSize, MaxConnections);
         }
-        void MsgCallback(params object[] data)
+        public void Launch()
         {
-            string msg = Encoding.UTF8.GetString((byte[])data[0]);
-            Debug.Log("接收消息：" + msg);
+            Net.Launch();
+        }
+
+        public void Send(int msgID, byte[] data, string ip = null)
+        {
+            PackHead head = new PackHead();
+            head.MsgID = msgID;
+            head.BodyLength = data.Length;
+            Net.Send(head,data,ip);
+        }
+        public void Close()
+        {
+            Net.Close();
+            Net.OtherBytes = new byte[0];
         }
         private void OnDestroy()
         {

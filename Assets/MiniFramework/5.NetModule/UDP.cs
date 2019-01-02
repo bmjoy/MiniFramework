@@ -35,10 +35,7 @@ namespace MiniFramework
             udpClient = (UdpClient)ar.AsyncState;
             IPEndPoint remote = new IPEndPoint(IPAddress.Any, Port);
             recvBuffer = udpClient.EndReceive(ar, ref remote);
-            if (ReceiveMsgHandler != null)
-            {
-                ReceiveMsgHandler(recvBuffer);
-            }
+            UnPack(recvBuffer);
             udpClient.BeginReceive(ReceiveResult, udpClient);
         }
         public override void Send(byte[] data,string ip)
@@ -47,6 +44,15 @@ namespace MiniFramework
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
                 udpClient.BeginSend(data, data.Length, endPoint, SendResult, udpClient);
+            }
+        }
+        public override void Send(PackHead head, byte[] data, string ip = null)
+        {
+            byte[] sendData = Packer(head, data);
+            if (IsConnect)
+            {
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
+                udpClient.BeginSend(sendData, sendData.Length, endPoint, SendResult, udpClient);
             }
         }
         private void SendResult(IAsyncResult ar)

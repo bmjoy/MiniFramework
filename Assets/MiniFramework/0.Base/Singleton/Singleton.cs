@@ -29,7 +29,7 @@ namespace MiniFramework
                 return mInstance;
             }
         }
-        public virtual void OnSingletonInit()
+        protected virtual void OnSingletonInit()
         {
 
         }

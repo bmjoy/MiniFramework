@@ -54,13 +54,10 @@ namespace MiniFramework
                     Close();
                     return;
                 }
-                byte[] realBytes = new byte[recvLength];
-                Array.Copy(recvBuffer, 0, realBytes, 0, recvLength);
+                byte[] recvBytes = new byte[recvLength];
+                Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
+                UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
-                if (ReceiveMsgHandler != null)
-                {
-                    ReceiveMsgHandler(realBytes);
-                }
             }
         }
 
@@ -69,6 +66,14 @@ namespace MiniFramework
             if (IsConnect)
             {
                 tcpClient.GetStream().BeginWrite(data, 0, data.Length, SendResult, tcpClient);
+            }
+        }
+        public override void Send(PackHead head,byte[] data,string ip = null)
+        {
+            byte[] sendData = Packer(head, data);
+            if (IsConnect)
+            {
+                tcpClient.GetStream().BeginWrite(sendData, 0, sendData.Length, SendResult, tcpClient);
             }
         }
         private void SendResult(IAsyncResult ar)

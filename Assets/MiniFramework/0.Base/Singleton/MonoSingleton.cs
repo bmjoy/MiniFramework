@@ -14,15 +14,13 @@
                     if (mInstance == null)
                     {
                         var obj = new GameObject(typeof(T).Name);                       
-                        mInstance = obj.AddComponent<T>();
-                        DontDestroyOnLoad(obj);
-                        mInstance.OnSingletonInit();
+                        obj.AddComponent<T>();
                     }
                 }
                 return mInstance;
             }
         }
-        public virtual void Awake()
+        protected virtual void Awake()
         {
             if (mInstance == null)
             {
@@ -35,7 +33,7 @@
                 Destroy(this.gameObject);
             }
         }
-        public virtual void OnSingletonInit()
+        protected virtual void OnSingletonInit()
         {
 
         }

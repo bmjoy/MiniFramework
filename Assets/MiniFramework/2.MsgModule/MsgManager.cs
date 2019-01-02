@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+
 namespace MiniFramework
 {
     public class MsgManager : MonoSingleton<MsgManager>
@@ -46,7 +48,7 @@ namespace MiniFramework
         {
             if (callback == null)
             {
-                throw new Exception("callback不能为null!");
+                Debug.LogError("callback不能为null!");
             }
             //确保一个消息名只有一组消息列表
             if (!msgHandlerDict.ContainsKey(msgName))
@@ -74,7 +76,7 @@ namespace MiniFramework
         {
             if (!msgHandlerDict.ContainsKey(msgName))
             {
-                throw new Exception("该消息名没有被注册");
+                Debug.LogError("该消息名没有被注册:"+msgName);
             }
             var handlers = msgHandlerDict[msgName];
             //从后向前遍历，删除item后前面item的索引不会变化

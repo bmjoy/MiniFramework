@@ -4,16 +4,15 @@ using System.Net.Sockets;
 
 namespace MiniFramework
 {
-    public abstract class Net
+    public abstract class Net : DataPacker
     {
         public string IP;
         public int Port;
         public int MaxBufferSize;
         public int MaxConnections;
-        public bool IsConnect  { get; set; }
+        public bool IsConnect { get; set; }
         public Action ConnectFailed;
         public Action ConnectSuccess;
-        public Action<byte[]> ReceiveMsgHandler;
         public void Init(string ip, int port, int maxBufferSize)
         {
             IP = ip;
@@ -23,10 +22,11 @@ namespace MiniFramework
         public void Init(string ip, int port, int maxBufferSize, int maxConnections)
         {
             Init(ip, port, maxBufferSize);
-            MaxConnections = maxBufferSize;
+            MaxConnections = maxConnections;
         }
         public abstract void Launch();
         public abstract void Send(byte[] data, string ip = null);
+        public virtual void Send(PackHead head, byte[] data, string ip = null) { }
         public abstract void Close();
         public string GetLocalIP()
         {

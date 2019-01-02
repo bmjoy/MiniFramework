@@ -40,7 +40,7 @@ namespace MiniFramework
         GUIContent showKPPLabel = new GUIContent("ShowKPP", "Show the left param");
 
         // Use this for initialization
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             new FPSCounter(this);
