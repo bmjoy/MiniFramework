@@ -1,9 +1,10 @@
 ## 支持模块
 * 单例模板泛型实现，支持继承MonoBehaviour和非继承MonoBehaviour类
-* 逻辑队列，支持链式调用
+* 逻辑队列，支持链式调用  
 	```
 	this.Delay(3f, () => { Debug.Log("3f后执行"); });
-    this.Sequence().Delay(3f).Event(() => { Debug.Log("3f后执行"); }).Until(() => Input.GetKeyDown(KeyCode.Space)).Event(()=> { Debug.Log("按下空格键执行"); }).Execute();
+    this.Sequence().Delay(3f).Event(() => { Debug.Log("3f后执行"); }).Until(() =>  
+	Input.GetKeyDown(KeyCode.Space)).Event(()=> { Debug.Log("按下空格键执行"); }).Execute();
 	```
 * 对象池，支持类对象和Prefab
 * 简单有限状态机实现
@@ -70,11 +71,11 @@
 	```
 ## 网络通信模块
 * 支持封包解包
->	>解决三种粘包现象
->	>1、接收到部分包A
->	>2、接收到完整包A+部分包B
->	>3、接收到完整包A+完整包B+.....+部分包X
-* 支持TCP异步
+>	>解决三种粘包现象  
+>	>1、接收到部分包A  
+>	>2、接收到完整包A+部分包B  
+>	>3、接收到完整包A+完整包B+.....+部分包X  
+* 支持TCP异步  
 * 支持UDP异步
 
 	
