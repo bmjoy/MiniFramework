@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MiniFramework;
-public class Download : MonoBehaviour {
-	FileDownloader load;
-	// Use this for initialization
-	void Start () {
-		string url ="https://vscode.cdn.azure.cn/stable/dea8705087adb1b5e5ae1d9123278e178656186a/VSCodeUserSetup-x64-1.30.1.exe";
-		string path = Application.streamingAssetsPath;
-		load = new FileDownloader(url,path);
-		load.Download();
-	}
+public class Download : MonoBehaviour
+{
+    FileDownloader load;
+    // Use this for initialization
+    void Start()
+    {
+        string url = "http://download.unity3d.com/download_unity/6e9a27477296/TargetSupportInstaller/UnitySetup-Android-Support-for-Editor-2018.3.0f2.exe";
+        string path = Application.streamingAssetsPath;
+        load = new FileDownloader(url, path);
+        load.Download();
+    }
 
-	// Update is called once per frame
-	void Update () {
-		if(load.GetProcess()!=1){
-			Debug.Log(load.GetProcess());
-		}
+    // Update is called once per frame
+    void Update()
+    {
+        if (load.GetProcess() > 0 && load.GetProcess() < 1)
+        {
+            Debug.Log(load.GetProcess());
+        }
+    }
 
-	}
-
-	void OnDestroy(){
-		load.Close();
-	}
+    void OnDestroy()
+    {
+        load.Close();
+    }
 }

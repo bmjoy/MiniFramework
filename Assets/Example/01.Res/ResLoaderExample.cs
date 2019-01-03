@@ -12,8 +12,6 @@ public class ResLoaderExample : MonoBehaviour
         ResLoader.Instance.LoadAllAssetBundle(path, LoadCallback);
         yield return new WaitForEndOfFrame();//等待上一帧AssetBundle释放 不然会报错
         ResLoader.Instance.LoadAssetBundle(path, "Sphere", LoadCallback);
-       // string path2 = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/StandaloneWindows";
-      //  Dictionary<string ,Hash128> dict = ResLoader.Instance.GetAllAssetBundleHash(path2);
     }
     public void LoadCallback(Object[] objs)
     {

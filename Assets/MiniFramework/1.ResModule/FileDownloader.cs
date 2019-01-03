@@ -66,6 +66,11 @@ namespace MiniFramework
         private void RespCallBack(IAsyncResult result)
         {
             HttpWebRequest request = (HttpWebRequest)result.AsyncState;
+            if (request.Connection == null)
+            {
+                Debug.Log("请求下载地址无效！");
+                return;
+            }
             HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);
             responseStream = response.GetResponseStream();
             fileLength = response.ContentLength + curLength;
@@ -97,8 +102,10 @@ namespace MiniFramework
 
         public void Close()
         {
-            fileStream.Close();
-            responseStream.Close();
+            if (fileStream != null)
+                fileStream.Close();
+            if (responseStream != null)
+                responseStream.Close();
         }
     }
 }
