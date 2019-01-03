@@ -8,7 +8,7 @@
 	```
 * 对象池，支持类对象和Prefab
 * 简单有限状态机实现
-* 支持AssetBundle多平台打包
+* AssetBundle多平台打包
 ## ResManager资源管理模块
 * 资源下载 ，支持断点续传
 	```
@@ -29,7 +29,8 @@
 	MsgManager.Instance.SendMsg("MsgID", "Hello");
 	`
 ## IO文件操作模块
-* 支持AES、DES、MD5、RSA加密  
+* 文本，二进制读写
+* AES、DES、MD5、RSA加密  
 	```
 	//AES加密解密
 	SecurityFactory.AES.Encrypt();
@@ -51,7 +52,7 @@
     var EncryptText = SecurityFactory.RSA.Encrypt(normalText, publickey);
     var DecryptText = SecurityFactory.RSA.Decrypt(EncryptText, privatekey);
 	```
-* 支持对象序列化和反序列化	
+* 对象序列化和反序列化	
 	```
 	//Binary
 	SerializeFactory.Binary.Serialize();
@@ -70,12 +71,15 @@
 	SerializeFactory.ProtoBuff.Deserialize<T>();
 	```
 ## 网络通信模块
-* 支持封包解包
+* http通信，包括get、post和put请求  
+* TCP异步  
+* UDP异步
+* 封包解包
 >	>解决三种粘包现象  
 >	>1、接收到部分包A  
 >	>2、接收到完整包A+部分包B  
 >	>3、接收到完整包A+完整包B+.....+部分包X  
-* 支持TCP异步  
-* 支持UDP异步
-
+## 日志模块
+>	>支持控制台日志输出、内存查看、帧数记录
+## UI模块
 	

@@ -17,8 +17,8 @@ public class SerializeExample : MonoBehaviour
         obj.name = "haha";
         obj.Age.Add(1.1415926d);
         byte[] data = SerializeFactory.Json.Serialize(obj);
-        FileUtil.SaveBinaryToLocal(data, Application.streamingAssetsPath + "/json");
-        byte[] data2 = FileUtil.ReadBinaryFromLocal(Application.streamingAssetsPath + "/json");
+        FileUtil.SaveToLocalAsync(data, Application.streamingAssetsPath + "/json");
+        byte[] data2 = FileUtil.ReadBytesFromLocal(Application.streamingAssetsPath + "/json");
        // serializeContent = BitConverter.ToString(data);
         Obj = SerializeFactory.Json.Deserialize<SerializeObj>(data2);
     }

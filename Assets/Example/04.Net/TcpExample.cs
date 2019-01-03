@@ -4,7 +4,7 @@ using MiniFramework;
 using System.Text;
 using ProtoBuf;
 
-public class NewBehaviourScript : MonoBehaviour {
+public class TcpExample : MonoBehaviour {
     public Button Launch;
     public Button Send;
     public Button Close;
