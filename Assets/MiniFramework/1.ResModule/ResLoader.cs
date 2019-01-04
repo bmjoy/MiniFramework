@@ -8,7 +8,7 @@ namespace MiniFramework
 {
     public class ResLoader : MonoSingleton<ResLoader>
     {
-        private ResLoader() { }
+        protected override void OnSingletonInit(){}
         /// <summary>
         /// 获取所有AssetBundle的Hash128
         /// </summary>

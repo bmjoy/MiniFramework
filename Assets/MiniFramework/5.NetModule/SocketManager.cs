@@ -45,7 +45,7 @@
             PackHead head = new PackHead();
             head.MsgID = msgID;
             head.BodyLength = data.Length;
-            Net.Send(head,data,ip);
+            Net.Send(head, data, ip);
         }
         public void Close()
         {
@@ -54,7 +54,8 @@
         }
         private void OnDestroy()
         {
-            Net.Close();
+            if (Net != null)
+                Net.Close();
         }
     }
 

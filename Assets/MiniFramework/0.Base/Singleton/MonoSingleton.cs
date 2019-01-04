@@ -20,7 +20,7 @@
                 return mInstance;
             }
         }
-        protected virtual void Awake()
+        private void Awake()
         {
             if (mInstance == null)
             {
@@ -33,10 +33,7 @@
                 Destroy(this.gameObject);
             }
         }
-        protected virtual void OnSingletonInit()
-        {
-
-        }
+        protected abstract void OnSingletonInit();
         public virtual void Dispose()
         {
             DestroyImmediate(mInstance.gameObject);

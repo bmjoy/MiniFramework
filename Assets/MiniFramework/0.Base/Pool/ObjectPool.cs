@@ -30,6 +30,7 @@ namespace MiniFramework
             }
             return 0;
         }
+        protected override void OnSingletonInit(){}
         private void Start()
         {
             for (int i = 0; i < NeedCachePrefabs.Count; i++)

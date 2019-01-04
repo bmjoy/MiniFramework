@@ -40,9 +40,8 @@ namespace MiniFramework
         GUIContent showKPPLabel = new GUIContent("ShowKPP", "Show the left param");
 
         // Use this for initialization
-        protected override void Awake()
+        protected override void OnSingletonInit()
         {
-            base.Awake();
             new FPSCounter(this);
             new MemoryDetector(this);
             Application.logMessageReceivedThreaded += HandleLog;
@@ -69,15 +68,14 @@ namespace MiniFramework
         private void OnGUI()
         {
             GUI.color = Color.red;
-            if (!showGUI)
-            {
-                return;
-            }
             if (OnGUICallback != null && showKPP)
             {
                 OnGUICallback();
             }
-
+            if (!showGUI)
+            {
+                return;
+            }          
             windowRect = GUI.Window(123, windowRect, ConsoleWindow, "Console");
         }      
         void ConsoleWindow(int windowId)

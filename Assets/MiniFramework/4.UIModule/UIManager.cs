@@ -25,6 +25,7 @@ namespace MiniFramework
             public OperationType Type;
             public object[] paramList;
         }
+        protected override void OnSingletonInit() { }
         public void Start()
         {
             IdleQueue = true;
@@ -79,7 +80,7 @@ namespace MiniFramework
             if (UIPanelDict.ContainsKey(panelName))
             {
                 UIPanel up = UIPanelDict[panelName];
-                if(up.State == UIPanelState.Open)
+                if (up.State == UIPanelState.Open)
                 {
                     QueueObject qo = new QueueObject();
                     qo.UPanel = up;

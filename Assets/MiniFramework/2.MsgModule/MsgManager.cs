@@ -29,6 +29,7 @@ namespace MiniFramework
         private readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();
 
         private Queue<IdleMsg> idleMsgHandler = new Queue<IdleMsg>();
+        protected override void OnSingletonInit() { }
 
         void Update()
         {
@@ -76,7 +77,7 @@ namespace MiniFramework
         {
             if (!msgHandlerDict.ContainsKey(msgName))
             {
-                Debug.LogError("该消息名没有被注册:"+msgName);
+                Debug.LogError("该消息名没有被注册:" + msgName);
             }
             var handlers = msgHandlerDict[msgName];
             //从后向前遍历，删除item后前面item的索引不会变化
@@ -85,7 +86,7 @@ namespace MiniFramework
                 MsgHandler handler = handlers[i];
                 if (handler.Receiver != null)
                 {
-                    IdleMsg iMsg = new IdleMsg(paramList,handler.Callback);
+                    IdleMsg iMsg = new IdleMsg(paramList, handler.Callback);
                     idleMsgHandler.Enqueue(iMsg);
                 }
                 else
