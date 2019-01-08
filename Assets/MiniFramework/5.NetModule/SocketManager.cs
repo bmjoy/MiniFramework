@@ -15,11 +15,8 @@
         public int MaxConnections;
 
         private Net Net;
-        protected override void OnSingletonInit()
-        {
-            Init();
-        }
-        private void Init()
+        protected override void OnSingletonInit(){}
+        public void Launch()
         {
             switch (Type)
             {
@@ -34,12 +31,8 @@
                     break;
             }
             Net.Init(IP, Port, MaxBufferSize, MaxConnections);
-        }
-        public void Launch()
-        {
             Net.Launch();
         }
-
         public void Send(int msgID, byte[] data, string ip = null)
         {
             PackHead head = new PackHead();
@@ -50,7 +43,6 @@
         public void Close()
         {
             Net.Close();
-            Net.OtherBytes = new byte[0];
         }
         private void OnDestroy()
         {

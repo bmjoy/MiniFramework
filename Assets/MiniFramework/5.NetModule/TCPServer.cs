@@ -60,7 +60,7 @@ namespace MiniFramework
                 }
                 byte[] recvBytes = new byte[recvLength];
                 Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
-                UnPack(recvBytes);
+                DataPacker.UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
             }
         }
@@ -84,7 +84,7 @@ namespace MiniFramework
             {
                 return;
             }
-            byte[] sendData = Packer(head, data);
+            byte[] sendData = DataPacker.Packer(head, data);
             for (int i = 0; i < remoteClients.Count; i++)
             {
                 TcpClient client = remoteClients[i];

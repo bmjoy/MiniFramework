@@ -36,7 +36,7 @@ namespace MiniFramework
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
                 IsConnect = true;
                 if (ConnectSuccess != null)
-                    ConnectSuccess();   
+                    ConnectSuccess();
                 Debug.Log("客户端连接成功");
 
             }
@@ -56,7 +56,7 @@ namespace MiniFramework
                 }
                 byte[] recvBytes = new byte[recvLength];
                 Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
-                UnPack(recvBytes);
+                DataPacker.UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
             }
         }
@@ -70,7 +70,7 @@ namespace MiniFramework
         }
         public override void Send(PackHead head,byte[] data,string ip = null)
         {
-            byte[] sendData = Packer(head, data);
+            byte[] sendData = DataPacker.Packer(head, data);
             if (IsConnect)
             {
                 tcpClient.GetStream().BeginWrite(sendData, 0, sendData.Length, SendResult, tcpClient);
