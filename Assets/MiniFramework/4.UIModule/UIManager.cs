@@ -11,7 +11,7 @@ namespace MiniFramework
         public Camera UICamera;
         public EventSystem EventSystem;
         private string AssetBundlePath;
-        private readonly Dictionary<string, UIPanel> UIPanelDict = new Dictionary<string, UIPanel>();
+        private readonly Dictionary<string, GameObject> UIPanelDict = new Dictionary<string, GameObject>();
         private readonly Queue<QueueObject> PanelQueue = new Queue<QueueObject>();
         public bool IdleQueue;
         enum OperationType
@@ -21,9 +21,8 @@ namespace MiniFramework
         }
         class QueueObject
         {
-            public UIPanel UPanel;
+            public GameObject UPanel;
             public OperationType Type;
-            public object[] paramList;
         }
         protected override void OnSingletonInit() { }
         public void Start()
@@ -47,15 +46,14 @@ namespace MiniFramework
         /// 打开UI(队列)
         /// </summary>
         /// <param name="panelName"></param>
-        public void OpenUIByQueue(string panelName, params object[] paramList)
+        public void OpenUIByQueue(string panelName)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel up = UIPanelDict[panelName];
+                GameObject up = UIPanelDict[panelName];
                 QueueObject qo = new QueueObject();
                 qo.UPanel = up;
                 qo.Type = OperationType.Open;
-                qo.paramList = paramList;
                 PanelQueue.Enqueue(qo);
             }
         }
@@ -63,46 +61,39 @@ namespace MiniFramework
         /// 打开UI
         /// </summary>
         /// <param name="panelName"></param>
-        public void OpenUI(string panelName, params object[] paramList)
+        public void OpenUI(string panelName)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel up = UIPanelDict[panelName];
-                up.Open(paramList);
+                GameObject up = UIPanelDict[panelName];
+                up.SetActive(true);
             }
         }
         /// <summary>
         /// 关闭UI(队列)
         /// </summary>
         /// <param name="panelName"></param>
-        public void CloseUIByQueue(string panelName, params object[] paramList)
+        public void CloseUIByQueue(string panelName)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel up = UIPanelDict[panelName];
-                if (up.State == UIPanelState.Open)
-                {
-                    QueueObject qo = new QueueObject();
-                    qo.UPanel = up;
-                    qo.Type = OperationType.Close;
-                    qo.paramList = paramList;
-                    PanelQueue.Enqueue(qo);
-                }
+                GameObject up = UIPanelDict[panelName];
+                QueueObject qo = new QueueObject();
+                qo.UPanel = up;
+                qo.Type = OperationType.Close;
+                PanelQueue.Enqueue(qo);
             }
         }
         /// <summary>
         /// 关闭UI
         /// </summary>
         /// <param name="panelName"></param>
-        public void CloseUI(string panelName, params object[] paramList)
+        public void CloseUI(string panelName)
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel up = UIPanelDict[panelName];
-                if (up.State == UIPanelState.Open)
-                {
-                    up.Close(paramList);
-                }
+                GameObject up = UIPanelDict[panelName];
+                up.SetActive(false);
             }
         }
         /// <summary>
@@ -146,7 +137,7 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel panel = UIPanelDict[panelName];
+                GameObject panel = UIPanelDict[panelName];
                 Image[] images = panel.transform.GetComponentsInChildren<Image>();
                 for (int i = 0; i < images.Length; i++)
                 {
@@ -167,7 +158,7 @@ namespace MiniFramework
         {
             if (UIPanelDict.ContainsKey(panelName))
             {
-                UIPanel panel = UIPanelDict[panelName];
+                GameObject panel = UIPanelDict[panelName];
                 Image[] images = panel.transform.GetComponentsInChildren<Image>();
                 for (int i = 0; i < images.Length; i++)
                 {
@@ -225,7 +216,7 @@ namespace MiniFramework
         {
             for (int i = 0; i < Canvas.transform.childCount; i++)
             {
-                UIPanel panel = Canvas.transform.GetChild(i).GetComponent<UIPanel>();
+                GameObject panel = Canvas.transform.GetChild(i).gameObject;
                 if (panel != null && !UIPanelDict.ContainsKey(panel.name))
                 {
                     UIPanelDict.Add(panel.name, panel);
@@ -243,10 +234,10 @@ namespace MiniFramework
                 switch (qo.Type)
                 {
                     case OperationType.Close:
-                        qo.UPanel.Close(qo.paramList);
+                        //qo.UPanel.Close(qo.paramList);
                         break;
                     case OperationType.Open:
-                        qo.UPanel.Open(qo.paramList);
+                        //qo.UPanel.Open(qo.paramList);
                         break;
                 }
             }
