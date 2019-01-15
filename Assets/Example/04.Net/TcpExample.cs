@@ -31,6 +31,8 @@ public class TcpExample : MonoBehaviour {
             msg.sex = 1;
             byte[] sendData = SerializeFactory.ProtoBuff.Serialize(msg);
             SocketManager.Instance.Send(100,sendData, IP.text);
+            SocketManager.Instance.Send(100,sendData, IP.text);
+            SocketManager.Instance.Send(100,sendData, IP.text);
         });
         Close.onClick.AddListener(() =>
         {

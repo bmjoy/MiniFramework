@@ -34,7 +34,7 @@ namespace MiniFramework
             Array.Copy(data, 0, totalData, OtherBytes.Length, data.Length);
             if (totalData.Length < HeadLength)
             {
-                Debug.Log("接收消息头不足！当前接收:"+totalData.Length);
+                //消息头不足
                 OtherBytes = totalData;
                 return;
             }
@@ -43,22 +43,24 @@ namespace MiniFramework
             PackHead head = SerializeFactory.Binary.DeserializeByMarshal<PackHead>(headData);
             if (totalData.Length < head.BodyLength + HeadLength)
             {
-                Debug.Log("接收消息体不足！当前接收:"+totalData.Length);
+                //消息体不足
                 OtherBytes = totalData;
                 return;
             }
             byte[] bodyData = new byte[head.BodyLength];
             Array.Copy(totalData, HeadLength, bodyData, 0, bodyData.Length);
+            //整包发送
             SendPack(head, bodyData);
             int leftLength = totalData.Length - HeadLength - bodyData.Length;
             OtherBytes = new byte[leftLength];
+            Debug.Log("完成发送("+HeadLength+".."+head.BodyLength+")剩余数据："+leftLength);
             if (leftLength > 0)
             {
-                Array.Copy(totalData, HeadLength + bodyData.Length, OtherBytes, 0, OtherBytes.Length);
+                Array.Copy(totalData, HeadLength + bodyData.Length, OtherBytes, 0, leftLength);
                 if (leftLength > HeadLength)
                 {
-                    Debug.Log("继续进行拆包");
-                    UnPack(OtherBytes);
+                    //拆包
+                   UnPack(new byte[0]);
                 }
             }
         }
