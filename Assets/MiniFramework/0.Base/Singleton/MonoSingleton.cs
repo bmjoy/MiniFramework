@@ -13,14 +13,14 @@
                     mInstance = Object.FindObjectOfType<T>();
                     if (mInstance == null)
                     {
-                        var obj = new GameObject(typeof(T).Name);                       
+                        var obj = new GameObject(typeof(T).Name);
                         obj.AddComponent<T>();
                     }
                 }
                 return mInstance;
             }
         }
-        private void Awake()
+        protected virtual void Awake()
         {
             if (mInstance == null)
             {
@@ -33,8 +33,8 @@
                 Destroy(this.gameObject);
             }
         }
-        protected abstract void OnSingletonInit();
-        public virtual void Dispose()
+        protected virtual void OnSingletonInit(){}
+        protected virtual void Dispose()
         {
             DestroyImmediate(mInstance.gameObject);
         }

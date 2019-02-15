@@ -18,7 +18,7 @@ namespace MiniFramework
                 Name = name;
             }
             public readonly Dictionary<string, FSMTranslation> mTranslationDict = new Dictionary<string, FSMTranslation>();//每个状态对应一个跳转
-        }
+        } 
         class FSMTranslation
         {
             public string FromState;
@@ -33,7 +33,7 @@ namespace MiniFramework
                 OnTranslationCallback = onTranslationCallback;
             }
         }
-        Dictionary<string, FSMState> mStateDict = new Dictionary<string, FSMState>();   //状态池   
+        Dictionary<string, FSMState> mStateDict = new Dictionary<string, FSMState>();   //状态池
         /// <summary>
         /// 添加跳转
         /// </summary>
@@ -60,7 +60,7 @@ namespace MiniFramework
         {
             if(!mStateDict.ContainsKey(stateName))
             {
-                mStateDict[stateName] = new FSMState(stateName);               
+                mStateDict[stateName] = new FSMState(stateName);
             }
             mCurState = stateName;
         }
