@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-public class UIDrag : MonoBehaviour, IBeginDragHandler, IDragHandler
+public class UIDragComponent : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
     Vector3 offset;
     public void OnBeginDrag(PointerEventData eventData)

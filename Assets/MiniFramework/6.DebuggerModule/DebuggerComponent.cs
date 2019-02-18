@@ -1,31 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 namespace MiniFramework
 {
-    public sealed partial class DebuggerComponent : MonoBehaviour
+    public sealed partial class DebuggerComponent : MonoSingleton<DebuggerComponent>
     {
         //调试器默认标题
         static readonly string DefaultWindowTitle = "<b>MiniFramework Debugger</b>";
+        static readonly string DefaultMiniWindowTitle = "<b>Debugger</b>";
         //调试器默认大小
-        static readonly Rect DefaultWindowRect = new Rect(10f, 10f, 640f, 480f);
-        public float DefaultWindowScale = 1f;
+        static readonly Rect DefaultWindowRect = new Rect(0, 0, Screen.width/2, Screen.height/2);
+        static readonly float DefaultWindowScale = 1f;
 
         private Rect windowRect = DefaultWindowRect;
-        private Rect smallWindowRect = new Rect(10f, 10f, 60f, 60f);
+        private float windowScale = DefaultWindowScale;
+        private Rect smallWindowRect = new Rect(0, 0, 60f, 60f);
         private Rect dragRect = new Rect(0, 0, float.MaxValue, 25f);
         private bool showSmallWindow = true;
-        private List<IDebuggerWindow> windowsList = new List<IDebuggerWindow>();
-        private List<string> windowsName = new List<string>();
+        private List<IDebuggerWindow> windowList = new List<IDebuggerWindow>();
+        private List<string> toolList = new List<string>();
         private int curSelectedWindowIndex;
         private ConsoleWindow consoleWindow = new ConsoleWindow();
-        private ProfilerWindow profilerWindow = new ProfilerWindow();
+        private InformationWindow informationWindow = new InformationWindow();
+        private MemoryWindow memoryWindow = new MemoryWindow();
+        private SettingsWindow settingWindow = new SettingsWindow();
         private FPSCounter fpsCounter = new FPSCounter();
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             RegisterDebuggerWindow("<b>Console</b>", consoleWindow);
-            RegisterDebuggerWindow("<b>Profiler</b>", profilerWindow);
+            RegisterDebuggerWindow("<b>Information</b>", informationWindow);
+            RegisterDebuggerWindow("<b>Memory</b>", memoryWindow);
+            RegisterDebuggerWindow("<b>Setting</b>", settingWindow);
             RegisterDebuggerWindow("<b>Close</b>", null);
         }
         private void Update(){
@@ -33,15 +38,13 @@ namespace MiniFramework
         }
         private void OnGUI()
         {
-            GUI.skin = GUI.skin;
-            GUI.matrix = Matrix4x4.Scale(new Vector3(DefaultWindowScale, DefaultWindowScale, 1f));
+            GUI.matrix = Matrix4x4.Scale(new Vector3(windowScale, windowScale, 1f));
             if (showSmallWindow)
             {
-                smallWindowRect = GUILayout.Window(0, smallWindowRect, DrawSmallWindow, "<b>Debugger</b>");
+                smallWindowRect = GUILayout.Window(0, smallWindowRect, DrawSmallWindow, DefaultMiniWindowTitle);
             }
             else
             {
-
                 windowRect = GUILayout.Window(0, windowRect, DrawWindow, DefaultWindowTitle);
             }
         }
@@ -58,25 +61,25 @@ namespace MiniFramework
         private void DrawWindow(int windowId)
         {
             GUI.DragWindow(dragRect);
-            int toolbarIndex = GUILayout.Toolbar(curSelectedWindowIndex, windowsName.ToArray(), GUILayout.Height(30f), GUILayout.MaxWidth(Screen.width));
-            if (toolbarIndex >= windowsList.Count)
+            int toolbarIndex = GUILayout.Toolbar(curSelectedWindowIndex, toolList.ToArray(), GUILayout.Height(30f));
+            if (toolbarIndex >= windowList.Count)
             {
                 showSmallWindow = true;
             }
             else
             {
-                windowsList[curSelectedWindowIndex].OnDraw();
+                windowList[toolbarIndex].OnDraw();
                 curSelectedWindowIndex = toolbarIndex;
             }
         }
 
         private void RegisterDebuggerWindow(string title, IDebuggerWindow window)
         {
-            windowsName.Add(title);
+            toolList.Add(title);
             if (window != null)
             {
                 window.Initialize();
-                windowsList.Add(window);
+                windowList.Add(window);
             }
         }
     }

@@ -4,13 +4,13 @@ using UnityEngine;
 using MiniFramework;
 public class Download : MonoBehaviour
 {
-    FileDownloader load;
+    Downloader load;
     // Use this for initialization
     void Start()
     {
         string url = "http://download.unity3d.com/download_unity/6e9a27477296/TargetSupportInstaller/UnitySetup-Android-Support-for-Editor-2018.3.0f2.exe";
         string path = Application.streamingAssetsPath;
-        load = new FileDownloader(url, path);
+        load = new Downloader(url, path);
         load.Download();
     }
 

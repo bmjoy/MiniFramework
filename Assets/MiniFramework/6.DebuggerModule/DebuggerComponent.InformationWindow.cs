@@ -3,7 +3,7 @@ using UnityEngine.Profiling;
 
 namespace MiniFramework{
     public partial class DebuggerComponent{
-        private class ProfilerWindow : IDebuggerWindow
+        private class InformationWindow : IDebuggerWindow
         {
             private const float MBSize= 1024*1024;
             public void Initialize(params object[] args)

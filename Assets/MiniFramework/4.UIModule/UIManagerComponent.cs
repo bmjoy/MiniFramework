@@ -5,14 +5,17 @@ using UnityEngine.UI;
 
 namespace MiniFramework
 {
-    public class UIManager : MonoSingleton<UIManager>
+    public class UIManagerComponent : MonoSingleton<UIManagerComponent>
     {
+        public string UIDownloadPath = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui";
+        public string UIResourecePath = "UI";
+        
+        private readonly Dictionary<string, GameObject> UIPanelDict = new Dictionary<string, GameObject>();
+        private readonly Queue<QueueObject> PanelQueue = new Queue<QueueObject>();
+
         public Canvas Canvas;
         public Camera UICamera;
         public EventSystem EventSystem;
-        private string AssetBundlePath;
-        private readonly Dictionary<string, GameObject> UIPanelDict = new Dictionary<string, GameObject>();
-        private readonly Queue<QueueObject> PanelQueue = new Queue<QueueObject>();
         public bool IdleQueue;
         enum OperationType
         {
@@ -24,18 +27,14 @@ namespace MiniFramework
             public GameObject UPanel;
             public OperationType Type;
         }
-        protected override void OnSingletonInit() { }
         public void Start()
         {
-            IdleQueue = true;
-
-            AssetBundlePath = Application.streamingAssetsPath + "/AssetBundle/StandaloneWindows/ui";
             GetCanvas();
             GetCamera();
             GetEventSystem();
             GetDefaultUI();
 
-            ResLoader.Instance.LoadAllAssetBundle(AssetBundlePath, LoadUIFromAssetBundle);
+            ResLoader.Instance.LoadAllAssetBundle(UIDownloadPath, LoadUIFromAssetBundle);
         }
 
         private void Update()

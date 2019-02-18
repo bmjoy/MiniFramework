@@ -4,7 +4,7 @@ using System.Net;
 using UnityEngine;
 namespace MiniFramework
 {
-    public class FileDownloader
+    public class Downloader
     {
         private string url;
         private string saveDir;
@@ -15,14 +15,15 @@ namespace MiniFramework
         private long curLength;
         private long fileLength;
         private byte[] buffer = new byte[1024];
-        public FileDownloader(string url, string saveDir)
+        private int timeout = 20000;
+        public Downloader(string url, string saveDir)
         {
             this.url = url;
             this.saveDir = saveDir;
             FileName = GetFileNameFromUrl(url);
             this.tempSavePath = saveDir + "/" + FileName + ".temp";
         }
-        public FileDownloader(string url, string saveDir, string fileName)
+        public Downloader(string url, string saveDir, string fileName)
         {
             this.url = url;
             this.saveDir = saveDir;
@@ -46,6 +47,7 @@ namespace MiniFramework
         {
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
             request.Method = "GET";
+            request.Timeout = timeout;
             ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
             if (File.Exists(tempSavePath))
@@ -68,7 +70,7 @@ namespace MiniFramework
             HttpWebRequest request = (HttpWebRequest)result.AsyncState;
             if (request.Connection == null)
             {
-                Debug.Log("请求下载地址无效！");
+                Debug.LogWarning("请求下载地址无效！");
                 return;
             }
             HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);

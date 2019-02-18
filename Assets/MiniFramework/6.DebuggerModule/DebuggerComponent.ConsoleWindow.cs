@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace MiniFramework
@@ -7,11 +7,13 @@ namespace MiniFramework
     {
         private class ConsoleWindow : IDebuggerWindow
         {
+            private int maxLine = 300;
+
             private int logCount = 0;
             private int warningCount = 0;
             private int errorCount = 0;
             private int exceptionCount = 0;
-            private int maxLine = 300;
+     
             private string dateTimeFormat = "[HH:mm:ss.fff]";
             private Queue<LogNode> logNodes = new Queue<LogNode>();
             private LogNode selectedNode = null;
@@ -44,11 +46,11 @@ namespace MiniFramework
                 RefreshCount();
                 GUILayout.BeginHorizontal();
                 {
-                    if (GUILayout.Button("Clear All", GUILayout.Width(100f)))
+                    if (GUILayout.Button("Clear All"))
                     {
                         Clear();
                     }
-                    lockScroll = GUILayout.Toggle(lockScroll, "Lock Scroll", GUILayout.Width(100f));
+                    lockScroll = GUILayout.Toggle(lockScroll, "Lock Scroll");
                     GUILayout.FlexibleSpace();
                     logFilter = GUILayout.Toggle(logFilter, "Info (" + logCount + ")");
                     warningFilter = GUILayout.Toggle(warningFilter, "Warning (" + warningCount + ")");
@@ -192,6 +194,40 @@ namespace MiniFramework
             private void Clear()
             {
                 logNodes.Clear();
+            }
+        }
+        /// <summary>
+        /// 日志类型
+        /// </summary>
+        private class LogNode : IPoolable
+        {
+            public DateTime LogTime;
+            public LogType LogType;
+            public string LogMsg;
+            public string StackTrace;
+
+            public bool IsRecycled { get; set; }
+
+            public LogNode Fill(LogType logType, string logMsg, string stackTrace)
+            {
+                LogTime = DateTime.Now;
+                LogType = logType;
+                LogMsg = logMsg;
+                StackTrace = stackTrace;
+                return this;
+            }
+
+            public void Clear()
+            {
+                LogTime = default(DateTime);
+                LogType = default(LogType);
+                LogMsg = default(string);
+                StackTrace = default(string);
+            }
+
+            public void OnRecycled()
+            {
+                Clear();
             }
         }
     }
