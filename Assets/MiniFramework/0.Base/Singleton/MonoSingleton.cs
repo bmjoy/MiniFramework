@@ -33,8 +33,8 @@
                 Destroy(this.gameObject);
             }
         }
-        protected virtual void OnSingletonInit(){}
-        protected virtual void Dispose()
+        public abstract void OnSingletonInit();
+        public virtual void Dispose()
         {
             DestroyImmediate(mInstance.gameObject);
         }

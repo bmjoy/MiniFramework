@@ -29,7 +29,7 @@ namespace MiniFramework
         private readonly Dictionary<string, List<MsgHandler>> msgHandlerDict = new Dictionary<string, List<MsgHandler>>();
 
         private Queue<IdleMsg> idleMsgHandler = new Queue<IdleMsg>();
-        protected override void OnSingletonInit() { }
+        public override void OnSingletonInit() { }
 
         void Update()
         {

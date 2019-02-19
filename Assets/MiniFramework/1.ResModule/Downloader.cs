@@ -1,105 +1,43 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using UnityEngine;
 namespace MiniFramework
 {
-    public class Downloader
+    public class Downloader : IDownloader
     {
+
+        public string FileName;
+        public event Action<string> DownloadSuccessed;
+        public event Action<string> DownloadFailed;
+
+        public int BufferSize = 1024 * 1024;
+        public int Timeout = 10000;
+        public long CurLength;
+        public long FileLength;
+
+        private byte[] buffer;
         private string url;
         private string saveDir;
         private string tempSavePath;
-        public string FileName;
-        private Stream responseStream;
+             
         private FileStream fileStream;
-        private long curLength;
-        private long fileLength;
-        private byte[] buffer = new byte[1024];
-        private int timeout = 20000;
-        public Downloader(string url, string saveDir)
+        private Stream responseStream;
+      
+        public Downloader(string url,string saveDir)
         {
             this.url = url;
             this.saveDir = saveDir;
             FileName = GetFileNameFromUrl(url);
-            this.tempSavePath = saveDir + "/" + FileName + ".temp";
         }
-        public Downloader(string url, string saveDir, string fileName)
+        public float GetDownloadProcess()
         {
-            this.url = url;
-            this.saveDir = saveDir;
-            FileName = fileName;
-            this.tempSavePath = saveDir + "/" + FileName + ".temp";
+            return FileLength > 0 ? (float)CurLength / FileLength : 0;
         }
-        private string GetFileNameFromUrl(string url)
-        {
-            FileName = url.Substring(url.LastIndexOf('/') + 1);
-            return FileName;
-        }
-        public float GetProcess()
-        {
-            if (fileLength > 0)
-            {
-                return (float)curLength / fileLength;
-            }
-            return 0;
-        }
-        public void Download()
-        {
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
-            request.Method = "GET";
-            request.Timeout = timeout;
-            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-            if (File.Exists(tempSavePath))
-            {
-                fileStream = File.OpenWrite(tempSavePath);
-                curLength = fileStream.Length;
-                fileStream.Seek(curLength, SeekOrigin.Current);
-                request.AddRange((int)curLength);
-            }
-            else
-            {
-                fileStream = new FileStream(tempSavePath, FileMode.Create, FileAccess.Write);
-                curLength = 0;
-            }
-            request.KeepAlive = false;
-            request.BeginGetResponse(new AsyncCallback(RespCallBack), request);
-        }
-        private void RespCallBack(IAsyncResult result)
-        {
-            HttpWebRequest request = (HttpWebRequest)result.AsyncState;
-            if (request.Connection == null)
-            {
-                Debug.LogWarning("请求下载地址无效！");
-                return;
-            }
-            HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);
-            responseStream = response.GetResponseStream();
-            fileLength = response.ContentLength + curLength;
-            responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
-        }
-        private void ReadCallback(IAsyncResult result)
-        {
-            responseStream = (Stream)result.AsyncState;
-            int read = responseStream.EndRead(result);
-            if (curLength < fileLength)
-            {
-                fileStream.Write(buffer, 0, read);
-                curLength += read;
-                responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
-            }
-            else
-            {
-                Close();
-
-                string savePath = saveDir + "/" + FileName;
-                if (File.Exists(savePath))
-                {
-                    File.Delete(savePath);
-                }
-                File.Move(tempSavePath, savePath);
-                Debug.Log("下载完成");
-            }
+        // Use this for initialization
+        public void Start()
+        {           
+            tempSavePath = saveDir + "/" + FileName + ".temp";
+            HttpRequest();
         }
 
         public void Close()
@@ -109,5 +47,70 @@ namespace MiniFramework
             if (responseStream != null)
                 responseStream.Close();
         }
+        private void HttpRequest()
+        {
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+            request.Method = "GET";
+            request.Timeout = Timeout;
+            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+            if (File.Exists(tempSavePath))
+            {
+                fileStream = File.OpenWrite(tempSavePath);
+                CurLength = fileStream.Length;
+                fileStream.Seek(CurLength, SeekOrigin.Current);
+                request.AddRange((int)CurLength);
+            }
+            else
+            {
+                fileStream = new FileStream(tempSavePath, FileMode.Create, FileAccess.Write);
+                CurLength = 0;
+            }
+            request.KeepAlive = false;
+            request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+        }
+        private void RespCallback(IAsyncResult result)
+        {
+            HttpWebRequest request = (HttpWebRequest)result.AsyncState;
+            if (!request.HaveResponse)
+            {
+                DownloadFailed(FileName);
+                return;
+            }
+            HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);
+            responseStream = response.GetResponseStream();
+            FileLength = response.ContentLength + CurLength;
+            buffer = new byte[BufferSize];
+            responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
+        }
+        private void ReadCallback(IAsyncResult result)
+        {
+            responseStream = (Stream)result.AsyncState;
+            int read = responseStream.EndRead(result);
+            if (CurLength < FileLength)
+            {
+                fileStream.Write(buffer, 0, read);
+                CurLength += read;
+                responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
+            }
+            else
+            {
+                Close();
+                string savePath = saveDir + "/" + FileName;
+                if (File.Exists(savePath))
+                {
+                    File.Delete(savePath);
+                }
+                File.Move(tempSavePath, savePath);
+                DownloadSuccessed(FileName);
+            }
+        }
+
+        private string GetFileNameFromUrl(string url)
+        {
+            FileName = url.Substring(url.LastIndexOf('/') + 1);
+            return FileName;
+        }
     }
 }
+

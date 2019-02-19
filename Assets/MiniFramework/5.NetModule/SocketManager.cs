@@ -15,7 +15,7 @@
         public int MaxConnections;
 
         private Net Net;
-        protected override void OnSingletonInit(){}
+        public override void OnSingletonInit(){}
         public void Launch()
         {
             switch (Type)

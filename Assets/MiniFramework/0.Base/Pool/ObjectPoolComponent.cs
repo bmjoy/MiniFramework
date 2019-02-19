@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class ObjectPool : MonoSingleton<ObjectPool>
+    public class ObjectPoolComponent : MonoSingleton<ObjectPoolComponent>
     {
         [Serializable]
-        public struct Prefab
+        public class Prefab
         {
             public GameObject Obj;
             public uint Max;
@@ -30,7 +30,7 @@ namespace MiniFramework
             }
             return 0;
         }
-        protected override void OnSingletonInit(){}
+        public override void OnSingletonInit(){}
         private void Start()
         {
             for (int i = 0; i < NeedCachePrefabs.Count; i++)

@@ -102,12 +102,12 @@ namespace MiniFramework
                         {
                             if (duplicateSampleCount > 0)
                             {
-                                GUILayout.Label("<b>" + samples.Count.ToString() + " " + typeName + "s(" + GetSizeString(sampleSize) + ") obtained at " + sampleTime.ToString("yyyy-MM-dd HH:mm:ss") + ", while " + duplicateSampleCount.ToString() + " " + typeName + "s (" + GetSizeString(duplicateSampleSize) + ") might be duplicated.</b>");
+                                GUILayout.Label("<b>" + samples.Count.ToString() + " " + typeName + "s(" + ByteUtil.AutoUnitConversion(sampleSize) + ") obtained at " + sampleTime.ToString("yyyy-MM-dd HH:mm:ss") + ", while " + duplicateSampleCount.ToString() + " " + typeName + "s (" + ByteUtil.AutoUnitConversion(duplicateSampleSize) + ") might be duplicated.</b>");
                             }
                             else
 
                             {
-                                GUILayout.Label("<b>" + samples.Count.ToString() + " " + typeName + "s(" + GetSizeString(sampleSize) + ") obtained at " + sampleTime.ToString("yyyy-MM-dd HH:mm:ss") + "</b>");
+                                GUILayout.Label("<b>" + samples.Count.ToString() + " " + typeName + "s(" + ByteUtil.AutoUnitConversion(sampleSize) + ") obtained at " + sampleTime.ToString("yyyy-MM-dd HH:mm:ss") + "</b>");
                             }
                             if (samples.Count > 0)
                             {
@@ -126,7 +126,7 @@ namespace MiniFramework
                                 {
                                     GUILayout.Label(samples[i].HighLight ? "<color=yellow>" + samples[i].Name + "</color>" : samples[i].Name);
                                     GUILayout.Label(samples[i].HighLight ? "<color=yellow>" + samples[i].Type + "</color>" : samples[i].Type, GUILayout.Width(240f));
-                                    GUILayout.Label(samples[i].HighLight ? "<color=yellow>" + GetSizeString(samples[i].Size) + "</color>" : GetSizeString(samples[i].Size), GUILayout.Width(80f));
+                                    GUILayout.Label(samples[i].HighLight ? "<color=yellow>" + ByteUtil.AutoUnitConversion(samples[i].Size) + "</color>" : ByteUtil.AutoUnitConversion(samples[i].Size), GUILayout.Width(80f));
                                 }
                                 GUILayout.EndHorizontal();
 
@@ -172,31 +172,7 @@ namespace MiniFramework
                         duplicateSampleCount++;
                     }
                 }
-            }
-            private string GetSizeString(long size)
-            {
-                if (size < 1024L)
-                {
-                    return size.ToString() + " Bytes";
-                }
-
-                if (size < 1024L * 1024L)
-                {
-                    return (size / 1024f).ToString("F2") + " KB";
-                }
-
-                if (size < 1024L * 1024L * 1024L)
-                {
-                    return (size / 1024f / 1024f).ToString("F2") + " MB";
-                }
-
-                if (size < 1024L * 1024L * 1024L * 1024L)
-                {
-                    return (size / 1024f / 1024f / 1024f).ToString("F2") + " GB";
-                }
-
-                return (size / 1024f / 1024f / 1024f / 1024f).ToString("F2") + " TB";
-            }
+            }          
             private int SampleComparer(Sample a, Sample b)
             {
                 int result = b.Size.CompareTo(a.Size);

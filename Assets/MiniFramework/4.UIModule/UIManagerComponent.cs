@@ -27,14 +27,16 @@ namespace MiniFramework
             public GameObject UPanel;
             public OperationType Type;
         }
+        public override void OnSingletonInit()
+        {
+            throw new System.NotImplementedException();
+        }
         public void Start()
         {
             GetCanvas();
             GetCamera();
             GetEventSystem();
             GetDefaultUI();
-
-            ResLoader.Instance.LoadAllAssetBundle(UIDownloadPath, LoadUIFromAssetBundle);
         }
 
         private void Update()
