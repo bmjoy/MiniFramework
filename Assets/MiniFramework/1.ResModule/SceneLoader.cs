@@ -26,7 +26,6 @@ namespace MiniFramework
         {
             SceneManager.UnloadSceneAsync(sceneName);
         }
-
         public void UnloadScene(int sceneIndex)
         {
             SceneManager.UnloadSceneAsync(sceneIndex);

@@ -9,10 +9,11 @@ public class ResLoaderExample : MonoBehaviour
     public string ManifestPath;
     public string ResourcePath;
     public string SceneName;
+    private AudioSource aSource;
     // Use this for initialization
     void Start()
     {
-        ResourceManager.Instance.AssetLoader.LoadAsset(ResourcePath, LoadCallback);
+        aSource = GetComponent<AudioSource>();
         ResourceManager.Instance.AssetLoader.LoadAssetBundles(Application.streamingAssetsPath + ABPath, LoadCallback);
         Dictionary<string,Hash128> manifest = ResourceManager.Instance.AssetLoader.LoadABManifest(Application.streamingAssetsPath+ManifestPath);
         foreach (var item in manifest)
@@ -20,7 +21,9 @@ public class ResLoaderExample : MonoBehaviour
             Debug.Log(item.Key + ":" + item.Value);
         }
 
-        ResourceManager.Instance.SceneLoader.LoadScene(SceneName,LoadCallback);
+        // ResourceManager.Instance.SceneLoader.LoadScene(SceneName,LoadCallback);
+
+        ResourceManager.Instance.AssetLoader.LoadAsset(ResourcePath,LoadCallback);
     }
     public void LoadCallback(UnityEngine.Object[] objs)
     {
@@ -32,8 +35,7 @@ public class ResLoaderExample : MonoBehaviour
     }
     public void LoadCallback(UnityEngine.Object obj)
     {
-        GameObject gobj = Instantiate(obj) as GameObject;
-        Debug.Log(gobj.name);
+        aSource.PlayOneShot (obj as AudioClip);
     }
     public void LoadCallback(AsyncOperation async)
     {

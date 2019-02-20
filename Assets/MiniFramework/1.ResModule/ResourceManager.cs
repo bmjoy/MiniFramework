@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace MiniFramework
+﻿namespace MiniFramework
 {
     public class ResourceManager : MonoSingleton<ResourceManager>
     {

@@ -25,7 +25,6 @@
             if (mInstance == null)
             {
                 mInstance = this as T;
-                DontDestroyOnLoad(this);
                 mInstance.OnSingletonInit();
             }
             else
@@ -36,7 +35,7 @@
         public abstract void OnSingletonInit();
         public virtual void Dispose()
         {
-            DestroyImmediate(mInstance.gameObject);
+            Destroy(mInstance.gameObject);
         }
     }
 }

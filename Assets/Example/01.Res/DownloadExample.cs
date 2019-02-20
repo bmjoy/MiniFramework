@@ -1,32 +1,73 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using MiniFramework;
-public class DownloadExample : MonoBehaviour {
-    string url = "https://netstorage.unity3d.com/unity/76b3e37670a4/UnityDownloadAssistant-2018.3.5f1.exe";
-    Downloader downloader;
-	// Use this for initialization
-	void Start () {
-        downloader = new Downloader();
-        downloader.Start(url, Application.streamingAssetsPath);
-        downloader.DownloadSuccessed += DownloadSuccess;
-        downloader.DownloadFailed += DownloadFailed;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        Debug.Log(downloader.GetDownloadProcess());
-        Debug.Log(downloader.GetDownloadSpeed());
+using System.Collections.Generic;
+using System;
+
+public class DownloadExample : MonoBehaviour
+{
+    public Button BtStart;
+    public Button BtPause;
+    public GameObject GOTask;
+    public List<Task> Tasks;
+    private Transform parent;
+    public Text Speed;
+    public Slider Process;
+    // Use this for initialization
+    void Start()
+    {
+        parent = GOTask.transform.parent;
+
+        for (int i = 0; i < Tasks.Count; i++)
+        {
+            GameObject obj = Instantiate(GOTask, parent);
+            obj.transform.SetAsFirstSibling();
+            obj.SetActive(true);
+            obj.GetComponentInChildren<InputField>().text = Tasks[i].Url;
+            Tasks[i].Process = obj.GetComponentInChildren<Slider>();
+            Tasks[i].Start = obj.GetComponentInChildren<Button>();
+            Tasks[i].Pause = obj.GetComponentsInChildren<Button>()[1];
+        }
+
+        BtStart.onClick.AddListener(() =>
+        {
+            for (int i = 0; i < Tasks.Count; i++)
+            {
+                Tasks[i].Name = DownloaderManager.Instance.AddTask(Tasks[i].Url);
+                DownloaderManager.Instance.GetTask(Tasks[i].Name).DownloadSuccessed += DownloadSuccess;
+
+            }
+            DownloaderManager.Instance.Download();
+        });
+
+        BtPause.onClick.AddListener(() => {
+            DownloaderManager.Instance.Pause();
+        });
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        for (int i = 0; i < DownloaderManager.Instance.GetTaskCount(); i++)
+        {
+            Tasks[i].Process.value = DownloaderManager.Instance.GetTask(Tasks[i].Name).GetDownloadProcess();
+        }
+        Speed.text = DownloaderManager.Instance.GetDownloaderSpeed();
+        Process.value = DownloaderManager.Instance.GetDownloadProcess();
     }
     void DownloadFailed(string name)
-    {
-        Debug.Log(name + "下载失败");
+    {        
     }
     void DownloadSuccess(string name)
     {
-        Debug.Log(name + "下载成功");
     }
-
-    private void OnDestroy()
-    {
-        downloader.Close();
-    }
+}
+[Serializable]
+public class Task
+{
+    public string Name;
+    public string Url;
+    public Slider Process;
+    public Button Start;
+    public Button Pause;
 }

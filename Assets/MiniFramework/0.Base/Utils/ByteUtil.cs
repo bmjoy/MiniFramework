@@ -9,9 +9,13 @@
         /// <returns></returns>
         public static string AutoUnitConversion(long size)
         {
+            return AutoUnitConversion((float)size);
+        }
+        public static string AutoUnitConversion(float size)
+        {
             if (size < 1024L)
             {
-                return size.ToString() + " Bytes";
+                return size.ToString() + " B";
             }
 
             if (size < 1024L * 1024L)
@@ -33,4 +37,3 @@
         }
     }
 }
-

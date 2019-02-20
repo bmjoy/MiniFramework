@@ -4,22 +4,23 @@ using System.Net;
 namespace MiniFramework
 {
     public class Downloader : IDownloader
-    {
-
-        public string FileName;
+    {    
         public event Action<string> DownloadSuccessed;
         public event Action<string> DownloadFailed;
 
-        public int BufferSize = 1024 * 1024;
-        public int Timeout = 10000;
-        public long CurLength;
-        public long FileLength;
+        private string fileName;
+
+        private int bufferSize = 1024 * 1024;
+        private int timeout = 10000;
+        private long curLength;
+        private long fileLength;
 
         private byte[] buffer;
         private string url;
         private string saveDir;
         private string tempSavePath;
-             
+
+        private DownloadState state;
         private FileStream fileStream;
         private Stream responseStream;
       
@@ -27,44 +28,67 @@ namespace MiniFramework
         {
             this.url = url;
             this.saveDir = saveDir;
-            FileName = GetFileNameFromUrl(url);
+            fileName = GetFileNameFromUrl(url);
+            state = DownloadState.None;
+        }
+        public string GetFileName()
+        {
+            return fileName;
+        }
+        public long GetCurLength()
+        {
+            return curLength;
         }
         public float GetDownloadProcess()
         {
-            return FileLength > 0 ? (float)CurLength / FileLength : 0;
+            return fileLength > 0 ? (float)curLength / fileLength : 0;
+        }
+        public DownloadState GetDownloadSate()
+        {
+            return state;
         }
         // Use this for initialization
         public void Start()
         {           
-            tempSavePath = saveDir + "/" + FileName + ".temp";
+            tempSavePath = saveDir + "/" + fileName + ".temp";
+            
             HttpRequest();
         }
 
         public void Close()
         {
             if (fileStream != null)
+            {
                 fileStream.Close();
+            }  
             if (responseStream != null)
+            {
                 responseStream.Close();
+            }
+            if (state == DownloadState.Downloading)
+            {
+                state = DownloadState.None;
+            }              
         }
         private void HttpRequest()
         {
+            state = DownloadState.Downloading;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
             request.Method = "GET";
-            request.Timeout = Timeout;
+            request.Timeout = timeout;
             ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
             if (File.Exists(tempSavePath))
             {
                 fileStream = File.OpenWrite(tempSavePath);
-                CurLength = fileStream.Length;
-                fileStream.Seek(CurLength, SeekOrigin.Current);
-                request.AddRange((int)CurLength);
+                curLength = fileStream.Length;
+                fileStream.Seek(curLength, SeekOrigin.Current);
+                request.AddRange((int)curLength);
             }
             else
             {
                 fileStream = new FileStream(tempSavePath, FileMode.Create, FileAccess.Write);
-                CurLength = 0;
+                curLength = 0;
             }
             request.KeepAlive = false;
             request.BeginGetResponse(new AsyncCallback(RespCallback), request);
@@ -74,42 +98,46 @@ namespace MiniFramework
             HttpWebRequest request = (HttpWebRequest)result.AsyncState;
             if (!request.HaveResponse)
             {
-                DownloadFailed(FileName);
+                DownloadFailed(fileName);
+                state = DownloadState.Failed;
+                Close();
                 return;
             }
             HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(result);
+            WebHeaderCollection collection = response.Headers;
             responseStream = response.GetResponseStream();
-            FileLength = response.ContentLength + CurLength;
-            buffer = new byte[BufferSize];
+            fileLength = response.ContentLength + curLength;
+            buffer = new byte[bufferSize];
             responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
         }
         private void ReadCallback(IAsyncResult result)
         {
             responseStream = (Stream)result.AsyncState;
             int read = responseStream.EndRead(result);
-            if (CurLength < FileLength)
+            if (curLength < fileLength)
             {
                 fileStream.Write(buffer, 0, read);
-                CurLength += read;
+                curLength += read;
                 responseStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), responseStream);
             }
             else
             {
+                state = DownloadState.Completed;
                 Close();
-                string savePath = saveDir + "/" + FileName;
+                string savePath = saveDir + "/" + fileName;
                 if (File.Exists(savePath))
                 {
                     File.Delete(savePath);
                 }
                 File.Move(tempSavePath, savePath);
-                DownloadSuccessed(FileName);
+                DownloadSuccessed(fileName);
             }
         }
 
         private string GetFileNameFromUrl(string url)
         {
-            FileName = url.Substring(url.LastIndexOf('/') + 1);
-            return FileName;
+            fileName = url.Substring(url.LastIndexOf('/') + 1);
+            return fileName;
         }
     }
 }
