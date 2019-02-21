@@ -4,14 +4,7 @@ namespace MiniFramework
 {
     public class MiniFramework : MonoSingleton<MiniFramework>
     {
-        public bool IsDestroyOnLoad;
-        public override void OnSingletonInit()
-        {
-            if (!IsDestroyOnLoad)
-            {
-                DontDestroyOnLoad(this);
-            }
-        }
+        public override void OnSingletonInit(){ }
         //static DrivenRectTransformTracker tracker = new DrivenRectTransformTracker();
         //[MenuItem("Test/Limit")]
         //static void Check()

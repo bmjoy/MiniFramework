@@ -3,7 +3,7 @@
     public static class ByteUtil
     {
         /// <summary>
-        /// 单位换算
+        /// 存储单位换算
         /// </summary>
         /// <param name="size">字节</param>
         /// <returns></returns>

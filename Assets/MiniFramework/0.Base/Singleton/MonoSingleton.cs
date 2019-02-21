@@ -26,6 +26,7 @@
             {
                 mInstance = this as T;
                 mInstance.OnSingletonInit();
+                DontDestroyOnLoad(this);
             }
             else
             {
