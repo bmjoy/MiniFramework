@@ -5,12 +5,16 @@ namespace MiniFramework
     public class MiniFramework : MonoSingleton<MiniFramework>
     {
         public override void OnSingletonInit(){ }
-        //static DrivenRectTransformTracker tracker = new DrivenRectTransformTracker();
-        //[MenuItem("Test/Limit")]
-        //static void Check()
-        //{
-        //    tracker.Clear();
-        //    tracker.Add(Selection.activeGameObject, Selection.activeGameObject.GetComponent<RectTransform>(), DrivenTransformProperties.Pivot | DrivenTransformProperties.Anchors);
-        //}
+        void OnGUI(){
+            if(GUILayout.Button("MiniFramework")){
+                ResourceManager.Instance.SceneLoader.LoadScene("MiniFramework",null);
+            }
+            if(GUILayout.Button("A")){
+                ResourceManager.Instance.SceneLoader.LoadScene("A",null);
+            }
+            if(GUILayout.Button("B")){
+                ResourceManager.Instance.SceneLoader.LoadScene("B",null);
+            }
+        }
     }
 }

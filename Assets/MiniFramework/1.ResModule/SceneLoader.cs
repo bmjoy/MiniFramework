@@ -35,7 +35,14 @@ namespace MiniFramework
             async.allowSceneActivation = false;
             while (!async.isDone)
             {
-                loadCallback(async);
+                if (async.progress >= 0.9f)
+                {
+                    async.allowSceneActivation = true;
+                    if (loadCallback != null)
+                    {
+                        loadCallback(async);
+                    }
+                }
                 yield return null;
             }
         }

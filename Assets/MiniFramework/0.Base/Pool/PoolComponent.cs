@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,13 +14,21 @@ namespace MiniFramework
             public uint Max;
             public uint Min;
             public bool DestroyOnLoad;
+            public GameObject Prefab;
             public Stack<NeedPoolObject> Objs = new Stack<NeedPoolObject>();
         }
+        [HideInInspector]
         public List<CacheObject> CacheObjects = new List<CacheObject>();
-        public float DefaultWaitTime = 1f;//等待间隔时间
-
+        public float DefaultWaitTime = 0.2f;//等待间隔时间
         public override void OnSingletonInit() { }
-
+        IEnumerator Start()
+        {
+            for (int i = 0; i < CacheObjects.Count; i++)
+            {
+                yield return new WaitForSeconds(DefaultWaitTime);
+                Init(CacheObjects[i].Prefab,CacheObjects[i].Max,CacheObjects[i].Min,CacheObjects[i].DestroyOnLoad);
+            }
+        }
         public bool IsExist(string name)
         {
             CacheObject obj = GetCacheObject(name);
@@ -63,22 +72,32 @@ namespace MiniFramework
             {
                 return;
             }
+            
             if (IsExist(obj.name))
             {
-                return;
+                CacheObject cacheObj = GetCacheObject(obj.name);
+                for (int i = cacheObj.Objs.Count; i < minCount; i++)
+                {
+                    GameObject temp = Instantiate(obj);
+                    temp.name = obj.name;
+                    Recycle(temp);
+                }
             }
-            CacheObject cacheObj = new CacheObject();
-            cacheObj.Name = obj.name;
-            cacheObj.Max = maxCount;
-            cacheObj.Min = minCount;
-            cacheObj.DestroyOnLoad = destroyOnLoad;
-            CacheObjects.Add(cacheObj);
-            uint initCount = Math.Min(maxCount, minCount);
-            for (int i = 0; i < initCount; i++)
+            else
             {
-                GameObject temp = Instantiate(obj);
-                temp.name = obj.name;
-                Recycle(temp);
+                CacheObject cacheObj = new CacheObject();
+                cacheObj.Name = obj.name;
+                cacheObj.Max = maxCount;
+                cacheObj.Min = minCount;
+                cacheObj.DestroyOnLoad = destroyOnLoad;
+                cacheObj.Prefab = obj;
+                CacheObjects.Add(cacheObj);
+                for (int i = 0; i < minCount; i++)
+                {
+                    GameObject temp = Instantiate(obj);
+                    temp.name = obj.name;
+                    Recycle(temp);
+                }
             }
         }
         /// <summary>
@@ -91,13 +110,13 @@ namespace MiniFramework
             CacheObject cacheObject = GetCacheObject(objName);
             if (cacheObject != null)
             {
-                if (cacheObject.Objs.Count>0)
+                if (cacheObject.Objs.Count > 0)
                 {
                     NeedPoolObject obj = cacheObject.Objs.Pop();
                     obj.IsRecycled = false;
                     obj.gameObject.SetActive(true);
                     obj.transform.SetParent(null);
-                    
+
                     return obj.gameObject;
                 }
             }

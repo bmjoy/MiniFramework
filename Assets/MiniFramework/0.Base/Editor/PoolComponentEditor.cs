@@ -6,10 +6,7 @@ namespace MiniFramework
     [CustomEditor(typeof(PoolComponent))]
     public class PoolComponentEditor : Editor
     {
-        ReorderableList reorderableList;
         SerializedProperty prefabs;
-        SerializedProperty defaultMaxValue;
-        SerializedProperty min;
         void OnEnable()
         {
             prefabs = serializedObject.FindProperty("CacheObjects");
@@ -19,17 +16,22 @@ namespace MiniFramework
         {
             EditorGUILayout.BeginVertical("box");
             {
-                for (int i = 0; i < prefabs.CountInProperty(); i++)
+                for (int i = 0; i < prefabs.arraySize; i++)
                 {
                     SerializedProperty element = prefabs.GetArrayElementAtIndex(i);
-
-                  //  SerializedProperty objs = element.FindPropertyRelative("Objs");
+                    SerializedProperty name = element.FindPropertyRelative("Name");
+                    SerializedProperty prefab = element.FindPropertyRelative("Prefab");
                     SerializedProperty max = element.FindPropertyRelative("Max");
                     SerializedProperty min = element.FindPropertyRelative("Min");
                     SerializedProperty destroyOnLoad = element.FindPropertyRelative("DestroyOnLoad");
                     EditorGUILayout.BeginVertical("box");
                     {
-                        //EditorGUILayout.ObjectField(obj, GUIContent.none);
+                        if (prefab.objectReferenceValue != null)
+                        {
+                            name.stringValue = prefab.objectReferenceValue.name;
+                        }
+                        EditorGUILayout.LabelField(name.stringValue);
+                        EditorGUILayout.ObjectField(prefab, GUIContent.none);
                         max.intValue = EditorGUILayout.IntField("Max", max.intValue);
                         min.intValue = EditorGUILayout.IntField("Min", min.intValue);
                         destroyOnLoad.boolValue = EditorGUILayout.ToggleLeft("Destroy On Load", destroyOnLoad.boolValue);
@@ -53,7 +55,7 @@ namespace MiniFramework
         {
             base.OnInspectorGUI();
             serializedObject.Update();
-           // OnDraw();
+            OnDraw();
             serializedObject.ApplyModifiedProperties();
         }
     }
