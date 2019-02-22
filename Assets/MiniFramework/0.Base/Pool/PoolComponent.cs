@@ -31,8 +31,7 @@ namespace MiniFramework
         }
         public bool IsExist(string name)
         {
-            CacheObject obj = GetCacheObject(name);
-            return obj == null ? false : true;
+            return GetCacheObject(name)==null ? false : true;
         }
         public CacheObject GetCacheObject(string name)
         {
@@ -66,38 +65,33 @@ namespace MiniFramework
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="count"></param>
-        public void Init(GameObject obj, uint maxCount, uint minCount, bool destroyOnLoad)
+        public void Init(GameObject obj, uint maxCount, uint minCount, bool destroyOnLoad=false)
         {
             if (obj == null || obj.GetComponent<NeedPoolObject>() == null)
             {
                 return;
             }
-            
-            if (IsExist(obj.name))
+            uint initCount = Math.Min(maxCount, minCount);
+            CacheObject cacheObj = GetCacheObject(obj.name);
+            if (cacheObj == null)
             {
-                CacheObject cacheObj = GetCacheObject(obj.name);
-                for (int i = cacheObj.Objs.Count; i < minCount; i++)
-                {
-                    GameObject temp = Instantiate(obj);
-                    temp.name = obj.name;
-                    Recycle(temp);
-                }
-            }
-            else
-            {
-                CacheObject cacheObj = new CacheObject();
-                cacheObj.Name = obj.name;
-                cacheObj.Max = maxCount;
-                cacheObj.Min = minCount;
-                cacheObj.DestroyOnLoad = destroyOnLoad;
-                cacheObj.Prefab = obj;
+                cacheObj = new CacheObject();
                 CacheObjects.Add(cacheObj);
-                for (int i = 0; i < minCount; i++)
+            }
+            cacheObj.Name = obj.name;
+            cacheObj.Max = maxCount;
+            cacheObj.Min = minCount;
+            cacheObj.DestroyOnLoad = destroyOnLoad;
+            cacheObj.Prefab = obj;
+            for (int i = cacheObj.Objs.Count; i < initCount; i++)
+            {
+                GameObject cloneObj = Instantiate(obj);
+                cloneObj.name = obj.name;
+                if (!destroyOnLoad)
                 {
-                    GameObject temp = Instantiate(obj);
-                    temp.name = obj.name;
-                    Recycle(temp);
+                    DontDestroyOnLoad(cloneObj);
                 }
+                Recycle(cloneObj);
             }
         }
         /// <summary>
@@ -113,11 +107,12 @@ namespace MiniFramework
                 if (cacheObject.Objs.Count > 0)
                 {
                     NeedPoolObject obj = cacheObject.Objs.Pop();
-                    obj.IsRecycled = false;
-                    obj.gameObject.SetActive(true);
-                    obj.transform.SetParent(null);
-
-                    return obj.gameObject;
+                    if (obj != null)
+                    {
+                        obj.IsRecycled = false;
+                        obj.gameObject.SetActive(true);
+                        return obj.gameObject;
+                    }
                 }
             }
             Debug.LogError("该对象不存在缓存池中!");
@@ -134,9 +129,6 @@ namespace MiniFramework
             {
                 return false;
             }
-            obj.gameObject.SetActive(false);
-            obj.gameObject.transform.SetParent(transform);
-
             CacheObject cacheObj = GetCacheObject(obj.name);
             if (cacheObj != null)
             {
@@ -148,20 +140,19 @@ namespace MiniFramework
                 {
                     return false;
                 }
-                cacheObj.Objs.Push(poolObject);
             }
             else
             {
-                CacheObject newCache = new CacheObject();
-                newCache.Name = obj.name;
-                newCache.Objs.Push(poolObject);
+                cacheObj = new CacheObject();
+                cacheObj.Name = obj.name;
                 CacheObjects.Add(new CacheObject());
-                poolObject.IsRecycled = true;
-                poolObject.OnRecycled();
             }
+            cacheObj.Objs.Push(poolObject);
+            poolObject.IsRecycled = true;
+            poolObject.OnRecycled();
+            obj.gameObject.SetActive(false);
             return true;
         }
-
         public void Recycle(string name)
         {
             NeedPoolObject[] objs = GameObject.FindObjectsOfType<NeedPoolObject>();

@@ -33,18 +33,17 @@ public class PoolExample : MonoBehaviour
 
     void Pool()
     {
-        PoolComponent.Instance.Init(Prefab, 10, 5, true);
+        PoolComponent.Instance.Init(Prefab, 10, 5, false);
     }
     void Use()
     {
-        GameObject obj = PoolComponent.Instance.Allocate("[Resource]Cube");
+        GameObject obj = PoolComponent.Instance.Allocate(Prefab.name);
         if (obj != null)
         {
             float red = Random.Range(0.0f, 1.0f);
             float green = Random.Range(0.0f, 1.0f);
             float blue = Random.Range(0.0f, 1.0f);
             obj.GetComponent<MeshRenderer>().material.color = new Color(red, green, blue);
-            obj.transform.SetParent(transform);
         }
     }
     void Recycle()
