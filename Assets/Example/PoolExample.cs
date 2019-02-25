@@ -3,18 +3,6 @@ using UnityEngine;
 public class PoolExample : MonoBehaviour
 {
     public GameObject Prefab;
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void OnGUI()
     {
         if (GUILayout.Button("Pool"))
@@ -33,11 +21,11 @@ public class PoolExample : MonoBehaviour
 
     void Pool()
     {
-        PoolComponent.Instance.Init(Prefab, 10, 5, false);
+        GamePool.Instance.Init(Prefab, 10, 5);
     }
     void Use()
     {
-        GameObject obj = PoolComponent.Instance.Allocate(Prefab.name);
+        GameObject obj = GamePool.Instance.Allocate(Prefab.name);
         if (obj != null)
         {
             float red = Random.Range(0.0f, 1.0f);
@@ -48,6 +36,6 @@ public class PoolExample : MonoBehaviour
     }
     void Recycle()
     {
-        PoolComponent.Instance.Recycle(Prefab.name);
+        GamePool.Instance.Recycle(Prefab.name);
     }
 }

@@ -22,8 +22,7 @@ namespace MiniFramework
 
         private DownloadState state;
         private FileStream fileStream;
-        private Stream responseStream;
-      
+        private Stream responseStream;     
         public Downloader(string url,string saveDir)
         {
             this.url = url;
@@ -72,26 +71,34 @@ namespace MiniFramework
         }
         private void HttpRequest()
         {
-            state = DownloadState.Downloading;
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
-            request.Method = "GET";
-            request.Timeout = timeout;
-            ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-            if (File.Exists(tempSavePath))
+            try
             {
-                fileStream = File.OpenWrite(tempSavePath);
-                curLength = fileStream.Length;
-                fileStream.Seek(curLength, SeekOrigin.Current);
-                request.AddRange((int)curLength);
+                state = DownloadState.Downloading;
+                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+                request.Method = "GET";
+                request.Timeout = timeout;
+                ServicePointManager.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+                if (File.Exists(tempSavePath))
+                {
+                    fileStream = File.OpenWrite(tempSavePath);
+                    curLength = fileStream.Length;
+                    fileStream.Seek(curLength, SeekOrigin.Current);
+                    request.AddRange((int)curLength);
+                }
+                else
+                {
+                    fileStream = new FileStream(tempSavePath, FileMode.Create, FileAccess.Write);
+                    curLength = 0;
+                }
+                request.KeepAlive = false;
+                request.BeginGetResponse(new AsyncCallback(RespCallback), request);
             }
-            else
+            catch(Exception e)
             {
-                fileStream = new FileStream(tempSavePath, FileMode.Create, FileAccess.Write);
-                curLength = 0;
-            }
-            request.KeepAlive = false;
-            request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                DownloadFailed(fileName);
+                throw e;
+            }  
         }
         private void RespCallback(IAsyncResult result)
         {
