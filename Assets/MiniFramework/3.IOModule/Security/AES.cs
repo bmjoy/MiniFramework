@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework{
-     public class AES:SecurityFactory{
+     public class AES:SecurityUtil{
         public byte[] KeyIV { get; set; }
         public AES()
         {

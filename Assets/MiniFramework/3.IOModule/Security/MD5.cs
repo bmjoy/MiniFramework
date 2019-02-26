@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class MD5 : SecurityFactory
+    public class MD5 : SecurityUtil
     {
         public MD5() { }
         public override string Encrypt(string normalText,string key =null)

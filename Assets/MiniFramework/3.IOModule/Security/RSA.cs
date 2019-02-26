@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class RSA : SecurityFactory
+    public class RSA : SecurityUtil
     {
         public RSA() { }
         public override string Encrypt(string normalText,string xmlPublicKey)

@@ -7,6 +7,9 @@ namespace MiniFramework
 {
     public class FileUtil
     {
+        private static byte[] buffer;
+        private static event Action writeCallback;
+        private static event Action<byte[]> readCallback;
         public static void CreateDirectoryIfNoExist(string dir)
         {
             if (!Directory.Exists(dir))
@@ -15,34 +18,53 @@ namespace MiniFramework
             }
         }
 
-        public static void SaveToLocalAsync(string content, string path)
+        public static void WriteToLocalAsync(string content, string path,Action callback)
         {
             using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
+                writeCallback = callback;
                 byte[] data = Encoding.UTF8.GetBytes(content);
-                stream.BeginWrite(data, 0, data.Length, SaveCallback, stream);
+                stream.BeginWrite(data, 0, data.Length, WriteCallback, stream);
             }
         }
-        public static void SaveToLocalAsync(byte[] content, string path)
+        public static void WriteToLocalAsync(byte[] data, string path,Action callback)
         {
             using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                stream.BeginWrite(content, 0, content.Length, SaveCallback, stream);
+                writeCallback = callback;
+                stream.BeginWrite(data, 0, data.Length, WriteCallback, stream);
             }
         }
-        private static void SaveCallback(IAsyncResult ar)
+
+        private static void WriteCallback(IAsyncResult ar)
         {
-            using (FileStream str = (FileStream)ar.AsyncState)
+            using (FileStream stream = (FileStream)ar.AsyncState)
             {
-                str.EndWrite(ar);
+                stream.EndWrite(ar);
                 Debug.Log("写入完成");
+                writeCallback(); 
             }
         }
-        public static string ReadTextFromLocal(string path)
+        public static void ReadFromLocalAsync(string path, Action<byte[]> callback)
         {
-            return File.ReadAllText(path);
+            using( FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                readCallback = callback;
+                buffer = new byte[stream.Length];
+                stream.BeginRead(buffer, 0, buffer.Length, ReadCallback, stream);
+            }
         }
-        public static byte[] ReadBytesFromLocal(string path)
+        private static void ReadCallback(IAsyncResult ar)
+        {
+            using (FileStream stream = (FileStream)ar.AsyncState)
+            {
+                stream.EndRead(ar);               
+                Debug.Log("读取完成");
+                readCallback(buffer);  
+                buffer =null;
+            }
+        }
+        public static byte[] ReadFromLocal(string path)
         {
             return File.ReadAllBytes(path);
         }

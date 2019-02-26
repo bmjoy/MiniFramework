@@ -129,6 +129,7 @@ namespace MiniFramework
             }
             else
             {
+                buffer = null;
                 state = DownloadState.Completed;
                 Close();
                 string savePath = saveDir + "/" + fileName;

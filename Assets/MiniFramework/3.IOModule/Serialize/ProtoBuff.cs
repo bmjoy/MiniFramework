@@ -1,7 +1,7 @@
 using System.IO;
 namespace MiniFramework
 {
-    public class ProtoBuff:SerializeFactory
+    public class ProtoBuff:SerializeUtil
     {
         public override byte[] Serialize(object obj)
         {

@@ -20,7 +20,7 @@ namespace MiniFramework
         public byte[] OtherBytes = new byte[0];
         public byte[] Packer(PackHead head, byte[] bodyData)
         {
-            byte[] headData = SerializeFactory.Binary.SerializeByMarshal(head);
+            byte[] headData = SerializeUtil.Binary.SerializeByMarshal(head);
             byte[] packData = new byte[headData.Length + bodyData.Length];
             Array.Copy(headData, packData, headData.Length);
             Array.Copy(bodyData, 0, packData, headData.Length, bodyData.Length);
@@ -40,7 +40,7 @@ namespace MiniFramework
             }
             byte[] headData = new byte[HeadLength];
             Array.Copy(totalData, headData, HeadLength);
-            PackHead head = SerializeFactory.Binary.DeserializeByMarshal<PackHead>(headData);
+            PackHead head = SerializeUtil.Binary.DeserializeByMarshal<PackHead>(headData);
             if (totalData.Length < head.BodyLength + HeadLength)
             {
                 //消息体不足

@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class DES:SecurityFactory
+    public class DES:SecurityUtil
     {
         public byte[] KeyIV { get; set; }
         public DES()

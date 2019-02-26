@@ -6,7 +6,6 @@ public class Receiver : MonoBehaviour {
 	void Awake () {
         MsgManager.Instance.RegisterMsg(this, "Test", Receive);
     }
-
     void Receive(object[] msg)
     {
         Debug.Log(msg[0].ToString());

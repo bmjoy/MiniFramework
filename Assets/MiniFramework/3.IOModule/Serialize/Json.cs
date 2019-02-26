@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MiniFramework
 {
-    public class Json:SerializeFactory
+    public class Json:SerializeUtil
     {
         public override byte[] Serialize(object obj)
         {

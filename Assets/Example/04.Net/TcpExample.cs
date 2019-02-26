@@ -15,7 +15,7 @@ public class TcpExample : MonoBehaviour {
     private void Awake()
     {
         MsgManager.Instance.RegisterMsg(this, "100", (s) => {
-            MsgExample msg = SerializeFactory.ProtoBuff.Deserialize<MsgExample>((byte[])s[0]);
+            MsgExample msg = SerializeUtil.ProtoBuff.Deserialize<MsgExample>((byte[])s[0]);
             Debug.Log("age:" + msg.age + "name:" + msg.name + "sex:" + msg.sex);
         });
     }
@@ -29,7 +29,7 @@ public class TcpExample : MonoBehaviour {
             msg.age = 12;
             msg.name = Msg.text;
             msg.sex = 1;
-            byte[] sendData = SerializeFactory.ProtoBuff.Serialize(msg);
+            byte[] sendData = SerializeUtil.ProtoBuff.Serialize(msg);
             SocketManager.Instance.Send(100,sendData, IP.text);
             SocketManager.Instance.Send(100,sendData, IP.text);
             SocketManager.Instance.Send(100,sendData, IP.text);

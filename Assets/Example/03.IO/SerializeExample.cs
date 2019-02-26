@@ -7,8 +7,6 @@ public class SerializeExample : MonoBehaviour
 {
     public SerializeObj Obj;
     public string serializeContent;
-
-
     // Use this for initialization
     void Start()
     {
@@ -16,11 +14,11 @@ public class SerializeExample : MonoBehaviour
         obj.id = 1;
         obj.name = "haha";
         obj.Age.Add(1.1415926d);
-        byte[] data = SerializeFactory.Json.Serialize(obj);
-        FileUtil.SaveToLocalAsync(data, Application.streamingAssetsPath + "/json");
-        byte[] data2 = FileUtil.ReadBytesFromLocal(Application.streamingAssetsPath + "/json");
+        byte[] data = SerializeUtil.Json.Serialize(obj);
+        FileUtil.WriteToLocalAsync(data, Application.streamingAssetsPath + "/json",null);
+        byte[] data2 = FileUtil.ReadFromLocal(Application.streamingAssetsPath + "/json");
        // serializeContent = BitConverter.ToString(data);
-        Obj = SerializeFactory.Json.Deserialize<SerializeObj>(data2);
+        Obj = SerializeUtil.Json.Deserialize<SerializeObj>(data2);
     }
 }
 [Serializable]

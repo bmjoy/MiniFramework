@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 namespace MiniFramework
 {
-    public class Binary : SerializeFactory
+    public class Binary : SerializeUtil
     {
         public override byte[] Serialize(object obj)
         {

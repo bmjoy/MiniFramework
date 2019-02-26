@@ -13,11 +13,11 @@ public class SecurityExample : MonoBehaviour
     {
         string publickey;
         string privatekey;
-        SecurityFactory.RSA.GenerateKey(out privatekey, out publickey);
-        EncryptText = SecurityFactory.RSA.Encrypt(NormalText, publickey);
-        DecryptText = SecurityFactory.RSA.Decrypt(EncryptText, privatekey);
+        SecurityUtil.RSA.GenerateKey(out privatekey, out publickey);
+        EncryptText = SecurityUtil.RSA.Encrypt(NormalText, publickey);
+        DecryptText = SecurityUtil.RSA.Decrypt(EncryptText, privatekey);
 
-        EncryptText = SecurityFactory.DES.Encrypt(NormalText, key);
-        DecryptText = SecurityFactory.DES.Decrypt(EncryptText, key);
+        EncryptText = SecurityUtil.DES.Encrypt(NormalText, key);
+        DecryptText = SecurityUtil.DES.Decrypt(EncryptText, key);
     }
 }

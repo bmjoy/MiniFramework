@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace MiniFramework
 {
-    public class Xml:SerializeFactory
+    public class Xml:SerializeUtil
     {
         public override byte[] Serialize(object obj)
         {
