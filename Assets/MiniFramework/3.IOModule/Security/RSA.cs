@@ -6,25 +6,25 @@ namespace MiniFramework
     public class RSA : SecurityUtil
     {
         public RSA() { }
-        public override string Encrypt(string normalText,string xmlPublicKey)
+        public override byte[] Encrypt(byte[] normalData,string xmlPublicKey)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(normalText);
+            var bytes = normalData;
             CspParameters cp = new CspParameters();
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
             rsa.FromXmlString(xmlPublicKey);
             byte[] encryptBytes = rsa.Encrypt(bytes, false);
-            return Convert.ToBase64String(encryptBytes);
+            return encryptBytes;
         }
-        public override string Decrypt(string encryptText,string xmlPrivateKey)
+        public override byte[] Decrypt(byte[] encryptData,string xmlPrivateKey)
         {
             try
             {
-                var bytes = Convert.FromBase64String(encryptText);
+                var bytes = encryptData;
                 CspParameters cp = new CspParameters();
                 RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cp);
                 rsa.FromXmlString(xmlPrivateKey);
                 var decryptBytes = rsa.Decrypt(bytes, false);
-                return Encoding.UTF8.GetString(decryptBytes);
+                return decryptBytes;
             }
             catch (Exception e)
             {

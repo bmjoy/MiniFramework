@@ -9,9 +9,9 @@ namespace MiniFramework{
         {
             KeyIV = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16 };
         }
-        public override string Encrypt(string normalText,string key)
+        public override byte[] Encrypt(byte[] normalData,string key)
         {
-            var bytes = Encoding.UTF8.GetBytes(normalText);
+            var bytes = normalData;
             SymmetricAlgorithm aes = Rijndael.Create();
             aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32));
             aes.IV = KeyIV;
@@ -20,14 +20,14 @@ namespace MiniFramework{
                 CryptoStream cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write);
                 cs.Write(bytes, 0, bytes.Length);
                 cs.FlushFinalBlock();
-                return Convert.ToBase64String(ms.ToArray());
+                return ms.ToArray();
             }
         }
-        public override string Decrypt(string encryptText,string key)
+        public override byte[] Decrypt(byte[] encryptData,string key)
         {
             try
             {
-                var bytes = Convert.FromBase64String(encryptText);
+                var bytes = encryptData;
                 SymmetricAlgorithm aes = Rijndael.Create();
                 aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32));
                 aes.IV = KeyIV;
@@ -36,7 +36,7 @@ namespace MiniFramework{
                     CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write);
                     cs.Write(bytes, 0, bytes.Length);
                     cs.FlushFinalBlock();
-                    return Encoding.UTF8.GetString(ms.ToArray());
+                    return ms.ToArray();
                 }
             }
             catch (Exception e)

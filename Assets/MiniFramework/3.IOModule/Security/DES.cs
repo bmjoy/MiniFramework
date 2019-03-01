@@ -11,9 +11,9 @@ namespace MiniFramework
         {
             KeyIV = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
         }
-        public override string Encrypt(string normalText,string key)
+        public override byte[] Encrypt(byte[] normalData,string key)
         {
-            var bytes = Encoding.UTF8.GetBytes(normalText);
+            var bytes = normalData;
             using (MemoryStream ms = new MemoryStream())
             {
                 DESCryptoServiceProvider des = new DESCryptoServiceProvider();
@@ -22,14 +22,14 @@ namespace MiniFramework
                 CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
                 cs.Write(bytes, 0, bytes.Length);
                 cs.FlushFinalBlock();
-                return Convert.ToBase64String(ms.ToArray());
+                return ms.ToArray();
             }
         }
-        public override string Decrypt(string encryptText,string key)
+        public override byte[] Decrypt(byte[] encryptData,string key)
         {
             try
             {
-                var bytes = Convert.FromBase64String(encryptText);
+                var bytes = encryptData;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     DESCryptoServiceProvider des = new DESCryptoServiceProvider();
@@ -38,7 +38,7 @@ namespace MiniFramework
                     CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
                     cs.Write(bytes, 0, bytes.Length);
                     cs.FlushFinalBlock();
-                    return Encoding.UTF8.GetString(ms.ToArray());
+                    return ms.ToArray();
                 }
             }
             catch (Exception e)

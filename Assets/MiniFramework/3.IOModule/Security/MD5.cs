@@ -6,11 +6,11 @@ namespace MiniFramework
     public class MD5 : SecurityUtil
     {
         public MD5() { }
-        public override string Encrypt(string normalText,string key =null)
+        public override byte[] Encrypt(byte[] normalData,string key =null)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(normalText);
+            byte[] bytes = normalData;
             byte[] md5 = new MD5CryptoServiceProvider().ComputeHash(bytes);
-            return Convert.ToBase64String(md5);
+            return md5;
         }
     }
 }
