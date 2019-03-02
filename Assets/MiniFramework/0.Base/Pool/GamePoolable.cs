@@ -8,7 +8,7 @@ namespace MiniFramework
     /// </summary>
     public class GamePoolable : MonoBehaviour
     {
-        public bool IsRecycled { get; set; }
+        public bool IsRecycled;
         public UnityEvent OnRecycled;
     }
 }

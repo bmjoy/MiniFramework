@@ -11,24 +11,29 @@ namespace MiniFramework
 
         public int CurCount(string name)
         {
-            return objs[name].Count;
+            return objs.ContainsKey(name) == true ? objs[name].Count : 0;
         }
         public void Init(GameObject prefab, uint maxCount, uint minCount)
         {
+            if (prefab == null || prefab.GetComponent<GamePoolable>() == null)
+            {
+                return;
+            }
             if (!objs.ContainsKey(prefab.name))
             {
                 objs.Add(prefab.name, new Stack<GameObject>());
                 maxCacheNum.Add(prefab.name, maxCount);
             }
             uint initCount = Math.Min(maxCount, minCount);
-            if (CurCount(prefab.name) < initCount)
+            if (CurCount(prefab.name) >= initCount)
             {
-                for (int i = CurCount(prefab.name); i < initCount; i++)
-                {
-                    GameObject obj = Instantiate(prefab);
-                    obj.name = prefab.name;
-                    Recycle(obj);
-                }
+                initCount = maxCount;
+            }
+            for (int i = CurCount(prefab.name); i < initCount; i++)
+            {
+                GameObject obj = Instantiate(prefab);
+                obj.name = prefab.name;
+                Recycle(obj);
             }
         }
         public GameObject Allocate(string name)
@@ -38,6 +43,10 @@ namespace MiniFramework
             {
                 result.GetComponent<GamePoolable>().IsRecycled = false;
                 result.SetActive(true);
+            }
+            else if(objs[name].Count>0)
+            {
+                 return Allocate(name);
             }
             return result;
         }

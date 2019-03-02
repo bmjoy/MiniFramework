@@ -20,12 +20,8 @@ namespace MiniFramework
 
         public static void WriteToLocalAsync(string content, string path,Action callback)
         {
-            using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
-            {
-                writeCallback = callback;
-                byte[] data = Encoding.UTF8.GetBytes(content);
-                stream.BeginWrite(data, 0, data.Length, WriteCallback, stream);
-            }
+            byte[] data = Encoding.UTF8.GetBytes(content);
+            WriteToLocalAsync(data,path,callback);
         }
         public static void WriteToLocalAsync(byte[] data, string path,Action callback)
         {

@@ -3,6 +3,12 @@ using UnityEngine;
 public class PoolExample : MonoBehaviour
 {
     public GameObject Prefab;
+    public uint MaxNum;
+    public uint MinNum;
+    private void Start()
+    {
+
+    }
     private void OnGUI()
     {
         if (GUILayout.Button("Pool"))
@@ -21,7 +27,7 @@ public class PoolExample : MonoBehaviour
 
     void Pool()
     {
-        GamePool.Instance.Init(Prefab, 10, 5);
+        GamePool.Instance.Init(Prefab, MaxNum, MinNum);
     }
     void Use()
     {
@@ -38,4 +44,6 @@ public class PoolExample : MonoBehaviour
     {
         GamePool.Instance.Recycle(Prefab.name);
     }
+
+
 }
