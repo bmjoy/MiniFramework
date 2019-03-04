@@ -12,37 +12,35 @@ namespace MiniFramework
         {
             monoBehaviour = mono;
         }
-        public void LoadScene(string sceneName, Action<AsyncOperation> loadCallback)
+        public void LoadSceneAsync(string sceneName, Action<AsyncOperation> loadingCallback = null)
         {
             AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
-            monoBehaviour.StartCoroutine(requestIEnumerator(async, loadCallback));
+            if (loadingCallback != null)
+            {
+                monoBehaviour.StartCoroutine(requestIEnumerator(async, loadingCallback));
+            }
         }
-        public void LoadScene(int sceneIndex, Action<AsyncOperation> loadCallback)
+        public void LoadSceneAsync(int sceneIndex, Action<AsyncOperation> loadingCallback = null)
         {
             AsyncOperation async = SceneManager.LoadSceneAsync(sceneIndex);
-            monoBehaviour.StartCoroutine(requestIEnumerator(async, loadCallback));
+            if (loadingCallback != null)
+            {
+                monoBehaviour.StartCoroutine(requestIEnumerator(async, loadingCallback));
+            }
         }
-        public void UnloadScene(string sceneName)
+        public void UnloadSceneAsync(string sceneName)
         {
             SceneManager.UnloadSceneAsync(sceneName);
         }
-        public void UnloadScene(int sceneIndex)
+        public void UnloadSceneAsync(int sceneIndex)
         {
             SceneManager.UnloadSceneAsync(sceneIndex);
         }
-        IEnumerator requestIEnumerator(AsyncOperation async, Action<AsyncOperation> loadCallback)
+        IEnumerator requestIEnumerator(AsyncOperation async, Action<AsyncOperation> loadingCallback)
         {
-            async.allowSceneActivation = false;
             while (!async.isDone)
             {
-                if (async.progress >= 0.9f)
-                {
-                    async.allowSceneActivation = true;
-                    if (loadCallback != null)
-                    {
-                        loadCallback(async);
-                    }
-                }
+                loadingCallback(async);
                 yield return null;
             }
         }
