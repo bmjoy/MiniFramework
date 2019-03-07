@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 namespace MiniFramework
 {
-    public class Binary : SerializeUtil
+    public static class Binary
     {
-        public override byte[] Serialize(object obj)
+        public static byte[] Serialize(object obj)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -15,7 +15,7 @@ namespace MiniFramework
                 return ms.ToArray();
             }
         }
-        public override T Deserialize<T>(byte[] data)
+        public static T Deserialize<T>(byte[] data)
         {
             using (MemoryStream ms = new MemoryStream(data))
             {
@@ -25,7 +25,7 @@ namespace MiniFramework
             }
         }
 
-        public byte[] SerializeByMarshal(object obj)
+        public static byte[] SerializeByMarshal(object obj)
         {
             int size = Marshal.SizeOf(obj);
             byte[] data = new byte[size];
@@ -41,7 +41,7 @@ namespace MiniFramework
             }
             return data;
         }
-        public T DeserializeByMarshal<T>(byte[] data)
+        public static T DeserializeByMarshal<T>(byte[] data)
         {
             object obj;
             int size = Marshal.SizeOf(typeof(T));

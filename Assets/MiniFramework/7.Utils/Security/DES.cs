@@ -4,14 +4,16 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class DES:SecurityUtil
+    public static class DES
     {
-        public byte[] KeyIV { get; set; }
-        public DES()
+        //初始化向量
+        public static byte[]  KeyIV = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
+         public static byte[] Encrypt(string content, string key)
         {
-            KeyIV = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
+            byte[] bytes = Encoding.UTF8.GetBytes(content);
+            return Encrypt(bytes,key);
         }
-        public override byte[] Encrypt(byte[] normalData,string key)
+        public static byte[] Encrypt(byte[] normalData,string key)
         {
             var bytes = normalData;
             using (MemoryStream ms = new MemoryStream())
@@ -25,7 +27,11 @@ namespace MiniFramework
                 return ms.ToArray();
             }
         }
-        public override byte[] Decrypt(byte[] encryptData,string key)
+        public static byte[] Decrypt(string content,string key){
+            byte[] bytes = Encoding.UTF8.GetBytes(content);
+            return Decrypt(bytes,key);
+        }
+        public static byte[] Decrypt(byte[] encryptData,string key)
         {
             try
             {

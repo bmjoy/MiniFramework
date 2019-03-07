@@ -6,7 +6,6 @@ namespace MiniFramework
     public class DownloaderManager : MonoSingleton<DownloaderManager>
     {
         public int MaxTogetherNum = 1;
-
         private string defaultSaveDir;
         private float countTime;
         private int curDownloadNum;

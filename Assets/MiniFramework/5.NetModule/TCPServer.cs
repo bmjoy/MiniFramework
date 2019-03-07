@@ -6,26 +6,30 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPServer : Net
+    public class TCPServer
     {
+        public bool IsActive;
+        public int MaxBufferSize = 1024;
         private byte[] recvBuffer;
         private List<TcpClient> remoteClients;
         private TcpListener tcpListener;
-        public override void Launch()
+        private DataPacker dataPacker;
+        public void Launch(int port, int maxConnections)
         {
-            if (IsConnect)
+            if (IsActive)
             {
                 Debug.Log("服务器已启动");
                 return;
             }
             recvBuffer = new byte[MaxBufferSize];
             remoteClients = new List<TcpClient>();
+            dataPacker = new DataPacker();
             try
             {
-                tcpListener = new TcpListener(IPAddress.Any, Port);
-                tcpListener.Start(MaxConnections);
+                tcpListener = new TcpListener(IPAddress.Any, port);
+                tcpListener.Start(maxConnections);
                 tcpListener.BeginAcceptTcpClient(AcceptResult, tcpListener);
-                IsConnect = true;
+                IsActive = true;
                 Debug.Log("服务端启动成功:" + tcpListener.LocalEndpoint);
             }
             catch (Exception e)
@@ -60,14 +64,18 @@ namespace MiniFramework
                 }
                 byte[] recvBytes = new byte[recvLength];
                 Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
-                DataPacker.UnPack(recvBytes);
+                dataPacker.UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
             }
         }
-
-        public override void Send(byte[] data, string ip = null)
+        public void Send(PackHead head, byte[] data)
         {
-            if (!IsConnect)
+            byte[] sendData = dataPacker.Packer(head, data);
+            Send(sendData);
+        }
+        public void Send(byte[] data)
+        {
+            if (!IsActive)
             {
                 return;
             }
@@ -77,28 +85,14 @@ namespace MiniFramework
                 if (client.Connected)
                     client.GetStream().BeginWrite(data, 0, data.Length, SendResult, client);
             }
-        }
-        public override void Send(PackHead head, byte[] data, string ip = null)
-        {
-            if (!IsConnect)
-            {
-                return;
-            }
-            byte[] sendData = DataPacker.Packer(head, data);
-            for (int i = 0; i < remoteClients.Count; i++)
-            {
-                TcpClient client = remoteClients[i];
-                if (client.Connected)
-                    client.GetStream().BeginWrite(sendData, 0, sendData.Length, SendResult, client);
-            }
-        }
+        }    
         private void SendResult(IAsyncResult ar)
         {
             TcpClient tcpClient = (TcpClient)ar.AsyncState;
             NetworkStream stream = tcpClient.GetStream();
             stream.EndWrite(ar);
         }
-        public override void Close()
+        public void Close()
         {
             if (remoteClients != null)
             {
@@ -114,7 +108,7 @@ namespace MiniFramework
             if (tcpListener != null)
             {
                 tcpListener.Stop();
-                IsConnect = false;
+                IsActive = false;
             }
             Debug.Log("服务器已关闭");
         }

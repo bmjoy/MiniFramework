@@ -4,14 +4,18 @@ using System.Text;
 
 namespace MiniFramework
 {
-    public class Json:SerializeUtil
+    public static class Json
     {
-        public override byte[] Serialize(object obj)
+        public static string Serialize(object obj)
         {
             string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-            return Encoding.UTF8.GetBytes(json);
+            return json;
         }
-        public override T Deserialize<T>(byte[] data)
+        public static T Deserialize<T>(string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        } 
+        public static T Deserialize<T>(byte[] data)
         {
             string json = Encoding.UTF8.GetString(data);
             return JsonConvert.DeserializeObject<T>(json);

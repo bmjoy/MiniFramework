@@ -3,9 +3,9 @@ using System.Xml.Serialization;
 
 namespace MiniFramework
 {
-    public class Xml:SerializeUtil
+    public static class Xml
     {
-        public override byte[] Serialize(object obj)
+        public static byte[] Serialize(object obj)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -14,7 +14,7 @@ namespace MiniFramework
                 return ms.ToArray();
             }
         }
-        public override T Deserialize<T>(byte[] data)
+        public static T Deserialize<T>(byte[] data)
         {
             using (MemoryStream ms = new MemoryStream(data))
             {

@@ -3,10 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class MD5 : SecurityUtil
+    public static class MD5
     {
-        public MD5() { }
-        public override byte[] Encrypt(byte[] normalData,string key =null)
+        public static byte[] Encrypt(string content){
+            byte[] bytes = Encoding.UTF8.GetBytes(content);
+            return Encrypt(bytes);
+        }
+        public static byte[] Encrypt(byte[] normalData)
         {
             byte[] bytes = normalData;
             byte[] md5 = new MD5CryptoServiceProvider().ComputeHash(bytes);

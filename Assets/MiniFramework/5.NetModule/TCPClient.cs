@@ -5,11 +5,17 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPClient : Net
+    public class TCPClient
     {
+        public bool IsConnect;
+        public int MaxBufferSize = 1024;
+        public Action ConnectFailed;
+        public Action ConnectSuccess;
+
         private byte[] recvBuffer;
         private TcpClient tcpClient;
-        public override void Launch()
+        private DataPacker dataPacker;
+        public void Connect(string ip,int port)
         {
             if (IsConnect)
             {
@@ -17,17 +23,18 @@ namespace MiniFramework
                 return;
             }
             recvBuffer = new byte[MaxBufferSize];
+            dataPacker = new DataPacker();
             tcpClient = new TcpClient();
-            tcpClient.BeginConnect(IPAddress.Parse(IP), Port, ConnectResult, tcpClient);
+            tcpClient.BeginConnect(IPAddress.Parse(ip), port, ConnectResult, tcpClient);
         }
         private void ConnectResult(IAsyncResult ar)
         {
             tcpClient = (TcpClient)ar.AsyncState;
             if (!tcpClient.Connected)
-            {
+            {  
+                Debug.Log("连接服务器失败，请尝试重新连接!");
                 if (ConnectFailed != null)
                     ConnectFailed();
-                Debug.Log("连接服务器失败，请尝试重新连接!");
             }
             else
             {
@@ -35,10 +42,9 @@ namespace MiniFramework
                 NetworkStream stream = tcpClient.GetStream();
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
                 IsConnect = true;
+                Debug.Log("客户端连接成功");
                 if (ConnectSuccess != null)
                     ConnectSuccess();
-                Debug.Log("客户端连接成功");
-
             }
         }
         private void ReadResult(IAsyncResult ar)
@@ -56,24 +62,20 @@ namespace MiniFramework
                 }
                 byte[] recvBytes = new byte[recvLength];
                 Array.Copy(recvBuffer, 0, recvBytes, 0, recvLength);
-                DataPacker.UnPack(recvBytes);
+                dataPacker.UnPack(recvBytes);
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
             }
         }
-
-        public override void Send(byte[] data, string ip = null)
+        public void Send(PackHead head,byte[] data)
+        {
+            byte[] sendData = dataPacker.Packer(head, data);
+            Send(sendData);
+        }
+        public void Send(byte[] data)
         {
             if (IsConnect)
             {
                 tcpClient.GetStream().BeginWrite(data, 0, data.Length, SendResult, tcpClient);
-            }
-        }
-        public override void Send(PackHead head,byte[] data,string ip = null)
-        {
-            byte[] sendData = DataPacker.Packer(head, data);
-            if (IsConnect)
-            {
-                tcpClient.GetStream().BeginWrite(sendData, 0, sendData.Length, SendResult, tcpClient);
             }
         }
         private void SendResult(IAsyncResult ar)
@@ -82,7 +84,7 @@ namespace MiniFramework
             NetworkStream stream = tcpClient.GetStream();
             stream.EndWrite(ar);
         }
-        public override void Close()
+        public void Close()
         {
             if (tcpClient != null)
             {

@@ -26,14 +26,14 @@ namespace MiniFramework
             public void Initialize(params object[] args)
             {
                 windows.Add("All", objectWindow);
-                windows.Add("Texture", textureMemoryWindow);
-                windows.Add("Mesh", meshMemoryWindow);
-                windows.Add("Material", materialMemoryWindow);
-                windows.Add("AnimationClip", animationClipMemoryWindow);
-                windows.Add("AudioClip", audioClipMemoryWindow);
-                windows.Add("Font", fontMemoryWindow);
-                windows.Add("GameObject", gameObjectMemoryWindow);
-                windows.Add("Component", componentMemoryWindow);
+                windows.Add("纹理", textureMemoryWindow);
+                windows.Add("网格", meshMemoryWindow);
+                windows.Add("材质", materialMemoryWindow);
+                windows.Add("动画", animationClipMemoryWindow);
+                windows.Add("音频", audioClipMemoryWindow);
+                windows.Add("字体", fontMemoryWindow);
+                windows.Add("物体", gameObjectMemoryWindow);
+                windows.Add("组件", componentMemoryWindow);
             }
 
             public void OnDraw()
@@ -172,7 +172,7 @@ namespace MiniFramework
                         duplicateSampleCount++;
                     }
                 }
-            }          
+            }
             private int SampleComparer(Sample a, Sample b)
             {
                 int result = b.Size.CompareTo(a.Size);

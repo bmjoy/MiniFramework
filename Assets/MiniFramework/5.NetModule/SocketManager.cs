@@ -1,54 +1,68 @@
-﻿namespace MiniFramework
+﻿using System;
+using System.Net;
+using System.Net.Sockets;
+
+namespace MiniFramework
 {
     public class SocketManager : MonoSingleton<SocketManager>
     {
-        public enum SocketType
+        public TCPClient TCPClient;
+        public TCPServer TCPServer;
+        public UDP UDP;
+        public Action ConnectFailed;
+        public Action ConnectSuccess;
+        public override void OnSingletonInit()
         {
-            TCPClient,
-            TCPServer,
-            UDP,
-        }
-        public SocketType Type;
-        public string IP;
-        public int Port;
-        public int MaxBufferSize;
-        public int MaxConnections;
 
-        private Net Net;
-        public override void OnSingletonInit(){}
-        public void Launch()
-        {
-            switch (Type)
-            {
-                case SocketType.UDP:
-                    Net = new UDP();
-                    break;
-                case SocketType.TCPServer:
-                    Net = new TCPServer();
-                    break;
-                case SocketType.TCPClient:
-                    Net = new TCPClient();
-                    break;
-            }
-            Net.Init(IP, Port, MaxBufferSize, MaxConnections);
-            Net.Launch();
         }
-        public void Send(int msgID, byte[] data, string ip = null)
+        public void Connect(string ip, int port)
         {
-            PackHead head = new PackHead();
-            head.MsgID = msgID;
-            head.BodyLength = data.Length;
-            Net.Send(head, data, ip);
+            TCPClient = new TCPClient();
+            TCPClient.ConnectSuccess = ConnectSuccess;
+            TCPClient.ConnectFailed = ConnectFailed;
+            TCPClient.Connect(ip, port);
+        }
+        public void LaunchAsServer(int port, int maxConnections)
+        {
+            TCPServer = new TCPServer();
+            TCPServer.Launch(port, maxConnections);
+        }
+        public void LaunchAsHost(int port)
+        {
+            UDP = new UDP();
+            UDP.Launch(port);
+        }
+        public string GetLocalIP()
+        {
+            string hostName = Dns.GetHostName();
+            IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
+            for (int i = 0; i < ipEntry.AddressList.Length; i++)
+            {
+                if (ipEntry.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ipEntry.AddressList[i].ToString();
+                }
+            }
+            return "";
         }
         public void Close()
         {
-            Net.Close();
+            if (TCPClient != null)
+            {
+                TCPClient.Close();
+            }
+            if (TCPServer != null)
+            {
+                TCPServer.Close();
+            }
+            if (UDP != null)
+            {
+                UDP.Close();
+            }
         }
         private void OnDestroy()
         {
-            if (Net != null)
-                Net.Close();
+            Close();
         }
     }
-
 }

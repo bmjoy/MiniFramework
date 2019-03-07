@@ -5,24 +5,27 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class UDP:Net
+    public class UDP
     {
+        public bool IsActive;
         private byte[] recvBuffer;
         private UdpClient udpClient;
-        public override void Launch()
+        private DataPacker dataPacker;
+        public void Launch(int port)
         {
-            if (IsConnect)
+            if (IsActive)
             {
                 Debug.Log("UDP已启动!");
                 return;
             }
+            dataPacker = new DataPacker();
             try
             {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
                 udpClient = new UdpClient(endPoint);
                 udpClient.EnableBroadcast = true;
                 udpClient.BeginReceive(ReceiveResult, udpClient);
-                IsConnect = true;
+                IsActive = true;
                 Debug.Log("UDP初始化成功");
             }
             catch (Exception e)
@@ -33,27 +36,23 @@ namespace MiniFramework
         private void ReceiveResult(IAsyncResult ar)
         {
             udpClient = (UdpClient)ar.AsyncState;
-            IPEndPoint remote = new IPEndPoint(IPAddress.Any, Port);
+            IPEndPoint remote = new IPEndPoint(IPAddress.Any, 0);
             recvBuffer = udpClient.EndReceive(ar, ref remote);
-            DataPacker.UnPack(recvBuffer);
+            dataPacker.UnPack(recvBuffer);
             udpClient.BeginReceive(ReceiveResult, udpClient);
         }
-        public override void Send(byte[] data,string ip)
+        public void Send(byte[] data, string ip, int port)
         {
-            if (IsConnect)
+            if (IsActive)
             {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 udpClient.BeginSend(data, data.Length, endPoint, SendResult, udpClient);
             }
         }
-        public override void Send(PackHead head, byte[] data, string ip = null)
+        public void Send(PackHead head, byte[] data, string ip, int port)
         {
-            byte[] sendData = DataPacker.Packer(head, data);
-            if (IsConnect)
-            {
-                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Port);
-                udpClient.BeginSend(sendData, sendData.Length, endPoint, SendResult, udpClient);
-            }
+            byte[] sendData = dataPacker.Packer(head, data);
+            Send(sendData, ip, port);
         }
         private void SendResult(IAsyncResult ar)
         {
@@ -61,12 +60,12 @@ namespace MiniFramework
             udpClient.EndSend(ar);
         }
 
-        public override void Close()
+        public void Close()
         {
             if (udpClient != null)
             {
                 udpClient.Close();
-                IsConnect = false;
+                IsActive = false;
             }
             Debug.Log("连接已断开");
         }

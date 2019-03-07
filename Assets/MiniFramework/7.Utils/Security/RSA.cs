@@ -3,10 +3,13 @@ using System.Security.Cryptography;
 using System.Text;
 namespace MiniFramework
 {
-    public class RSA : SecurityUtil
+    public static class RSA
     {
-        public RSA() { }
-        public override byte[] Encrypt(byte[] normalData,string xmlPublicKey)
+        public static byte[] Encrypt(string content,string xmlPublicKey){
+            byte[] bytes= Encoding.UTF8.GetBytes(content);
+            return Encrypt(bytes,xmlPublicKey);
+        }
+        public static byte[] Encrypt(byte[] normalData,string xmlPublicKey)
         {
             var bytes = normalData;
             CspParameters cp = new CspParameters();
@@ -15,7 +18,11 @@ namespace MiniFramework
             byte[] encryptBytes = rsa.Encrypt(bytes, false);
             return encryptBytes;
         }
-        public override byte[] Decrypt(byte[] encryptData,string xmlPrivateKey)
+        public static byte[] Decrypt(string content,string xmlPrivateKey){
+            byte[] bytes= Encoding.UTF8.GetBytes(content);
+            return Decrypt(bytes,xmlPrivateKey);
+        }
+        public static byte[] Decrypt(byte[] encryptData,string xmlPrivateKey)
         {
             try
             {
@@ -37,7 +44,7 @@ namespace MiniFramework
         /// </summary>
         /// <param name="xmlPrivateKey">私钥</param>
         /// <param name="xmlPublicKey">公钥</param>
-        public void GenerateKey(out string xmlPrivateKey, out string xmlPublicKey)
+        public static void GenerateKey(out string xmlPrivateKey, out string xmlPublicKey)
         {
             try
             {

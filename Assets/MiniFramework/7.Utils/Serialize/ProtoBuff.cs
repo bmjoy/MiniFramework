@@ -1,9 +1,9 @@
 using System.IO;
 namespace MiniFramework
 {
-    public class ProtoBuff:SerializeUtil
+    public static class ProtoBuff
     {
-        public override byte[] Serialize(object obj)
+        public static byte[] Serialize(object obj)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -11,12 +11,8 @@ namespace MiniFramework
                 return ms.ToArray();
             }
         }
-        public override T Deserialize<T>(byte[] bytes)
+        public static T Deserialize<T>(byte[] bytes)
         {
-            if (bytes == null || bytes.Length == 0)
-            {
-                throw new System.ArgumentNullException("bytes");
-            }
             return ProtoBuf.Serializer.Deserialize<T>(new MemoryStream(bytes));
         }
     }
