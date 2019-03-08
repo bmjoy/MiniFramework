@@ -12,8 +12,8 @@ public class LaunchAsServer : MonoBehaviour {
 		MsgManager.Instance.RegisterMsg(this,"1",Recv);
 		SocketManager.Instance.LaunchAsServer(1122,10);
 	}
-	void Recv(params object[] data){
-		byte[] bytes = (byte[])data[0];
+	void Recv(object data){
+		byte[] bytes = (byte[])data;
 		Debug.Log(Encoding.UTF8.GetString(bytes));
 	}
 	// Update is called once per frame
@@ -23,8 +23,8 @@ public class LaunchAsServer : MonoBehaviour {
 			PackHead head= new PackHead();
 			head.MsgID = 1;
 			head.TimeStamp = DateTime.Now.Second;
-			head.BodyLength = bytes.Length;			
-			SocketManager.Instance.TCPServer.Send(head,bytes);
+			head.PackLength = (short)bytes.Length;			
+			SocketManager.Instance.Server.Send(head,bytes);
 		}
 	}
 }

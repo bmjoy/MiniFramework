@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPServer
+    public class Server
     {
         public bool IsActive;
         public int MaxBufferSize = 1024;

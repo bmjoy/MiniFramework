@@ -1,36 +1,51 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-
+using System.Collections;
+using UnityEngine;
 namespace MiniFramework
 {
     public class SocketManager : MonoSingleton<SocketManager>
     {
-        public TCPClient TCPClient;
-        public TCPServer TCPServer;
+        public int Timeout;
+        public Client Client;
+        public Server Server;
         public UDP UDP;
-        public Action ConnectFailed;
-        public Action ConnectSuccess;
         public override void OnSingletonInit()
         {
-
+            MsgManager.Instance.RegisterMsg(this,MsgConfig.Net.ConnectSuccess.ToString(),ConnectSuccess);
+            MsgManager.Instance.RegisterMsg(this,MsgConfig.Net.ConnectFailed.ToString(),ConnectFailed);
+            MsgManager.Instance.RegisterMsg(this,MsgConfig.Net.ConnectAbort.ToString(),ConnectAbort);
         }
         public void Connect(string ip, int port)
         {
-            TCPClient = new TCPClient();
-            TCPClient.ConnectSuccess = ConnectSuccess;
-            TCPClient.ConnectFailed = ConnectFailed;
-            TCPClient.Connect(ip, port);
+            Client = new Client();
+            Client.Connect(ip, port);
         }
         public void LaunchAsServer(int port, int maxConnections)
         {
-            TCPServer = new TCPServer();
-            TCPServer.Launch(port, maxConnections);
+            Server = new Server();
+            Server.Launch(port, maxConnections);
         }
         public void LaunchAsHost(int port)
         {
             UDP = new UDP();
             UDP.Launch(port);
+        }
+        void ConnectSuccess(object data){
+
+        }
+        void ConnectFailed(object data){
+
+        }
+        void ConnectAbort(object data){
+
+        }
+        IEnumerator CheckTimeout(int timeout){
+            yield return new WaitForSeconds(timeout);
+            if(!Client.IsConnect){
+                Close();
+            }
         }
         public string GetLocalIP()
         {
@@ -47,13 +62,13 @@ namespace MiniFramework
         }
         public void Close()
         {
-            if (TCPClient != null)
+            if (Client != null)
             {
-                TCPClient.Close();
+                Client.Close();
             }
-            if (TCPServer != null)
+            if (Server != null)
             {
-                TCPServer.Close();
+                Server.Close();
             }
             if (UDP != null)
             {

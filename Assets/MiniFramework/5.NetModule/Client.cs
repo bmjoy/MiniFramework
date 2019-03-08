@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MiniFramework
 {
-    public class TCPClient
+    public class Client
     {
         public bool IsConnect;
         public int MaxBufferSize = 1024;
@@ -33,8 +33,7 @@ namespace MiniFramework
             if (!tcpClient.Connected)
             {  
                 Debug.Log("连接服务器失败，请尝试重新连接!");
-                if (ConnectFailed != null)
-                    ConnectFailed();
+                MsgManager.Instance.SendMsg(MsgConfig.Net.ConnectFailed.ToString(),null);
             }
             else
             {
@@ -43,8 +42,7 @@ namespace MiniFramework
                 stream.BeginRead(recvBuffer, 0, recvBuffer.Length, ReadResult, tcpClient);
                 IsConnect = true;
                 Debug.Log("客户端连接成功");
-                if (ConnectSuccess != null)
-                    ConnectSuccess();
+                MsgManager.Instance.SendMsg(MsgConfig.Net.ConnectSuccess.ToString(),null);
             }
         }
         private void ReadResult(IAsyncResult ar)
@@ -56,7 +54,8 @@ namespace MiniFramework
                 int recvLength = stream.EndRead(ar);
                 if (recvLength <= 0)
                 {
-                    Debug.Log("服务器已经关闭");
+                    Debug.Log("网络中断");
+                    MsgManager.Instance.SendMsg(MsgConfig.Net.ConnectAbort.ToString(),null);
                     Close();
                     return;
                 }

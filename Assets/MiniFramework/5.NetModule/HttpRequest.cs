@@ -14,9 +14,9 @@ namespace MiniFramework
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url))
             {
-                yield return www.Send();
+                yield return www.SendWebRequest();
 
-                if (www.isError)
+                if (www.isNetworkError)
                 {
                     Debug.Log(www.error);
                 }
@@ -35,9 +35,9 @@ namespace MiniFramework
         {
             using (UnityWebRequest www = UnityWebRequest.Put(url, data))
             {
-                yield return www.Send();
+                yield return www.SendWebRequest();
 
-                if (www.isError)
+                if (www.isNetworkError)
                 {
                     Debug.Log(www.error);
                     callback(false);
@@ -57,9 +57,9 @@ namespace MiniFramework
         {
             using (UnityWebRequest www = UnityWebRequest.Post(url, form))
             {
-                yield return www.Send();
+                yield return www.SendWebRequest();
 
-                if (www.isError)
+                if (www.isNetworkError)
                 {
                     Debug.Log(www.error);
                     callback(false);

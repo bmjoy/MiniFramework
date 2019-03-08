@@ -9,8 +9,8 @@ namespace MiniFramework
         private class MsgHandler
         {
             public readonly object Receiver;
-            public readonly Action<object[]> Callback;
-            public MsgHandler(object receiver, Action<object[]> callback)
+            public readonly Action<object> Callback;
+            public MsgHandler(object receiver, Action<object> callback)
             {
                 Receiver = receiver;
                 Callback = callback;
@@ -18,11 +18,11 @@ namespace MiniFramework
         }
         private class IdleMsg
         {
-            public readonly object[] ParamList;
-            public readonly Action<object[]> Callback;
-            public IdleMsg(object[] paramList, Action<object[]> callback)
+            public readonly object Param;
+            public readonly Action<object> Callback;
+            public IdleMsg(object param, Action<object> callback)
             {
-                ParamList = paramList;
+                Param = param;
                 Callback = callback;
             }
         }
@@ -36,7 +36,7 @@ namespace MiniFramework
             if (idleMsgHandler.Count > 0)
             {
                 IdleMsg iMsg = idleMsgHandler.Dequeue();
-                iMsg.Callback(iMsg.ParamList);
+                iMsg.Callback(iMsg.Param);
             }
         }
         /// <summary>
@@ -45,7 +45,7 @@ namespace MiniFramework
         /// <param name="receiverSelf">接收方</param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public void RegisterMsg(object receiverSelf, string msgName, Action<object[]> callback)
+        public void RegisterMsg(object receiverSelf, string msgName, Action<object> callback)
         {
             if (callback == null)
             {
@@ -73,7 +73,7 @@ namespace MiniFramework
         /// </summary>
         /// <param name="msgName"></param>
         /// <param name="paramList"></param>
-        public void SendMsg(string msgName, params object[] paramList)
+        public void SendMsg(string msgName, object param)
         {
             if (!msgHandlerDict.ContainsKey(msgName))
             {
@@ -86,7 +86,7 @@ namespace MiniFramework
                 MsgHandler handler = handlers[i];
                 if (handler.Receiver != null)
                 {
-                    IdleMsg iMsg = new IdleMsg(paramList, handler.Callback);
+                    IdleMsg iMsg = new IdleMsg(param, handler.Callback);
                     idleMsgHandler.Enqueue(iMsg);
                 }
                 else
@@ -102,7 +102,7 @@ namespace MiniFramework
         /// <param name="receiverSelf"></param>
         /// <param name="msgName"></param>
         /// <param name="callback"></param>
-        public void UnRegisterMsg(object receiver, string msgName, Action<object[]> callback)
+        public void UnRegisterMsg(object receiver, string msgName, Action<object> callback)
         {
             if (callback == null)
             {

@@ -13,13 +13,13 @@ public class LaunchAsClient : MonoBehaviour
 		MsgManager.Instance.RegisterMsg(this,"1",Recv);
         SocketManager.Instance.Connect("192.168.0.101", 1122);
     }
-	void Recv(params object[] data){
-		byte[] bytes = (byte[])data[0];
+	void Recv(object data){
+		byte[] bytes = (byte[])data;
 		Debug.Log(Encoding.UTF8.GetString(bytes));
 	}
     void Update()
     {
-        if (SocketManager.Instance.TCPClient.IsConnect)
+        if (SocketManager.Instance.Client.IsConnect)
         {
             if (Time.frameCount % 120 == 0)
             {
@@ -27,8 +27,8 @@ public class LaunchAsClient : MonoBehaviour
                 PackHead head = new PackHead();
                 head.MsgID = 1;
                 head.TimeStamp = DateTime.Now.Second;
-                head.BodyLength = bytes.Length;
-				SocketManager.Instance.TCPClient.Send(head,bytes);
+                head.PackLength = (short)bytes.Length;
+				SocketManager.Instance.Client.Send(head,bytes);
             }
         }
     }
