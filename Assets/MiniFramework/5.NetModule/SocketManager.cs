@@ -33,13 +33,13 @@ namespace MiniFramework
             UDP.Launch(port);
         }
         void ConnectSuccess(object data){
-            Debug.Log("连接成功");
+
         }
         void ConnectFailed(object data){
-            Debug.Log("连接失败");
+           
         }
         void ConnectAbort(object data){
-            Debug.Log("网络中断");
+            
         }
         IEnumerator CheckTimeout(int timeout){
             yield return new WaitForSeconds(timeout);
