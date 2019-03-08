@@ -9,9 +9,6 @@ namespace MiniFramework
     {
         public bool IsConnect;
         public int MaxBufferSize = 1024;
-        public Action ConnectFailed;
-        public Action ConnectSuccess;
-
         private byte[] recvBuffer;
         private TcpClient tcpClient;
         private DataPacker dataPacker;
@@ -75,6 +72,7 @@ namespace MiniFramework
             if (IsConnect)
             {
                 tcpClient.GetStream().BeginWrite(data, 0, data.Length, SendResult, tcpClient);
+                Debug.Log("发送数据："+data.Length);
             }
         }
         private void SendResult(IAsyncResult ar)
@@ -82,6 +80,7 @@ namespace MiniFramework
             tcpClient = (TcpClient)ar.AsyncState;
             NetworkStream stream = tcpClient.GetStream();
             stream.EndWrite(ar);
+            Debug.Log("数据发送成功");
         }
         public void Close()
         {

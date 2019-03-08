@@ -50,6 +50,7 @@ namespace MiniFramework
             if (callback == null)
             {
                 Debug.LogError("callback不能为null!");
+                return;
             }
             //确保一个消息名只有一组消息列表
             if (!msgHandlerDict.ContainsKey(msgName))
@@ -78,6 +79,7 @@ namespace MiniFramework
             if (!msgHandlerDict.ContainsKey(msgName))
             {
                 Debug.LogError("该消息名没有被注册:" + msgName);
+                return;
             }
             var handlers = msgHandlerDict[msgName];
             //从后向前遍历，删除item后前面item的索引不会变化
